@@ -1,18 +1,11 @@
 (ns authenticated_compojure_api.test_utils
-  (:require [cheshire.core :as cheshire]))
+  (:require [cheshire.core :as cheshire]
+            [ring.mock.request :as mock]
+            [buddy.core.codecs :refer [str->base64]]))
 
 (defn parse-body [body]
   (cheshire/parse-string (slurp body) true))
 
-; (defn read-body [body]
-;   (if (instance? java.io.InputStream body)
-;     (slurp body)
-;     body))
-
-; (defn parse-body [body]
-;   (let [body (read-body body)
-;         body (if (instance? String body)
-;                (cheshire/parse-string body true)
-;                body)]
-;     body))
-
+(defn basic-auth-header
+  [request original]
+  (mock/header request "Authorization" (str "Basic " (str->base64 original))))
