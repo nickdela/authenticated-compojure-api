@@ -14,6 +14,6 @@
     :title "Authenticated-compojure-api"
     :apiVersion "0.0.1" )
 
-  (swaggered "Tokens"
+  (swaggered "Token"
     :description "Get and refresh tokens"
     token-routes))

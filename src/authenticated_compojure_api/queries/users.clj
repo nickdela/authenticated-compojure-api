@@ -17,4 +17,3 @@
   [lookup-key lookup-value]
   (let [user (filter #(= (lookup-key %) lookup-value) example-users)]
     (first user)))
-
