@@ -4,7 +4,7 @@
             [midje.sweet :refer :all]
             [ring.mock.request :as mock]))
 
-(facts "Token tests"
+(facts "Token api tests"
 
   (fact "Test valid username and password return correct auth credentials"
     (let [response (app (-> (mock/request :get "/api/token")
