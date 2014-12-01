@@ -1,6 +1,7 @@
 (ns authenticated-compojure-api.handler
   (:require [compojure.api.sweet :refer :all]
             [authenticated-compojure-api.routes.token :refer :all]
+            [authenticated-compojure-api.routes.quotes :refer :all]
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
             [ring.util.http-response :refer :all]
             [schema.core :as s]))
@@ -16,4 +17,8 @@
 
   (swaggered "Token"
     :description "Get and refresh tokens"
-    token-routes))
+    token-routes)
+
+  (swaggered "Quotes"
+    :description "Create Read Update and Delete quotes"
+    quote-routes))
