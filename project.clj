@@ -1,10 +1,11 @@
 (defproject authenticated-compojure-api "0.1.0-SNAPSHOT"
   :description "An example compojure-api app with authentication using buddy"
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [metosin/compojure-api "0.16.5"]
+  :dependencies [[org.clojure/clojure        "1.6.0"]
+                 [metosin/compojure-api      "0.16.5"]
                  [metosin/ring-http-response "0.5.2"]
-                 [metosin/ring-swagger-ui "2.0.17"]
-                 [buddy "0.2.0"]]
+                 [metosin/ring-swagger-ui    "2.0.17"]
+                 [cheshire                   "5.3.1"]
+                 [buddy                      "0.2.0"]]
 
   :ring {:handler authenticated-compojure-api.handler/app
          :init    authenticated-compojure-api.handler/init}

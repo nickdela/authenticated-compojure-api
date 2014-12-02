@@ -1,4 +1,4 @@
-(ns authenticated_compojure_api.test_utils
+(ns authenticated-compojure-api.test-utils
   (:require [cheshire.core :as cheshire]
             [ring.mock.request :as mock]
             [buddy.core.codecs :refer [str->base64]]))

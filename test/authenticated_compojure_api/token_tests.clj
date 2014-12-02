@@ -1,6 +1,6 @@
 (ns authenticated-compojure-api.token-tests
   (:require [authenticated-compojure-api.handler :refer :all]
-            [authenticated_compojure_api.test_utils :refer [parse-body basic-auth-header]]
+            [authenticated-compojure-api.test-utils :refer [parse-body basic-auth-header]]
             [midje.sweet :refer :all]
             [ring.mock.request :as mock]))
 

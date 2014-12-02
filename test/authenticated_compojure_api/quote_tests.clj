@@ -1,31 +1,48 @@
 (ns authenticated-compojure-api.quote-tests
   (:require [authenticated-compojure-api.handler :refer :all]
-            [authenticated_compojure_api.test_utils :refer [parse-body]]
+            [authenticated-compojure-api.test-utils :refer [parse-body]]
+            [authenticated-compojure-api.queries.quotes :refer [quotes]]
             [midje.sweet :refer :all]
-            [ring.mock.request :as mock]))
+            [ring.mock.request :as mock]
+            [cheshire.core :as ch]))
 
 (facts "Quote api tests"
 
   (fact "Test GET request to /api/quotes returns all existing quotes"
-    (let [response (app (-> (mock/request :get "/api/quotes")))
-          body     (parse-body (:body response))]
-      (:status response)       => 200
-      (count body)             => 2
-      (:quoteid (first body))  => 1
-      (:author (first body))   => "Oscar Wilde"
-      (:quoteid (second body)) => 2
-      (:author (second body))  => "Plutarch"))
+    (with-redefs [quotes (atom [{:quoteid 1 :author "Jarrod" :quote "Hello"}
+                                {:quoteid 2 :author "Jrock" :quote "Good bye"}])]
+      (let [response (app (-> (mock/request :get "/api/quotes")))
+            body     (parse-body (:body response))]
+        (:status response)       => 200
+        (count body)             => 2
+        (:quoteid (first body))  => 1
+        (:author (first body))   => "Jarrod"
+        (:quoteid (second body)) => 2
+        (:author (second body))  => "Jrock")))
 
   (fact "Test GET request to /api/quotes/{quoteid} returns the expected quote"
-    (let [response (app (-> (mock/request :get "/api/quotes/1")))
-          body     (parse-body (:body response))]
-      (:status response) => 200
-      (count body)       => 3
-      (:quoteid body)    => 1
-      (:author  body)    => "Oscar Wilde"))
+    (with-redefs [quotes (atom [{:quoteid 1 :author "Jarrod" :quote "Hello"}
+                                {:quoteid 2 :author "Jrock" :quote "Good bye"}])]
+      (let [response (app (-> (mock/request :get "/api/quotes/1")))
+            body     (parse-body (:body response))]
+        (:status response) => 200
+        (count body)       => 3
+        (:quoteid body)    => 1
+        (:author  body)    => "Jarrod")))
 
   (fact "Test GET request to /api/quotes/{quoteid} with nonexistent id returns 400"
-    (let [response (app (-> (mock/request :get "/api/quotes/4")))
+    (with-redefs [quotes (atom [{:quoteid 1 :author "Jarrod" :quote "Hello"}
+                                {:quoteid 2 :author "Jrock" :quote "Good bye"}])]
+      (let [response (app (-> (mock/request :get "/api/quotes/4")))
+            body     (parse-body (:body response))]
+        (:status response) => 400
+        (:error body)      => "Bad Request")))
+
+ (fact "Test POST request to /api/quotes with a valid quote creates new quote"
+    (with-redefs [quotes (atom [{:quoteid 1 :author "Jarrod" :quote "Hello"}
+                                {:quoteid 2 :author "Jrock" :quote "Good bye"}])]
+    (let [response (app (-> (mock/request :post "/api/quotes" (ch/generate-string {:author "Jarrod" :quote-string "A test"}))
+                            (mock/content-type "application/json")))
           body     (parse-body (:body response))]
-      (:status response) => 400
-      (:error body)      => "Bad Request")))
+      (:status response)     => 200
+      (count body)           => 3))))

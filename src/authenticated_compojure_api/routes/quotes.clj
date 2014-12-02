@@ -10,7 +10,6 @@
 ;; ============================================
 (s/defschema Quote {:quoteid Long :author String :quote String})
 
-
 ;; ============================================
 ;; Routes
 ;; ============================================
@@ -33,7 +32,13 @@
 
     (POST* "/quotes" []
       :return Quote
-      :form-params [author :- String quote-string :- String]
+      :body-params [author :- String quote-string :- String]
       :summary "Create a new quote provided the author and quote strings"
       (let [id (add-quote author quote-string)]
-        (ok (get-quote-by-keyword :quoteid id))))))
+        (ok (get-quote-by-keyword :quoteid id))))
+
+    (DELETE* "/quotes/:id" []
+      :path-params [id :- Long]
+      (do
+        (remove-quote id)
+        (ok {:message "Gone"})))))

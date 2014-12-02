@@ -19,3 +19,6 @@
   (let [id (next-id)]
     (swap! quotes conj {:quoteid id :author author :quote quote-string})
     id))
+
+(defn remove-quote [quoteid]
+  (swap! quotes (fn [the-quote] (remove #(= (:quoteid %) quoteid) the-quote))))
