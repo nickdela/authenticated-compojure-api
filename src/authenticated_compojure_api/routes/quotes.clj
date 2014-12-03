@@ -1,8 +1,11 @@
 (ns authenticated-compojure-api.routes.quotes
-  (:require [schema.core :as s]
-            [ring.util.http-response :refer [ok not-found]]
-            [authenticated-compojure-api.queries.quotes :refer :all]
-            [compojure.api.sweet :refer :all]))
+  (:require [authenticated-compojure-api.queries.quotes :refer :all]
+            [authenticated-compojure-api.route-functions.quotes :refer [delete-quote-response
+                                                                        get-specific-quote-response
+                                                                        post-new-quote-response]]
+            [compojure.api.sweet :refer :all]
+            [ring.util.http-response :refer [ok]]
+            [schema.core :as s]))
 
 
 ;; ============================================
@@ -25,20 +28,14 @@
       :return Quote
       :path-params [id :- Long]
       :summary "Returns the quote with the specified id"
-      (let [the-quote (get-quote-by-keyword :quoteid id)]
-        (if (empty? the-quote)
-          (not-found {:error "Not Found"})
-          (ok (get-quote-by-keyword :quoteid id)))))
+      (get-specific-quote-response id))
 
     (POST* "/quotes" []
       :return Quote
       :body-params [author :- String quote-string :- String]
       :summary "Create a new quote provided the author and quote strings"
-      (let [id (add-quote author quote-string)]
-        (ok (get-quote-by-keyword :quoteid id))))
+      (post-new-quote-response author quote-string))
 
     (DELETE* "/quotes/:id" []
       :path-params [id :- Long]
-      (do
-        (remove-quote id)
-        (ok {:message "Gone"})))))
+      (delete-quote-response))))

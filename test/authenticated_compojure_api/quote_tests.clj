@@ -15,12 +15,10 @@
     (with-redefs [quotes test-quotes]
       (let [response (app (-> (mock/request :get "/api/quotes")))
             body     (parse-body (:body response))]
-        (:status response)       => 200
-        (count body)             => 2
-        (:quoteid (first body))  => 1
-        (:author (first body))   => "Jarrod"
-        (:quoteid (second body)) => 2
-        (:author (second body))  => "Jrock")))
+        (:status response) => 200
+        (count body)       => 2
+        (first body)       => {:quoteid 1 :quote "Hello" :author "Jarrod"}
+        (second body)      => {:quoteid 2 :quote "Good bye" :author "Jrock"})))
 
   (fact "Test GET request to /api/quotes/{quoteid} returns the expected quote"
     (with-redefs [quotes test-quotes]
@@ -28,8 +26,7 @@
             body     (parse-body (:body response))]
         (:status response) => 200
         (count body)       => 3
-        (:quoteid body)    => 1
-        (:author  body)    => "Jarrod")))
+        body               => {:quoteid 1 :quote "Hello" :author "Jarrod"})))
 
   (fact "Test GET request to /api/quotes/{quoteid} with nonexistent id returns 404"
     (with-redefs [quotes test-quotes]
