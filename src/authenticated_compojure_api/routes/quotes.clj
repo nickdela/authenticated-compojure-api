@@ -1,6 +1,6 @@
 (ns authenticated-compojure-api.routes.quotes
   (:require [schema.core :as s]
-            [ring.util.http-response :refer [ok bad-request]]
+            [ring.util.http-response :refer [ok not-found]]
             [authenticated-compojure-api.queries.quotes :refer :all]
             [compojure.api.sweet :refer :all]))
 
@@ -27,7 +27,7 @@
       :summary "Returns the quote with the specified id"
       (let [the-quote (get-quote-by-keyword :quoteid id)]
         (if (empty? the-quote)
-          (bad-request {:error "Bad Request"})
+          (not-found {:error "Not Found"})
           (ok (get-quote-by-keyword :quoteid id)))))
 
     (POST* "/quotes" []

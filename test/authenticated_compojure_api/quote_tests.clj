@@ -31,12 +31,12 @@
         (:quoteid body)    => 1
         (:author  body)    => "Jarrod")))
 
-  (fact "Test GET request to /api/quotes/{quoteid} with nonexistent id returns 400"
+  (fact "Test GET request to /api/quotes/{quoteid} with nonexistent id returns 404"
     (with-redefs [quotes test-quotes]
       (let [response (app (-> (mock/request :get "/api/quotes/4")))
             body     (parse-body (:body response))]
-        (:status response) => 400
-        (:error body)      => "Bad Request")))
+        (:status response) => 404
+        (:error body)      => "Not Found")))
 
  (fact "Test POST request to /api/quotes with a valid quote creates new quote"
     (with-redefs [quotes test-quotes]
