@@ -8,6 +8,10 @@ An example compojure-api application demonstrating authentication using buddy.
 
 `lein ring server`
 
+### Running Tests
+
+`lein midje`
+
 ### Packaging and running as standalone jar
 
 ```
