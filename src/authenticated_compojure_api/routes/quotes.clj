@@ -1,8 +1,8 @@
 (ns authenticated-compojure-api.routes.quotes
-  (:require [authenticated-compojure-api.queries.quotes :refer :all]
-            [authenticated-compojure-api.route-functions.quotes :refer [delete-quote-response
+  (:require [authenticated-compojure-api.route-functions.quotes :refer [delete-quote-response
                                                                         get-specific-quote-response
-                                                                        post-new-quote-response]]
+                                                                        post-new-quote-response
+                                                                        update-quote-response]]
             [compojure.api.sweet :refer :all]
             [ring.util.http-response :refer [ok]]
             [schema.core :as s]))
@@ -38,4 +38,11 @@
 
     (DELETE* "/quotes/:id" []
       :path-params [id :- Long]
-      (delete-quote-response))))
+      (delete-quote-response id))
+
+    (PUT* "/quotes/:id" []
+      :return Quote
+      :path-params [id :- Long]
+      :body-params [{author :- String ""} {quote-string :- String ""}]
+      :summary "Update some or all fields of a specified quote"
+      (update-quote-response id author quote-string))))

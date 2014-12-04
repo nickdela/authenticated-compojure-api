@@ -1,7 +1,8 @@
 (ns authenticated-compojure-api.route-functions.quotes
   (:require [authenticated-compojure-api.queries.quotes :refer [add-quote
                                                                 get-quote-by-keyword
-                                                                remove-quote]]
+                                                                remove-quote
+                                                                update-quote]]
             [ring.util.http-response :refer [not-found ok]]))
 
 (defn get-specific-quote-response [id]
@@ -17,4 +18,11 @@
 (defn delete-quote-response [id]
   (do
     (remove-quote id)
-    (ok {:message "Gone"})))
+    (ok {:message (format "Quote id %d successfully removed" id)})))
+
+(defn update-quote-response [id author quote-string]
+  (let [old-quote        (get-quote-by-keyword :quoteid id)
+        new-author       (if (empty? author) (:author old-quote) author)
+        new-quote-string (if (empty? quote-string) (:quote old-quote) quote-string)
+        new-quotes       (update-quote id author new-quote-string)]
+    (ok (first (filter #(= (:quoteid %) id) new-quotes)))))

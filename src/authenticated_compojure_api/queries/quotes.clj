@@ -22,3 +22,13 @@
 
 (defn remove-quote [quoteid]
   (swap! quotes (fn [the-quote] (remove #(= (:quoteid %) quoteid) the-quote))))
+
+(defn update-quote-if-id-match [the-quote quote-id author new-quote-string]
+  (if (= (:quoteid the-quote) quote-id)
+    (assoc the-quote :author author :quote new-quote-string)
+    the-quote))
+
+(defn update-quote [quote-id author new-quote-string]
+  (swap! quotes (fn [quotes]
+                  (for [the-quote quotes]
+                    (update-quote-if-id-match the-quote quote-id author new-quote-string)))))
