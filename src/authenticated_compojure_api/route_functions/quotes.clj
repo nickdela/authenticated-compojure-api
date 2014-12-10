@@ -3,7 +3,7 @@
                                                                 get-quote-by-keyword
                                                                 remove-quote
                                                                 update-quote]]
-            [ring.util.http-response :refer [not-found ok]]))
+            [ring.util.http-response :refer [not-found ok unauthorized]]))
 
 (defn get-specific-quote-response [id]
   (let [the-quote (get-quote-by-keyword :quoteid id)]
@@ -15,10 +15,16 @@
   (let [id (add-quote author quote-string)]
     (ok (get-quote-by-keyword :quoteid id))))
 
-(defn delete-quote-response [id]
+(defn delete-quote [id]
   (do
     (remove-quote id)
     (ok {:message (format "Quote id %d successfully removed" id)})))
+
+(defn delete-quote-response [request id]
+  (let [auth (get-in request [:identity :access])]
+    (if (= auth "Admin")
+      (delete-quote id)
+      (unauthorized {:error "Not authorized."}))))
 
 (defn update-quote-response [id author quote-string]
   (let [old-quote        (get-quote-by-keyword :quoteid id)

@@ -9,3 +9,7 @@
 (defn basic-auth-header
   [request original]
   (mock/header request "Authorization" (str "Basic " (str->base64 original))))
+
+(defn token-auth-header
+  [request token]
+  (mock/header request "Authorization" (str "Token " token)))
