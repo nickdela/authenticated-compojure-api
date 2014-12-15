@@ -4,9 +4,11 @@
             [authenticated-compojure-api.queries.quotes :refer [quotes]]
             [authenticated-compojure-api.test-utils :refer [token-auth-header]]
             [authenticated-compojure-api.auth-resources.auth-key :refer [auth-key]]
+            [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]
             [midje.sweet :refer :all]
             [ring.mock.request :as mock]
             [buddy.sign.generic :as s]
+            [buddy.auth.backends.token :refer [signed-token-backend]]
             [cheshire.core :as ch]))
 
 (def test-auth-user  {:userid 1 :access "Admin" :username "JarrodCTaylor" :password "password1" :refresh-token "zeRqCTZLoNR8j0irosN9"})
@@ -103,10 +105,20 @@
        body               => {:author "Big Daddy J" :quote "Hello" :quoteid 1})))
 
   (fact "Test PUT to /api/quotes/{quoteid} with an invalid token returns 401"
-     (with-redefs [quotes (make-test-quotes)]
-       (let [response (app (-> (mock/request :put "/api/quotes/1" (ch/generate-string {:author "Big Daddy J"}))
-                               (mock/content-type "application/json")
-                               (token-auth-header "bad-token")))
-             body     (parse-body (:body response))]
-         (:status response) => 401
-         (:error body)      => "Not authorized."))))
+   (with-redefs [quotes (make-test-quotes)]
+     (let [response (app (-> (mock/request :put "/api/quotes/1" (ch/generate-string {:author "Big Daddy J"}))
+                             (mock/content-type "application/json")
+                             (token-auth-header "bad-token")))
+           body     (parse-body (:body response))]
+       (:status response) => 401
+       (:error body)      => "Not authorized.")))
+
+  (fact "Test an expired valid token will not pass authentication"
+    (with-redefs [token-backend (signed-token-backend {:privkey auth-key :max-age -15})]
+     (let [the-token (s/dumps test-basic-user auth-key)
+           response  (app (-> (mock/request :post "/api/quotes" (ch/generate-string {:author "X" :quote-string "Y"}))
+                              (mock/content-type "application/json")
+                              (token-auth-header the-token)))
+           body      (parse-body (:body response))]
+       (:status response)     => 401
+       (:error body)          => "Not authorized."))))
