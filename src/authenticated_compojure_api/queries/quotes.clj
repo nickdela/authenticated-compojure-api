@@ -1,5 +1,8 @@
 (ns authenticated-compojure-api.queries.quotes)
 
+;; ============================================
+;; Stubs in place of a real database
+;; ============================================
 (def quotes (atom [{:quoteid 1 :author "Oscar Wilde" :quote "Always forgive your enemies; nothing annoys them so much."}
                    {:quoteid 2 :author "Plutarch" :quote "When Alexander the Great saw the breadth of his domain, he wept for there were no more worlds to conquer."}]))
 

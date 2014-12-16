@@ -1,6 +1,6 @@
 # authenticated-compojure-api
 
-An example compojure-api application demonstrating authentication using buddy.
+An example compojure-api application demonstrating basic and token authentication using buddy.
 
 ## Usage
 
@@ -10,7 +10,7 @@ An example compojure-api application demonstrating authentication using buddy.
 
 ### Running Tests
 
-`lein midje`
+`lein midje :autotest`
 
 ### Packaging and running as standalone jar
 
