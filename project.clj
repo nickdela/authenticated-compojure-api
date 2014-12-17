@@ -10,12 +10,20 @@
   :ring {:handler authenticated-compojure-api.handler/app
          :init    authenticated-compojure-api.handler/init}
 
+  :min-lein-version  "2.5.0"
+
   :uberjar-name "server.jar"
 
-  :profiles {:uberjar {:resource-paths ["swagger-ui"]}
+  :profiles {:uberjar {:resource-paths ["swagger-ui"]
+                       :aot :all}
+
              :dev     {:dependencies   [[javax.servlet/servlet-api "2.5"]
                                         [midje                     "1.6.3"]
                                         [ring-mock                 "0.1.5"]
                                         [cheshire                  "5.3.1"]]
                        :plugins        [[lein-ring  "0.8.13"]
-                                        [lein-midje "3.1.3"]]}})
+                                        [lein-midje "3.1.3"]]}
+
+                       :production {:ring {:open-browser? false
+                                    :stacktraces?  false
+                                    :auto-reload?  false}}})
