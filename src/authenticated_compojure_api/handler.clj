@@ -4,6 +4,7 @@
             [authenticated-compojure-api.routes.quotes :refer :all]
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
             [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
+            [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
             [ring.util.http-response :refer :all]
             [schema.core :as s]))
 
