@@ -6,6 +6,6 @@
 (defn cors-mw [handler]
   (fn [request]
     (let [response (handler request)]
-      (update-in response
-                 [:headers "Access-Control-Allow-Origin"]
-                 (fn [_] "*")))))
+      (-> response
+           (assoc-in [:headers "Access-Control-Allow-Origin"] "*")
+           (assoc-in [:headers "Access-Control-Allow-Headers"] "Authorization")))))
