@@ -14,7 +14,6 @@
 (def test-auth-user  {:userid 1 :access "Admin" :username "JarrodCTaylor" :password "password1" :refresh-token "zeRqCTZLoNR8j0irosN9"})
 (def test-basic-user {:userid 2 :access "User"  :username "Everyman"      :password "password2" :refresh-token "1HN05Az5P0zUhDDRzdcg"})
 
-
 (defn make-test-quotes []
   (let [test-quotes (atom [{:quoteid 1 :author "Jarrod" :quote "Hello"}
                            {:quoteid 2 :author "Jrock" :quote "Good bye"}])]
