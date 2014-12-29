@@ -24,7 +24,7 @@
       (GET* "/token" {:as request}
         :return        Credentials
         :header-params [authorization :- String]
-        :middlewares   [basic-auth-mw cors-mw]
+        :middlewares   [cors-mw basic-auth-mw]
         :summary       "Returns auth info given a username and password in the 'Authorization' header"
         :notes         "Authorization header expects 'Basic username:password' where username:password is base64 encoded."
         (auth-credentials-response request))
