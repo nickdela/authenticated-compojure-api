@@ -1,8 +1,8 @@
 (ns authenticated-compojure-api.routes.quotes
   (:require [authenticated-compojure-api.route-functions.quotes :as response]
-            [authenticated-compojure-api.queries.quotes :refer [quotes]]
             [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
+            [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]
             [compojure.api.sweet :refer :all]
@@ -12,7 +12,7 @@
 ;; ============================================
 ;; Schema(s)
 ;; ============================================
-(s/defschema Quote {:quoteid Long :author String :quote String})
+(s/defschema Quote {:id Long :author String :quote String})
 
 ;; ============================================
 ;; Routes
@@ -24,7 +24,7 @@
       (GET* "/quotes" []
         :return  [Quote]
         :summary "Returns an array of all available quotes."
-        (ok @quotes))
+        (ok (query/all-quotes)))
 
       (GET* "/quotes/:id" []
         :return      Quote
