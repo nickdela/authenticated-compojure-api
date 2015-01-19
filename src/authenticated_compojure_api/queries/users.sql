@@ -7,6 +7,27 @@ SELECT id
        ,refresh_token
 FROM   users;
 
+-- name: get-user-by-reset-token
+-- Selects a user with matching reset-token
+SELECT id
+       ,access
+       ,username
+       ,password
+       ,refresh_token
+FROM   users
+WHERE  refresh_token = :refresh_token;
+
+-- name: get-user-by-username-and-password
+-- Selects a user with matching password
+SELECT id
+       ,access
+       ,username
+       ,password
+       ,refresh_token
+FROM   users
+WHERE  password = :password
+       AND username = :username;
+
 -- name: insert-user<!
 -- inserts a single user
 INSERT INTO users

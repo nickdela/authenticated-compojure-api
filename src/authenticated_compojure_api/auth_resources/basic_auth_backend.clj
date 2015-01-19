@@ -1,5 +1,5 @@
 (ns authenticated-compojure-api.auth-resources.basic-auth-backend
-  (:require [authenticated-compojure-api.queries.users :refer [get-user-by-password]]
+  (:require [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.auth.backends.httpbasic :refer [http-basic-backend]]))
 
 ;; ============================================================================
@@ -11,7 +11,7 @@
   [request, auth-data]
   (let [username (:username auth-data)
         password (:password auth-data)]
-    (get-user-by-password username password)))
+    (first (query/get-user-by-username-and-password {:username username :password password}))))
 
 ;; ============================================================================
 ;  Create authentication backend

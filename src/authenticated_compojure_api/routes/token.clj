@@ -11,7 +11,7 @@
 ;; ============================================
 ;; Schema(s)
 ;; ============================================
-(s/defschema Credentials {:userid Long :token String :refresh-token String})
+(s/defschema Credentials {:id Long :token String :refresh_token String})
 (s/defschema Token {:token String})
 
 ;; ============================================
