@@ -2,17 +2,17 @@
   :description "An example compojure-api app with authentication using buddy"
 
   :dependencies [[org.clojure/clojure        "1.6.0"]
-                 [metosin/compojure-api      "0.16.5"]
+                 [metosin/compojure-api      "0.17.0"]
                  [metosin/ring-http-response "0.5.2"]
-                 [metosin/ring-swagger-ui    "2.0.17"]
-                 [cheshire                   "5.3.1"]
-                 [buddy                      "0.2.0"]
-                 [org.clojure/java.jdbc      "0.3.5"]
-                 [postgresql/postgresql      "9.1-901-1.jdbc4"]
+                 [metosin/ring-swagger-ui    "2.0.24"]
+                 [cheshire                   "5.4.0"]
+                 [buddy                      "0.2.3"]
+                 [org.clojure/java.jdbc      "0.3.6"]
+                 [postgresql/postgresql      "9.3-1102.jdbc41"]
                  [yesql                      "0.5.0-beta2"]
                  [environ                    "1.0.0"]]
 
-  :plugins      [[lein-ring    "0.8.13"]
+  :plugins      [[lein-ring    "0.9.1"]
                  [lein-environ "1.0.0"]]
 
   :ring {:handler authenticated-compojure-api.handler/app
@@ -27,7 +27,7 @@
 
              :test-local   {:dependencies [[javax.servlet/servlet-api "2.5"]
                                            [ring-mock                 "0.1.5"]
-                                           [cheshire                  "5.3.1"]]}
+                                           [cheshire                  "5.4.0"]]}
 
              ;; Set these in ./profiles.clj
              :test-env-vars {}
