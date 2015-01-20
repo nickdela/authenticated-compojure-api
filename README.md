@@ -10,7 +10,7 @@ An example compojure-api application demonstrating basic and token authenticatio
 
 ### Running Tests
 
-`lein midje :autotest`
+`lein test-refresh`
 
 ### Packaging and running as standalone jar
 

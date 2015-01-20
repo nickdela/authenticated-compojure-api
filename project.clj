@@ -26,11 +26,8 @@
                        :aot :all}
 
              :test-local   {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                           [midje                     "1.6.3"]
                                            [ring-mock                 "0.1.5"]
-                                           [cheshire                  "5.3.1"]]
-
-                             :plugins     [[lein-midje                "3.1.3"]]}
+                                           [cheshire                  "5.3.1"]]}
 
              ;; Set these in ./profiles.clj
              :test-env-vars {}
