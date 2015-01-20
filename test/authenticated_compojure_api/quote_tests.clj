@@ -35,49 +35,49 @@
 
 (deftest retrive-quote-no-authentication-required
 
-  (testing "Test GET request to /api/quotes returns all existing quotes"
-    (let [response (app (-> (mock/request :get "/api/quotes")))
+  (testing "Test GET request to /api/quote returns all existing quotes"
+    (let [response (app (-> (mock/request :get "/api/quote")))
           body     (parse-body (:body response))]
       (is (= (:status response) 200))
       (is (= (count body)       2))
       (is (= (first body)       {:id 1 :quote "Hello" :author "Jarrod"}))
       (is (= (second body)      {:id 2 :quote "Good bye" :author "Jrock"}))))
 
-  (testing "Test GET request to /api/quotes/{id} returns the expected quote"
-    (let [response (app (-> (mock/request :get "/api/quotes/1")))
+  (testing "Test GET request to /api/quote/{id} returns the expected quote"
+    (let [response (app (-> (mock/request :get "/api/quote/1")))
           body     (parse-body (:body response))]
       (is (= (:status response) 200))
       (is (= (count body)       3))
       (is (= body               {:id 1 :quote "Hello" :author "Jarrod"}))))
 
-  (testing "Test GET request to /api/quotes/{id} to a nonexistent id returns 404"
-    (let [response  (app (-> (mock/request :get "/api/quotes/4")))
+  (testing "Test GET request to /api/quote/{id} to a nonexistent id returns 404"
+    (let [response  (app (-> (mock/request :get "/api/quote/4")))
           body      (parse-body (:body response))]
       (is (= (:status response) 404))
       (is (= (:error body)      "Not Found")))))
 
 (deftest creating-deleteing-and-updating-quotes-requires-authentication
 
- (testing "Test POST request to /api/quotes with a valid token and quote creates new quote"
+ (testing "Test POST request to /api/quote with a valid token and quote creates new quote"
    (let [the-token (s/dumps basic-user auth-key)
-         response  (app (-> (mock/request :post "/api/quotes" (ch/generate-string {:author "Jarrod" :quote-string "A test"}))
+         response  (app (-> (mock/request :post "/api/quote" (ch/generate-string {:author "Jarrod" :quote-string "A test"}))
                             (mock/content-type "application/json")
                             (token-auth-header the-token)))
          body      (parse-body (:body response))]
      (is (= (:status response) 200))
      (is (= (count body)       3))))
 
- (testing "Test POST request to /api/quotes with an invalid token return not 401"
-   (let [response  (app (-> (mock/request :post "/api/quotes" (ch/generate-string {:author "Jarrod" :quote-string "A test"}))
+ (testing "Test POST request to /api/quote with an invalid token return not 401"
+   (let [response  (app (-> (mock/request :post "/api/quote" (ch/generate-string {:author "Jarrod" :quote-string "A test"}))
                             (mock/content-type "application/json")
                             (token-auth-header "bad-token")))
          body      (parse-body (:body response))]
      (is (= (:status response) 401))
      (is (= (:error body)      "Not authorized."))))
 
- (testing "Test POST request to /api/quotes with a valid token and an invalid quote returns an error"
+ (testing "Test POST request to /api/quote with a valid token and an invalid quote returns an error"
    (let [the-token (s/dumps basic-user auth-key)
-         response  (app (-> (mock/request :post "/api/quotes" (ch/generate-string {:wrong "Bad" :thing "Fail"}))
+         response  (app (-> (mock/request :post "/api/quote" (ch/generate-string {:wrong "Bad" :thing "Fail"}))
                             (mock/content-type "application/json")
                             (token-auth-header the-token)))
          body      (parse-body (:body response))]
@@ -85,33 +85,33 @@
      (is (= (:author (:errors body))       "missing-required-key"))
      (is (= (:quote-string (:errors body)) "missing-required-key"))))
 
- (testing "Test DELETE to /api/quotes/{id} from a user with 'Admin' auth deletes expected quote"
+ (testing "Test DELETE to /api/quote/{id} from a user with 'Admin' auth deletes expected quote"
    (let [the-token (s/dumps admin-user auth-key)
-         response  (app (-> (mock/request :delete "/api/quotes/2")
+         response  (app (-> (mock/request :delete "/api/quote/2")
                             (token-auth-header the-token)))
          body      (parse-body (:body response))]
      (is (= (:status response) 200))
      (is (= (:message body)    "Quote id 2 successfully removed"))))
 
- (testing "Test DELETE to /api/quotes/{id} from a user without 'Admin' auth returns 401"
+ (testing "Test DELETE to /api/quote/{id} from a user without 'Admin' auth returns 401"
    (let [the-token (s/dumps basic-user auth-key)
-         response  (app (-> (mock/request :delete "/api/quotes/2")
+         response  (app (-> (mock/request :delete "/api/quote/2")
                             (token-auth-header the-token)))
          body      (parse-body (:body response))]
      (is (= (:status response) 401))
      (is (= (:error body)      "Not authorized."))))
 
- (testing "Test PUT to /api/quotes/{id} with a valid token for existing quote correctly updates"
+ (testing "Test PUT to /api/quote/{id} with a valid token for existing quote correctly updates"
    (let [the-token (s/dumps basic-user auth-key)
-         response  (app (-> (mock/request :put "/api/quotes/1" (ch/generate-string {:author "Big Daddy J"}))
+         response  (app (-> (mock/request :put "/api/quote/1" (ch/generate-string {:author "Big Daddy J"}))
                             (mock/content-type "application/json")
                             (token-auth-header the-token)))
          body      (parse-body (:body response))]
      (is (= (:status response) 200))
      (is (= body               {:author "Big Daddy J" :quote "Hello" :id 1}))))
 
-  (testing "Test PUT to /api/quotes/{id} with an invalid token returns 401"
-     (let [response (app (-> (mock/request :put "/api/quotes/1" (ch/generate-string {:author "Big Daddy J"}))
+  (testing "Test PUT to /api/quote/{id} with an invalid token returns 401"
+     (let [response (app (-> (mock/request :put "/api/quote/1" (ch/generate-string {:author "Big Daddy J"}))
                              (mock/content-type "application/json")
                              (token-auth-header "bad-token")))
            body     (parse-body (:body response))]
@@ -121,7 +121,7 @@
   (testing "Test an expired valid token will not pass authentication"
     (with-redefs [token-backend (signed-token-backend {:privkey auth-key :max-age -15})]
      (let [the-token (s/dumps basic-user auth-key)
-           response  (app (-> (mock/request :post "/api/quotes" (ch/generate-string {:author "X" :quote-string "Y"}))
+           response  (app (-> (mock/request :post "/api/quote" (ch/generate-string {:author "X" :quote-string "Y"}))
                               (mock/content-type "application/json")
                               (token-auth-header the-token)))
            body      (parse-body (:body response))]

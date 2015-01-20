@@ -23,6 +23,6 @@
     :description "Get and refresh tokens"
     token-routes)
 
-  (swaggered "Quotes"
+  (swaggered "Quote"
     :description "Create Read Update and Delete quotes"
     quote-routes))

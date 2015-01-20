@@ -21,19 +21,19 @@
   (middlewares [cors-mw]
     (context "/api" []
 
-      (GET* "/quotes" []
+      (GET* "/quote" []
         :return  [Quote]
         :summary "Returns an array of all available quotes."
         (ok (query/all-quotes)))
 
-      (GET* "/quotes/:id" []
+      (GET* "/quote/:id" []
         :return      Quote
         :path-params [id :- Long]
         :summary     "Returns the quote with the specified id"
         (response/get-specific-quote-response id))
 
       (wrap-authentication
-        (POST* "/quotes" []
+        (POST* "/quote" []
           :return        Quote
           :body-params   [author :- String quote-string :- String]
           :header-params [authorization :- String]
@@ -44,7 +44,7 @@
         token-backend)
 
       (wrap-authentication
-        (PUT* "/quotes/:id" []
+        (PUT* "/quote/:id" []
           :return        Quote
           :path-params   [id :- Long]
           :body-params   [{author :- String ""} {quote-string :- String ""}]
@@ -56,7 +56,7 @@
         token-backend)
 
       (wrap-authentication
-        (DELETE* "/quotes/:id" {:as request}
+        (DELETE* "/quote/:id" {:as request}
           :path-params   [id :- Long]
           :header-params [authorization :- String]
           :summary       "Deletes the specified quote. Requires token to have Admin auth"
