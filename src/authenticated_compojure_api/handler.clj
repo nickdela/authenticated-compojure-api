@@ -1,6 +1,6 @@
 (ns authenticated-compojure-api.handler
   (:require [compojure.api.sweet :refer :all]
-            [authenticated-compojure-api.routes.token :refer :all]
+            [authenticated-compojure-api.routes.user :refer :all]
             [authenticated-compojure-api.routes.quotes :refer :all]
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
             [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
@@ -19,9 +19,9 @@
     :title "Authenticated-compojure-api"
     :apiVersion "0.0.1" )
 
-  (swaggered "Token"
-    :description "Get and refresh tokens"
-    token-routes)
+  (swaggered "User"
+    :description "Create and reset user details"
+    user-routes)
 
   (swaggered "Quote"
     :description "Create Read Update and Delete quotes"

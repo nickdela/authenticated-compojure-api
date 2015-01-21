@@ -11,8 +11,8 @@
             [buddy.auth.backends.token :refer [signed-token-backend]]
             [cheshire.core :as ch]))
 
-(def basic-user {:userid 2 :access "User"  :username "Everyman"      :password "password2" :refresh_token "1HN05Az5P0zUhDDRzdcg"})
-(def admin-user {:userid 1 :access "Admin" :username "JarrodCTaylor" :password "password1" :refresh_token "zeRqCTZLoNR8j0irosN9"})
+(def basic-user {:access "User"  :username "Everyman"      :password "password2" :refresh_token "1HN05Az5P0zUhDDRzdcg"})
+(def admin-user {:access "Admin" :username "JarrodCTaylor" :password "password1" :refresh_token "zeRqCTZLoNR8j0irosN9"})
 
 (defn add-users []
   (query/insert-user<! basic-user)

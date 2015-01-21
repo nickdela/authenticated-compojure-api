@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.token-tests
+(ns authenticated-compojure-api.user.token-tests
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :refer [parse-body basic-auth-header]]
@@ -20,38 +20,39 @@
 
 (use-fixtures :each setup-teardown)
 
-(deftest token-api-tests
+(deftest user-token-reterival-tests
 
   (testing "Test valid username and password return correct auth credentials"
-    (let [response (app (-> (mock/request :get "/api/token")
+    (let [response (app (-> (mock/request :get "/api/user/token")
                             (basic-auth-header "JarrodCTaylor:password1")))
           body     (parse-body (:body response))]
-      (is (= (:status response) 200))
-      (is (= (:id body)         1))))
+      (is (= (:status response)    200))
+      (is (= (:username body)      "JarrodCTaylor"))
+      (is (= (:refresh_token body) "zeRqCTZLoNR8j0irosN9"))))
 
   (testing "Test invalid username and password do not return auth credentials"
-    (let [response (app (-> (mock/request :get "/api/token")
+    (let [response (app (-> (mock/request :get "/api/user/token")
                             (basic-auth-header "JarrodCTaylor:badpass")))
           body     (parse-body (:body response))]
       (is (= (:status response) 401))
       (is (= (:error body)      "Not authorized."))))
 
   (testing "Test no auth credentials are returned when no username and password provided"
-    (let [response (app (mock/request :get "/api/token"))
+    (let [response (app (mock/request :get "/api/user/token"))
           body     (parse-body (:body response))]
       (is (= (:status response) 401))
       (is (= (:error body)      "Not authorized."))))
 
   (testing "Test user can generate a new token with a valid refresh-token"
-    (let [initial-response   (app (-> (mock/request :get "/api/token")
+    (let [initial-response   (app (-> (mock/request :get "/api/user/token")
                                       (basic-auth-header "JarrodCTaylor:password1")))
           initial-body       (parse-body (:body initial-response))
           refresh_token      (:refresh_token initial-body)
-          refreshed-response (app (mock/request :get (str "/api/token/refresh/" refresh_token)))]
+          refreshed-response (app (mock/request :get (str "/api/user/token/refresh/" refresh_token)))]
       (is (= (:status refreshed-response) 200))))
 
   (testing "Test invalid refresh token does not return a new token"
-    (let [response (app (mock/request :get (str "/api/token/refresh/" "abcd1234")))
+    (let [response (app (mock/request :get (str "/api/user/token/refresh/" "abcd1234")))
           body     (parse-body (:body response))]
       (is (= (:status response) 400))
       (is (= (:error body)      "Bad Request")))))

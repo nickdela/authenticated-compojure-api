@@ -3,4 +3,4 @@
             [yesql.core :refer [defqueries]]))
 
 (defqueries "authenticated_compojure_api/queries/quotes.sql" {:connection (env :database-url)})
-(defqueries "authenticated_compojure_api/queries/users.sql" {:connection (env :database-url)})
+(defqueries "authenticated_compojure_api/queries/user.sql" {:connection (env :database-url)})
