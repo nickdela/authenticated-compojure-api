@@ -3,7 +3,8 @@
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :refer [parse-body basic-auth-header]]
             [authenticated-compojure-api.queries.query-defs :as query]
-            [ring.mock.request :as mock]))
+            [ring.mock.request :as mock]
+            [cheshire.core :as ch]))
 
 (def basic-user {:access "User"  :username "Everyman"      :password "password2" :refresh_token "1HN05Az5P0zUhDDRzdcg"})
 (def admin-user {:access "Admin" :username "JarrodCTaylor" :password "password1" :refresh_token "zeRqCTZLoNR8j0irosN9"})
@@ -48,11 +49,13 @@
                                       (basic-auth-header "JarrodCTaylor:password1")))
           initial-body       (parse-body (:body initial-response))
           refresh_token      (:refresh_token initial-body)
-          refreshed-response (app (mock/request :get (str "/api/user/token/refresh/" refresh_token)))]
+          refreshed-response (app (-> (mock/request :post "/api/user/token/refresh" (ch/generate-string {:refresh-token refresh_token}))
+                                      (mock/content-type "application/json")))]
       (is (= (:status refreshed-response) 200))))
 
   (testing "Test invalid refresh token does not return a new token"
-    (let [response (app (mock/request :get (str "/api/user/token/refresh/" "abcd1234")))
+    (let [response (app (-> (mock/request :post "/api/user/token/refresh" (ch/generate-string {:refresh-token "abcd1234"}))
+                            (mock/content-type "application/json")))
           body     (parse-body (:body response))]
       (is (= (:status response) 400))
       (is (= (:error body)      "Bad Request")))))

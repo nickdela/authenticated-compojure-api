@@ -37,9 +37,9 @@
         (auth-credentials-response request))
       basic-backend)
 
-    (GET* "/user/token/refresh/:refresh-token" []
+    (POST* "/user/token/refresh" []
       :return      Token
       :summary     "Get a fresh token with a valid re-fresh token"
       :middlewares [cors-mw]
-      :path-params [refresh-token :- String]
+      :body-params [refresh-token :- String]
       (gen-new-token-response refresh-token))))
