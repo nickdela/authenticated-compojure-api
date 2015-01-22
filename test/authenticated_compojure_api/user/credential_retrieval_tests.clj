@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.user.token-tests
+(ns authenticated-compojure-api.user.credential-retrieval-tests
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :refer [parse-body basic-auth-header]]
@@ -6,12 +6,14 @@
             [ring.mock.request :as mock]
             [cheshire.core :as ch]))
 
-(def basic-user {:access "User"  :username "Everyman"      :password "password2" :refresh_token "1HN05Az5P0zUhDDRzdcg"})
-(def admin-user {:access "Admin" :username "JarrodCTaylor" :password "password1" :refresh_token "zeRqCTZLoNR8j0irosN9"})
+(def basic-user {:username "Everyman"      :password "password2"})
+(def admin-user {:username "JarrodCTaylor" :password "password1"})
 
 (defn add-users []
-  (query/insert-user<! admin-user)
-  (query/insert-user<! basic-user))
+  (app (-> (mock/request :post "/api/user" (ch/generate-string basic-user))
+                                           (mock/content-type "application/json")))
+  (app (-> (mock/request :post "/api/user" (ch/generate-string admin-user))
+                                           (mock/content-type "application/json"))))
 
 (defn setup-teardown [f]
   (query/create-users-table-if-not-exists!)
@@ -21,30 +23,30 @@
 
 (use-fixtures :each setup-teardown)
 
-(deftest user-token-reterival-tests
+(deftest user-credential-retrieval-tests
 
-  (testing "Test valid username and password return correct auth credentials"
+  (testing "Valid username and password return correct auth credentials"
     (let [response (app (-> (mock/request :get "/api/user/token")
                             (basic-auth-header "JarrodCTaylor:password1")))
           body     (parse-body (:body response))]
-      (is (= (:status response)    200))
-      (is (= (:username body)      "JarrodCTaylor"))
-      (is (= (:refresh_token body) "zeRqCTZLoNR8j0irosN9"))))
+      (is (= (:status response)            200))
+      (is (= (:username body)              "JarrodCTaylor"))
+      (is (= (count (:refresh_token body)) 36))))
 
-  (testing "Test invalid username and password do not return auth credentials"
+  (testing "Invalid username and password do not return auth credentials"
     (let [response (app (-> (mock/request :get "/api/user/token")
                             (basic-auth-header "JarrodCTaylor:badpass")))
           body     (parse-body (:body response))]
       (is (= (:status response) 401))
       (is (= (:error body)      "Not authorized."))))
 
-  (testing "Test no auth credentials are returned when no username and password provided"
+  (testing "No auth credentials are returned when no username and password provided"
     (let [response (app (mock/request :get "/api/user/token"))
           body     (parse-body (:body response))]
       (is (= (:status response) 401))
       (is (= (:error body)      "Not authorized."))))
 
-  (testing "Test user can generate a new token with a valid refresh-token"
+  (testing "User can generate a new token with a valid refresh-token"
     (let [initial-response   (app (-> (mock/request :get "/api/user/token")
                                       (basic-auth-header "JarrodCTaylor:password1")))
           initial-body       (parse-body (:body initial-response))
@@ -53,7 +55,7 @@
                                       (mock/content-type "application/json")))]
       (is (= (:status refreshed-response) 200))))
 
-  (testing "Test invalid refresh token does not return a new token"
+  (testing "Invalid refresh token does not return a new token"
     (let [response (app (-> (mock/request :post "/api/user/token/refresh" (ch/generate-string {:refresh-token "abcd1234"}))
                             (mock/content-type "application/json")))
           body     (parse-body (:body response))]

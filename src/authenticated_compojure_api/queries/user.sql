@@ -17,16 +17,15 @@ SELECT id
 FROM   users
 WHERE  refresh_token = :refresh_token;
 
--- name: get-user-by-username-and-password
--- Selects a user with matching password
+-- name: get-user-by-username
+-- Selects a user with matching username
 SELECT id
        ,access
        ,username
        ,password
        ,refresh_token
 FROM   users
-WHERE  password = :password
-       AND username = :username;
+WHERE  username = :username;
 
 -- name: insert-user<!
 -- inserts a single user

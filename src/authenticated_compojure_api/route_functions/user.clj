@@ -20,5 +20,8 @@
 (defn create-user-response [username password]
   (let [refresh-token   (str (java.util.UUID/randomUUID))
         hashed-password (hasher/make-password password)
-        new-user        (query/insert-user<! {:username username :password hashed-password :access "Basic" :refresh_token refresh-token})]
+        new-user        (query/insert-user<! {:username username
+                                              :password hashed-password
+                                              :access "Basic"
+                                              :refresh_token refresh-token})]
     (ok {:username (:username new-user)})))

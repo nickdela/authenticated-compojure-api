@@ -13,10 +13,11 @@
 
 (use-fixtures :each setup-teardown)
 
-(deftest user-api-tests
+(deftest user-tests
 
-  (testing "Test x"
+  (testing "Can successfully create a new user"
     (let [response (app (-> (mock/request :post "/api/user" (ch/generate-string {:username "Jarrod" :password "the-password"}))
                             (mock/content-type "application/json")))
           body     (parse-body (:body response))]
+      (is (= (count (query/all-users)) 1))
       (is (= (:username body) "Jarrod")))))
