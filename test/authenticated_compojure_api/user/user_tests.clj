@@ -19,5 +19,16 @@
     (let [response (app (-> (mock/request :post "/api/user" (ch/generate-string {:username "Jarrod" :password "the-password"}))
                             (mock/content-type "application/json")))
           body     (parse-body (:body response))]
+      (is (= (:status response)        201))
       (is (= (count (query/all-users)) 1))
-      (is (= (:username body) "Jarrod")))))
+      (is (= (:username body)          "Jarrod"))))
+
+  (testing "Can not create a user if username already exists"
+    (let [response-1 (app (-> (mock/request :post "/api/user" (ch/generate-string {:username "Jarrod" :password "the-password"}))
+                              (mock/content-type "application/json")))
+          response-2 (app (-> (mock/request :post "/api/user" (ch/generate-string {:username "Jarrod" :password "other-password"}))
+                              (mock/content-type "application/json")))
+          body     (parse-body (:body response-2))]
+      (is (= (:status response-2)      409))
+      (is (= (count (query/all-users)) 1))
+      (is (= (:error body)             "Username already exists")))))

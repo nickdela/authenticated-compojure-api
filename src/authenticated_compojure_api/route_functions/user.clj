@@ -3,7 +3,7 @@
             [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.sign.generic :as bs]
             [buddy.hashers.bcrypt :as hasher]
-            [ring.util.http-response :refer [bad-request ok]]))
+            [ring.util.http-response :refer [bad-request ok created conflict]]))
 
 (defn auth-credentials-response [request]
   (ok (let [user    (:identity request)
@@ -17,11 +17,16 @@
       (bad-request {:error "Bad Request"})
       (ok {:token (bs/dumps user auth-key)}))))
 
-(defn create-user-response [username password]
+(defn create-new-user [username password]
   (let [refresh-token   (str (java.util.UUID/randomUUID))
         hashed-password (hasher/make-password password)
         new-user        (query/insert-user<! {:username username
                                               :password hashed-password
                                               :access "Basic"
                                               :refresh_token refresh-token})]
-    (ok {:username (:username new-user)})))
+    (created {:username (:username new-user)})))
+
+(defn create-user-response [username password]
+  (if (empty? (query/get-user-by-username {:username username}))
+    (create-new-user username password)
+    (conflict {:error "Username already exists"})))

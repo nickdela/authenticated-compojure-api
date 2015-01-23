@@ -48,6 +48,6 @@ DROP TABLE users;
 CREATE TABLE IF NOT EXISTS users (
    id             SERIAL PRIMARY KEY
    ,access        VARCHAR (20) NOT NULL
-   ,username      VARCHAR (25) NOT NULL
+   ,username      VARCHAR (25) UNIQUE NOT NULL
    ,password      VARCHAR (225) NOT NULL
    ,refresh_token VARCHAR (50) NOT NULL);
