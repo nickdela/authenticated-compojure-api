@@ -6,7 +6,7 @@
                  [metosin/ring-http-response "0.5.2"]
                  [metosin/ring-swagger-ui    "2.0.24"]
                  [cheshire                   "5.4.0"]
-                 [buddy                      "0.2.3"]
+                 [buddy                      "0.3.0"]
                  [org.clojure/java.jdbc      "0.3.6"]
                  [postgresql/postgresql      "9.3-1102.jdbc41"]
                  [yesql                      "0.5.0-beta2"]
