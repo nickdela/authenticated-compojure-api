@@ -10,8 +10,10 @@
             [schema.core :as s]))
 
 (defn init []
-  (query/create-users-table-if-not-exists!)
-  (query/create-quotes-table-if-not-exists!))
+  (query/create-registered-user-table-if-not-exists!)
+  (query/create-quotes-table-if-not-exists!)
+  (query/create-permission-table-if-not-exists!)
+  (query/create-user-permission-table-if-not-exists!))
 
 (defapi app
   (swagger-ui)

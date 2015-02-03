@@ -13,8 +13,9 @@
   (let [username   (:username auth-data)
         password   (:password auth-data)
         db-user    (query/get-user-by-username {:username username})
+        permissions (query/get-permissions-for-userid {:userid (:id (first db-user))})
         pass-match (hs/check-password password (:password (first db-user)))]
-    (if pass-match (first db-user) false)))
+    (if pass-match (conj (first db-user) (first permissions)) false)))
 
 ;; ============================================================================
 ;  Create authentication backend

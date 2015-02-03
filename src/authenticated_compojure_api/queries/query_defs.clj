@@ -2,5 +2,9 @@
   (:require [environ.core :refer [env]]
             [yesql.core :refer [defqueries]]))
 
-(defqueries "authenticated_compojure_api/queries/quotes.sql" {:connection (env :database-url)})
-(defqueries "authenticated_compojure_api/queries/user.sql" {:connection (env :database-url)})
+(def db-connection {:connection (env :database-url)})
+
+(defqueries "authenticated_compojure_api/queries/quotes.sql" db-connection)
+(defqueries "authenticated_compojure_api/queries/user.sql" db-connection)
+(defqueries "authenticated_compojure_api/queries/permission.sql" db-connection)
+(defqueries "authenticated_compojure_api/queries/user_permission.sql" db-connection)

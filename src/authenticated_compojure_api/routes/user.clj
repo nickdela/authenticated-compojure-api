@@ -17,9 +17,9 @@
 
     (POST* "/user"  {:as request}
       :return       {:username String}
-      :body-params  [username :- String password :- String]
+      :body-params  [email :- String username :- String password :- String]
       :summary      "Create a new user with provided username and password."
-      (create-user-response username password))
+      (create-user-response email username password))
 
     (wrap-authentication
       (GET* "/user/token" {:as request}

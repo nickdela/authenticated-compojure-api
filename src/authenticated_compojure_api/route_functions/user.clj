@@ -17,16 +17,18 @@
       (bad-request {:error "Bad Request"})
       (ok {:token (bs/dumps user auth-key)}))))
 
-(defn create-new-user [username password]
+(defn create-new-user [email username password]
   (let [refresh-token   (str (java.util.UUID/randomUUID))
         hashed-password (hasher/make-password password)
-        new-user        (query/insert-user<! {:username username
-                                              :password hashed-password
-                                              :access "Basic"
-                                              :refresh_token refresh-token})]
+        new-user        (query/insert-user<! {:email         email
+                                              :username      username
+                                              :password      hashed-password
+                                              :refresh_token refresh-token})
+        permission      (query/insert-permission-for-user<! {:userid     (:id new-user)
+                                                             :permission "basic"})]
     (created {:username (:username new-user)})))
 
-(defn create-user-response [username password]
+(defn create-user-response [email username password]
   (if (empty? (query/get-user-by-username {:username username}))
-    (create-new-user username password)
+    (create-new-user email username password)
     (conflict {:error "Username already exists"})))
