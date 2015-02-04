@@ -102,8 +102,8 @@
          body      (parse-body (:body response))]
      (is (= 200                   (:status response)))
      (is (= {:author "Big Daddy J"
-             :quote "Hello"
-             :id 1}                body))))
+             :quote  "Hello"
+             :id     1}            body))))
 
   (testing "Test PUT to /api/quote/{id} with an invalid token returns 401"
      (let [response (app (-> (mock/request :put "/api/quote/1" (ch/generate-string {:author "Big Daddy J"}))

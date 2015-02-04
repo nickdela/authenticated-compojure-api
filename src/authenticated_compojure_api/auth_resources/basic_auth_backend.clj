@@ -8,8 +8,7 @@
 ;  password to authroize a user. The return value will be added to the request
 ;  with the keyword of :identity
 ;; ============================================================================
-(defn basic-auth
-  [request, auth-data]
+(defn basic-auth [request, auth-data]
   (let [username   (:username auth-data)
         password   (:password auth-data)
         db-user    (query/get-user-by-username {:username username})
