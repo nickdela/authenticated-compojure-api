@@ -11,12 +11,8 @@
             [buddy.auth.backends.token :refer [signed-token-backend]]
             [cheshire.core :as ch]))
 
-(def basic-user {:email "every@man.com"     :username "Everyman"      :password "password2" :refresh_token "1HN05Az5P0zUhDDRzdcg"})
-(def admin-user {:email "jarrod@taylor.com" :username "JarrodCTaylor" :password "password1" :refresh_token "zeRqCTZLoNR8j0irosN9"})
-
-(defn add-users []
-  (query/insert-user<! basic-user)
-  (query/insert-user<! admin-user))
+(def basic-user {:email "every@man.com"     :username "Everyman"      :password "password2" :refresh_token "1HN05Az5P0zUhDDRzdcg" :permissions ["basic"]})
+(def admin-user {:email "jarrod@taylor.com" :username "JarrodCTaylor" :password "password1" :refresh_token "zeRqCTZLoNR8j0irosN9" :permissions ["basic" "admin"]})
 
 (defn add-quotes []
   (query/insert-quote<! {:author "Jarrod" :quote "Hello"})
@@ -24,12 +20,9 @@
 
 (defn setup-teardown [f]
   (query/create-quotes-table-if-not-exists!)
-  (query/create-registered-user-table-if-not-exists!)
   (add-quotes)
-  (add-users)
   (f)
-  (query/drop-quotes-table!)
-  (query/drop-registered-user-table!))
+  (query/drop-quotes-table!))
 
 (use-fixtures :each setup-teardown)
 

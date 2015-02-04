@@ -6,9 +6,10 @@
             [ring.util.http-response :refer [bad-request ok created conflict]]))
 
 (defn auth-credentials-response [request]
-  (ok (let [user    (:identity request)
-            token   (bs/dumps user auth-key)
-            refresh (:refresh_token user)]
+  (ok (let [user        (:identity request)
+            permissions (query/get-permissions-for-userid {:userid (:id user)})
+            token       (bs/dumps (conj user {:permissions (map :permission permissions)}) auth-key)
+            refresh     (:refresh_token user)]
         {:username (:username user) :token token :refresh_token refresh})))
 
 (defn gen-new-token-response [refresh_token]

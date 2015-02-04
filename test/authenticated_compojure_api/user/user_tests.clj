@@ -21,6 +21,7 @@
 (deftest user-tests
 
   (testing "Can successfully create a new user"
+    (is (= 0 (count (query/all-registered-users))))
     (let [response (app (-> (mock/request :post "/api/user" (ch/generate-string {:email "Jarrod@Taylor.com" :username "Jarrod" :password "the-password"}))
                             (mock/content-type "application/json")))
           body     (parse-body (:body response))]
@@ -40,3 +41,4 @@
 
 ; Can not create a user if email already exists
 ; Can not create a user if email with different case exists
+; Creating a new user adds basic permission

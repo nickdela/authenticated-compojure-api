@@ -1,10 +1,12 @@
 (ns authenticated-compojure-api.user.credential-retrieval-tests
   (:require [clojure.test :refer :all]
+            [authenticated-compojure-api.auth-resources.auth-key :refer [auth-key]]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :refer [parse-body basic-auth-header]]
             [authenticated-compojure-api.queries.query-defs :as query]
-            [ring.mock.request :as mock]
-            [cheshire.core :as ch]))
+            [buddy.sign.generic :as bs]
+            [cheshire.core :as ch]
+            [ring.mock.request :as mock]))
 
 (def basic-user {:email "e@man.com"         :username "Everyman"      :password "password2"})
 (def admin-user {:email "Jarrod@Taylor.com" :username "JarrodCTaylor" :password "password1"})
@@ -20,9 +22,7 @@
   (query/create-permission-table-if-not-exists!)
   (query/create-user-permission-table-if-not-exists!)
   (query/insert-permission<! {:permission "basic"})
-  (query/insert-permission<! {:permission "admin"})
   (add-users)
-  (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
   (f)
   (query/drop-user-permission-table!)
   (query/drop-permission-table!)
@@ -34,11 +34,12 @@
 
   (testing "Valid username and password return correct auth credentials"
     (let [response (app (-> (mock/request :get "/api/user/token")
-                            (basic-auth-header "JarrodCTaylor:password1")))
+                            (basic-auth-header "Everyman:password2")))
           body     (parse-body (:body response))]
-      (is (= 200             (:status response)))
-      (is (= "JarrodCTaylor" (:username body)))
-      (is (= 36              (count (:refresh_token body))))))
+      (is (= 200        (:status response)))
+      (is (= "Everyman" (:username body)))
+      (is (= 36         (count (:refresh_token body))))
+      (is (= ["basic"]  (:permissions (bs/loads (:token body) auth-key))))))
 
   (testing "Invalid username and password do not return auth credentials"
     (let [response (app (-> (mock/request :get "/api/user/token")

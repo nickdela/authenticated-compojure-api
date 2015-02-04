@@ -16,11 +16,8 @@
   (ok {:message (format "Quote id %d successfully removed" id)}))
 
 (defn delete-quote-response [request id]
-  (println "<><><>")
-  (println request)
-  (println "<><><>")
-  (let [auth (get-in request [:identity :permission])]
-    (if (= auth "admin")
+  (let [auth (get-in request [:identity :permissions])]
+    (if (.contains auth "admin")
       (delete-quote id)
       (unauthorized {:error "Not authorized."}))))
 
