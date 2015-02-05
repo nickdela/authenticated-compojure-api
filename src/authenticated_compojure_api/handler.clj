@@ -18,13 +18,13 @@
 (defapi app
   (swagger-ui)
   (swagger-docs
-    :title "Authenticated-compojure-api"
-    :apiVersion "0.0.1" )
+   :title "Authenticated-compojure-api"
+   :apiVersion "0.0.1")
 
   (swaggered "User"
-    :description "Create and reset user details"
-    user-routes)
+             :description "Create and reset user details"
+             user-routes)
 
   (swaggered "Quote"
-    :description "Create Read Update and Delete quotes"
-    quote-routes))
+             :description "Create Read Update and Delete quotes"
+             quote-routes))

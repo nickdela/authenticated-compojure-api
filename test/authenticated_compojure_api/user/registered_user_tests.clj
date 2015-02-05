@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.user.user-tests
+(ns authenticated-compojure-api.user.registered-user-tests
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :refer [parse-body]]
@@ -18,7 +18,7 @@
 
 (use-fixtures :each setup-teardown)
 
-(deftest user-tests
+(deftest registered-user-create-modifiy-remove-tests
 
   (testing "Can successfully create a new user"
     (is (= 0 (count (query/all-registered-users))))

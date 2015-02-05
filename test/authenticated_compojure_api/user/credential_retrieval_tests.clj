@@ -13,9 +13,9 @@
 
 (defn add-users []
   (app (-> (mock/request :post "/api/user" (ch/generate-string basic-user))
-                                           (mock/content-type "application/json")))
+           (mock/content-type "application/json")))
   (app (-> (mock/request :post "/api/user" (ch/generate-string admin-user))
-                                           (mock/content-type "application/json"))))
+           (mock/content-type "application/json"))))
 
 (defn setup-teardown [f]
   (query/create-registered-user-table-if-not-exists!)
