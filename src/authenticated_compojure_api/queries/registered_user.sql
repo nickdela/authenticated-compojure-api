@@ -17,15 +17,20 @@ SELECT id
 FROM   registered_user
 WHERE  refresh_token = :refresh_token;
 
--- name: get-user-by-username
+-- name: get-user-details-by-username
 -- Selects a user with matching username
-SELECT id
-       ,email
-       ,username
-       ,password
-       ,refresh_token
-FROM   registered_user
-WHERE  username = :username;
+SELECT reg_user.id
+       ,reg_user.email
+       ,reg_user.username
+       ,reg_user.password
+       ,reg_user.refresh_token
+       ,string_agg(perm.permission, ',') as permissions
+FROM   registered_user      AS reg_user
+       JOIN user_permission AS perm
+         ON ( reg_user.id = perm.user_id )
+WHERE  reg_user.username = :username
+GROUP  BY reg_user.id;
+
 
 -- name: insert-user<!
 -- inserts a single user

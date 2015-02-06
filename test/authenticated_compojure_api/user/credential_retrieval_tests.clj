@@ -39,7 +39,18 @@
       (is (= 200        (:status response)))
       (is (= "Everyman" (:username body)))
       (is (= 36         (count (:refresh_token body))))
-      (is (= ["basic"]  (:permissions (bs/loads (:token body) auth-key))))))
+      (is (= "basic"    (:permissions (bs/loads (:token body) auth-key))))))
+
+  (testing "Mutiple permissions are properly formated"
+    (query/insert-permission<! {:permission "admin"})
+    (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
+    (let [response (app (-> (mock/request :get "/api/user/token")
+                            (basic-auth-header "JarrodCTaylor:password1")))
+          body     (parse-body (:body response))]
+      (is (= 200             (:status response)))
+      (is (= "JarrodCTaylor" (:username body)))
+      (is (= 36              (count (:refresh_token body))))
+      (is (= "basic,admin"   (:permissions (bs/loads (:token body) auth-key))))))
 
   (testing "Invalid username and password do not return auth credentials"
     (let [response (app (-> (mock/request :get "/api/user/token")

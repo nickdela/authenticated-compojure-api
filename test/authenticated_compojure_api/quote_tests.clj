@@ -11,8 +11,8 @@
             [buddy.auth.backends.token :refer [signed-token-backend]]
             [cheshire.core :as ch]))
 
-(def basic-user {:email "every@man.com"     :username "Everyman"      :password "password2" :refresh_token "1HN05Az5P0zUhDDRzdcg" :permissions ["basic"]})
-(def admin-user {:email "jarrod@taylor.com" :username "JarrodCTaylor" :password "password1" :refresh_token "zeRqCTZLoNR8j0irosN9" :permissions ["basic" "admin"]})
+(def basic-user {:email "every@man.com"     :username "Everyman"      :password "password2" :refresh_token "1HN05Az5P0zUhDDRzdcg" :permissions "basic"})
+(def admin-user {:email "jarrod@taylor.com" :username "JarrodCTaylor" :password "password1" :refresh_token "zeRqCTZLoNR8j0irosN9" :permissions "basic,admin"})
 
 (defn add-quotes []
   (query/insert-quote<! {:author "Jarrod" :quote "Hello"})

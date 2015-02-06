@@ -9,11 +9,11 @@
 ;  with the keyword of :identity
 ;; ============================================================================
 (defn basic-auth [request, auth-data]
-  (let [username   (:username auth-data)
-        password   (:password auth-data)
-        db-user    (query/get-user-by-username {:username username})
-        pass-match (hs/check-password password (:password (first db-user)))]
-    (if pass-match (first db-user) false)))
+  (let [username        (:username auth-data)
+        password        (:password auth-data)
+        registered-user (first (query/get-user-details-by-username {:username username}))
+        pass-match      (hs/check-password password (:password registered-user))]
+    (if pass-match registered-user false)))
 
 ;; ============================================================================
 ;  Create authentication backend

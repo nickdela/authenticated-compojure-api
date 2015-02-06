@@ -15,14 +15,14 @@
 (defroutes* user-routes
   (context "/api" []
 
-    (POST* "/user"  {:as request}
+    (POST* "/user"       {:as request}
            :return       {:username String}
            :body-params  [email :- String username :- String password :- String]
            :summary      "Create a new user with provided username and password."
            (create-user-response email username password))
 
     (wrap-authentication
-     (GET* "/user/token" {:as request}
+     (GET* "/user/token"     {:as request}
            :return           {:username String :token String :refresh_token String}
            :header-params    [authorization :- String]
            :middlewares      [cors-mw basic-auth-mw]

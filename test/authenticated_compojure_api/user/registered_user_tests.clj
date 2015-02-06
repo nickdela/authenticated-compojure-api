@@ -20,14 +20,18 @@
 
 (deftest registered-user-create-modifiy-remove-tests
 
-  (testing "Can successfully create a new user"
+  (testing "Can successfully create a new user and user is given basic permission as default"
+    (is (= 0 (count (query/all-registered-users))))
     (is (= 0 (count (query/all-registered-users))))
     (let [response (app (-> (mock/request :post "/api/user" (ch/generate-string {:email "Jarrod@Taylor.com" :username "Jarrod" :password "the-password"}))
                             (mock/content-type "application/json")))
-          body     (parse-body (:body response))]
+          body     (parse-body (:body response))
+          new-registered-user (first (query/get-user-details-by-username {:username (:username body)}))]
       (is (= 201      (:status response)))
       (is (= 1        (count (query/all-registered-users))))
-      (is (= "Jarrod" (:username body)))))
+      (is (= "Jarrod" (:username body)))
+      (is (= "Jarrod" (:username new-registered-user)))
+      (is (= "basic"  (:permissions new-registered-user)))))
 
   (testing "Can not create a user if username already exists"
     (let [response-1 (app (-> (mock/request :post "/api/user" (ch/generate-string {:email "Jarrod@Talor.com" :username "Jarrod" :password "the-password"}))
@@ -41,4 +45,4 @@
 
 ; Can not create a user if email already exists
 ; Can not create a user if email with different case exists
-; Creating a new user adds basic permission
+; Multiple permissions

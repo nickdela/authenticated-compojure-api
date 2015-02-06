@@ -6,10 +6,9 @@
             [ring.util.http-response :refer [bad-request ok created conflict]]))
 
 (defn auth-credentials-response [request]
-  (ok (let [user        (:identity request)
-            permissions (query/get-permissions-for-userid {:userid (:id user)})
-            token       (bs/dumps (conj user {:permissions (map :permission permissions)}) auth-key)
-            refresh     (:refresh_token user)]
+  (ok (let [user    (:identity request)
+            token   (bs/dumps user auth-key)
+            refresh (:refresh_token user)]
         {:username (:username user) :token token :refresh_token refresh})))
 
 (defn gen-new-token-response [refresh_token]
@@ -30,6 +29,6 @@
     (created {:username (:username new-user)})))
 
 (defn create-user-response [email username password]
-  (if (empty? (query/get-user-by-username {:username username}))
+  (if (empty? (query/get-user-details-by-username {:username username}))
     (create-new-user email username password)
     (conflict {:error "Username already exists"})))

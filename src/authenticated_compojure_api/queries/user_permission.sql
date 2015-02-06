@@ -6,12 +6,6 @@ INSERT INTO user_permission
 VALUES      (:userid
              ,:permission);
 
--- name: get-permissions-for-userid
--- get all of the permissions for a registered user
-SELECT permission
-FROM user_permission
-WHERE user_id = :userid;
-
 -- name: drop-user-permission-table!
 -- drop the user_permission table
 DROP TABLE user_permission CASCADE;
