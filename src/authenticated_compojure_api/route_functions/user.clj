@@ -29,6 +29,8 @@
     (created {:username (:username new-user)})))
 
 (defn create-user-response [email username password]
-  (if (empty? (query/get-user-details-by-username {:username username}))
+  (if (and
+        (empty? (query/get-registered-user-by-username {:username username}))
+        (empty? (query/get-registered-user-by-email {:email email})))
     (create-new-user email username password)
     (conflict {:error "Username already exists"})))

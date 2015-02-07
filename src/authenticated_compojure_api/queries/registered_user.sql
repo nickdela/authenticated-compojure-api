@@ -18,7 +18,7 @@ FROM   registered_user
 WHERE  refresh_token = :refresh_token;
 
 -- name: get-user-details-by-username
--- Selects a user with matching username
+-- Selects user details for matching username
 SELECT reg_user.id
        ,reg_user.email
        ,reg_user.username
@@ -31,6 +31,21 @@ FROM   registered_user      AS reg_user
 WHERE  reg_user.username = :username
 GROUP  BY reg_user.id;
 
+-- name: get-registered-user-by-username
+-- Selects the (id, email, username) for registered user matching the username
+SELECT id
+       ,email
+       ,username
+FROM registered_user
+WHERE username = :username
+
+-- name: get-registered-user-by-email
+-- Selects the (id, email, username) for registered user matching the email
+SELECT id
+       ,email
+       ,username
+FROM registered_user
+WHERE email = :email
 
 -- name: insert-user<!
 -- inserts a single user
@@ -52,7 +67,7 @@ DROP TABLE registered_user;
 -- create the registered_user table if it does not exist
 CREATE TABLE IF NOT EXISTS registered_user (
    id             SERIAL PRIMARY KEY
-   ,email         TEXT UNIQUE
+   ,email         CITEXT UNIQUE
    ,username      TEXT UNIQUE NOT NULL
    ,password      TEXT NOT NULL
    ,refresh_token TEXT NOT NULL);
