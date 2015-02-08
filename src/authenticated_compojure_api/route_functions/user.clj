@@ -26,11 +26,13 @@
                                               :refresh_token refresh-token})
         permission      (query/insert-permission-for-user<! {:userid     (:id new-user)
                                                              :permission "basic"})]
-    (created {:username (:username new-user)})))
+    (created {:username (str (:username new-user))})))
 
 (defn create-user-response [email username password]
-  (if (and
-        (empty? (query/get-registered-user-by-username {:username username}))
-        (empty? (query/get-registered-user-by-email {:email email})))
-    (create-new-user email username password)
-    (conflict {:error "Username already exists"})))
+  (let [username-query (query/get-registered-user-by-username {:username username})
+        email-query    (query/get-registered-user-by-email {:email email})]
+    (cond
+      (and (not-empty username-query) (not-empty email-query)) (conflict {:error "Username and Email already exist"})
+      (not-empty username-query) (conflict {:error "Username already exists"})
+      (not-empty email-query) (conflict {:error "Email already exists"})
+      :else (create-new-user email username password))))

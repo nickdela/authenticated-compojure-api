@@ -19,10 +19,11 @@
   (query/insert-quote<! {:author "Jrock" :quote "Good bye"}))
 
 (defn setup-teardown [f]
-  (query/create-quotes-table-if-not-exists!)
-  (add-quotes)
-  (f)
-  (query/drop-quotes-table!))
+  (try
+    (query/create-quotes-table-if-not-exists!)
+    (add-quotes)
+    (f)
+    (finally (query/drop-quotes-table!))))
 
 (use-fixtures :each setup-teardown)
 

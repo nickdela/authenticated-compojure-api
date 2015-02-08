@@ -67,7 +67,7 @@ DROP TABLE registered_user;
 -- create the registered_user table if it does not exist
 CREATE TABLE IF NOT EXISTS registered_user (
    id             SERIAL PRIMARY KEY
-   ,email         CITEXT UNIQUE
-   ,username      TEXT UNIQUE NOT NULL
+   ,email         CITEXT UNIQUE NOT NULL
+   ,username      CITEXT UNIQUE NOT NULL
    ,password      TEXT NOT NULL
    ,refresh_token TEXT NOT NULL);
