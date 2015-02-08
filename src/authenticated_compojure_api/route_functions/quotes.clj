@@ -19,7 +19,7 @@
   (let [auth (get-in request [:identity :permissions])]
     (if (.contains auth "admin")
       (delete-quote id)
-      (unauthorized {:error "Not authorized."}))))
+      (unauthorized {:error "Not authorized"}))))
 
 (defn update-quote-response [id author quote-string]
   (let [old-quote        (first (query/get-quote {:id id}))

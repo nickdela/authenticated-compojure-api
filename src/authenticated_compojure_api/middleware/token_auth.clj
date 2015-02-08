@@ -6,4 +6,4 @@
   (fn [request]
     (if (authenticated? request)
       (handler request)
-      (unauthorized {:error "Not authorized."}))))
+      (unauthorized {:error "Not authorized"}))))

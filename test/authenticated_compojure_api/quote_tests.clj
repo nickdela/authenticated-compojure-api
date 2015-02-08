@@ -65,8 +65,8 @@
                              (mock/content-type "application/json")
                              (token-auth-header "bad-token")))
           body      (parse-body (:body response))]
-      (is (= 401               (:status response)))
-      (is (= "Not authorized." (:error body)))))
+      (is (= 401              (:status response)))
+      (is (= "Not authorized" (:error body)))))
 
   (testing "Test POST request to /api/quote with a valid token and an invalid quote returns an error"
     (let [the-token (s/dumps basic-user auth-key)
@@ -91,8 +91,8 @@
           response  (app (-> (mock/request :delete "/api/quote/2")
                              (token-auth-header the-token)))
           body      (parse-body (:body response))]
-      (is (= 401               (:status response)))
-      (is (= "Not authorized." (:error body)))))
+      (is (= 401              (:status response)))
+      (is (= "Not authorized" (:error body)))))
 
   (testing "Test PUT to /api/quote/{id} with a valid token for existing quote correctly updates"
     (let [the-token (s/dumps basic-user auth-key)
@@ -110,8 +110,8 @@
                             (mock/content-type "application/json")
                             (token-auth-header "bad-token")))
           body     (parse-body (:body response))]
-      (is (= 401               (:status response)))
-      (is (= "Not authorized." (:error body)))))
+      (is (= 401              (:status response)))
+      (is (= "Not authorized" (:error body)))))
 
   (testing "Test an expired valid token will not pass authentication"
     (with-redefs [token-backend (signed-token-backend {:privkey auth-key :max-age -15})]
@@ -120,5 +120,5 @@
                                (mock/content-type "application/json")
                                (token-auth-header the-token)))
             body      (parse-body (:body response))]
-        (is (= 401               (:status response)))
-        (is (= "Not authorized." (:error body)))))))
+        (is (= 401              (:status response)))
+        (is (= "Not authorized" (:error body)))))))

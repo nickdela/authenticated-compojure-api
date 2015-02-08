@@ -59,15 +59,15 @@
     (let [response (app (-> (mock/request :get "/api/user/token")
                             (basic-auth-header "JarrodCTaylor:badpass")))
           body     (parse-body (:body response))]
-      (is (= 401               (:status response)))
-      (is (= "Not authorized." (:error body))))))
+      (is (= 401              (:status response)))
+      (is (= "Not authorized" (:error body))))))
 
 (deftest no-auth-credentials-are-returned-when-no-username-and-password-provided
   (testing "No auth credentials are returned when no username and password provided"
     (let [response (app (mock/request :get "/api/user/token"))
           body     (parse-body (:body response))]
-      (is (= 401               (:status response)))
-      (is (= "Not authorized." (:error body))))))
+      (is (= 401              (:status response)))
+      (is (= "Not authorized" (:error body))))))
 
 (deftest user-can-generate-a-new-token-with-a-valid-refresh-token
   (testing "User can generate a new token with a valid refresh-token"
