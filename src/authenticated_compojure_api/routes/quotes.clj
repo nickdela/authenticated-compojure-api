@@ -56,7 +56,7 @@
                   token-backend)
 
                  (wrap-authentication
-                  (DELETE* "/quote/:id" {:as request}
+                  (DELETE* "/quote/:id"   {:as request}
                            :path-params   [id :- Long]
                            :header-params [authorization :- String]
                            :summary       "Deletes the specified quote. Requires token to have Admin auth"

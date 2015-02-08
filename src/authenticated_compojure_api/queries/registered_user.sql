@@ -24,10 +24,10 @@ SELECT reg_user.id
        ,reg_user.username
        ,reg_user.password
        ,reg_user.refresh_token
-       ,string_agg(perm.permission, ',') as permissions
-FROM   registered_user      AS reg_user
-       JOIN user_permission AS perm
-         ON ( reg_user.id = perm.user_id )
+       ,STRING_AGG(perm.permission, ',') AS permissions
+FROM   registered_user                   AS reg_user
+       JOIN user_permission              AS perm
+         ON (reg_user.id = perm.user_id)
 WHERE  reg_user.username = :username
 GROUP  BY reg_user.id;
 
@@ -36,28 +36,33 @@ GROUP  BY reg_user.id;
 SELECT id
        ,email
        ,username
-FROM registered_user
-WHERE username = :username
+FROM   registered_user
+WHERE  username = :username
 
 -- name: get-registered-user-by-email
 -- Selects the (id, email, username) for registered user matching the email
 SELECT id
        ,email
        ,username
-FROM registered_user
-WHERE email = :email
+FROM   registered_user
+WHERE  email = :email
 
 -- name: insert-user<!
 -- inserts a single user
 INSERT INTO registered_user
             (email
-             ,username
-             ,password
-             ,refresh_token)
+            ,username
+            ,password
+            ,refresh_token)
 VALUES      (:email
              ,:username
              ,:password
              ,:refresh_token);
+
+-- name: delete-user!
+-- delete a single user matching provided id
+DELETE FROM registered_user
+WHERE id = :id;
 
 -- name: drop-registered-user-table!
 -- drop the registered_user table

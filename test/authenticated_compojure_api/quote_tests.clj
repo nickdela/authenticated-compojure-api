@@ -1,7 +1,6 @@
 (ns authenticated-compojure-api.quote-tests
   (:require [authenticated-compojure-api.handler :refer :all]
-            [authenticated-compojure-api.test-utils :refer [parse-body]]
-            [authenticated-compojure-api.test-utils :refer [token-auth-header]]
+            [authenticated-compojure-api.test-utils :refer [parse-body token-auth-header]]
             [authenticated-compojure-api.auth-resources.auth-key :refer [auth-key]]
             [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]
             [authenticated-compojure-api.queries.query-defs :as query]
