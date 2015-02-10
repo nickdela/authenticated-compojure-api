@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.user.creation-tests
+(ns authenticated-compojure-api.user.user-creation-tests
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :refer [parse-body]]

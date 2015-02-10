@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.user.deletion-tests
+(ns authenticated-compojure-api.user.user-deletion-tests
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :refer [parse-body basic-auth-header token-auth-header]]
@@ -33,7 +33,7 @@
 (deftest can-delete-user-who-is-not-self-and-associated-permissions-with-valid-token-and-admin-permissions
   (testing "Can delete user who is not self and associated permissions with valid token and admin permissions"
     (is (= 2 (count (query/all-registered-users))))
-    (is (= 1 (count (query/get-permissions-for-userid {:userid 1}))))
+    (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid 1})))))
     (query/insert-permission<! {:permission "admin"})
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
     (let [initial-response (app (-> (mock/request :get "/api/user/token")
@@ -46,12 +46,12 @@
       (is (= 200                              (:status response)))
       (is (= "User id 1 successfully removed" (:message body)))
       (is (= 1 (count (query/all-registered-users))))
-      (is (= 0 (count (query/get-permissions-for-userid {:userid 1})))))))
+      (is (= nil (:permissions (first (query/get-permissions-for-userid {:userid 1}))))))))
 
 (deftest can-delete-self-and-associated-permissions-with-valid-token-and-basic-permissions
   (testing "Can delete self and associated permissions with valid token and basic permissions"
     (is (= 2 (count (query/all-registered-users))))
-    (is (= 1 (count (query/get-permissions-for-userid {:userid 1}))))
+    (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid 1})))))
     (let [initial-response (app (-> (mock/request :get "/api/user/token")
                                     (basic-auth-header "Everyman:pass")))
           initial-body     (parse-body (:body initial-response))
@@ -62,7 +62,7 @@
       (is (= 200                              (:status response)))
       (is (= "User id 1 successfully removed" (:message body)))
       (is (= 1 (count (query/all-registered-users))))
-      (is (= 0 (count (query/get-permissions-for-userid {:userid 1})))))))
+      (is (= nil (:permissions (first (query/get-permissions-for-userid {:userid 1}))))))))
 
 (deftest can-not-delete-user-who-is-not-self-with-valid-token-and-basic-permissions
   (testing "Can not delete user who is not self with valid token and basic permissions"

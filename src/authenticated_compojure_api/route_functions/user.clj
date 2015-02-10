@@ -49,3 +49,29 @@
     (if (or (.contains auth "admin") deleting-self)
       (delete-user id)
       (respond-with/unauthorized {:error "Not authorized"}))))
+
+(defn delete-user-permission [id permission]
+  (let [deleted-permission (query/delete-user-permission! {:userid id :permission permission})]
+    (if (not= 0 deleted-permission)
+      (respond-with/ok {:message (format "Permission '%s' for user %d successfully removed" permission id)})
+      (respond-with/not-found {:error (format "User %s does not have %s permission" id)}))))
+
+(defn delete-user-permission-response [request id permission]
+  (let [auth (get-in request [:identity :permissions])]
+        (if (.contains auth "admin")
+          (delete-user-permission id permission)
+          (respond-with/unauthorized {:error "Not authorized"}))))
+
+(defn add-user-permission [id permission]
+  (let [added-permission (try
+                           (query/insert-permission-for-user<! {:userid id :permission permission})
+                           (catch Exception e 0))]
+    (if (not= 0 added-permission)
+      (respond-with/ok {:message (format "Permission '%s' for user %d successfully added" permission id)})
+      (respond-with/not-found {:error (format "Permission '%s' does not exist" permission)}))))
+
+(defn add-user-permission-response [request id permission]
+  (let [auth (get-in request [:identity :permissions])]
+        (if (.contains auth "admin")
+          (add-user-permission id permission)
+          (respond-with/unauthorized {:error "Not authorized"}))))
