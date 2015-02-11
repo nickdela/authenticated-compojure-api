@@ -9,7 +9,8 @@
                                                                       create-user-response
                                                                       delete-user-response
                                                                       delete-user-permission-response
-                                                                      add-user-permission-response]]
+                                                                      add-user-permission-response
+                                                                      modify-user-response]]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [compojure.api.sweet :refer :all]))
 
@@ -33,6 +34,17 @@
                :summary       "Deletes the specified user. Requires token to have `admin` auth."
                :notes         "Authorization header expects the following format 'Token {token}'"
                (delete-user-response request id))
+      token-backend)
+
+    (wrap-authentication
+      (PUT* "/user/:id"      {:as request}
+               :path-params  [id :- Long]
+               :body-params  [{username :- String ""} {password :- String ""} {email :- String ""}]
+               :return       {:id Long :email String :username String}
+               :middlewares  [token-auth-mw]
+               :summary      "Update some or all fields of a specified user. Requires token to have `admin` auth."
+               :notes        "Authorization header expects the following format 'Token {token}'"
+               (modify-user-response request id username password email))
       token-backend)
 
     (wrap-authentication

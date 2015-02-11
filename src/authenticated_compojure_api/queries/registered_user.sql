@@ -31,6 +31,16 @@ FROM   registered_user                   AS reg_user
 WHERE  reg_user.username = :username
 GROUP  BY reg_user.id;
 
+-- name: get-registered-user-by-id
+-- Selects the (id, email, username, password, refresh_token) for registered user matching the id
+SELECT id
+       ,email
+       ,username
+       ,password
+       ,refresh_token
+FROM   registered_user
+WHERE  id = :id
+
 -- name: get-registered-user-by-username
 -- Selects the (id, email, username) for registered user matching the username
 SELECT id
@@ -51,13 +61,22 @@ WHERE  email = :email
 -- inserts a single user
 INSERT INTO registered_user
             (email
-            ,username
-            ,password
-            ,refresh_token)
+             ,username
+             ,password
+             ,refresh_token)
 VALUES      (:email
              ,:username
              ,:password
              ,:refresh_token);
+
+-- name: update-user<!
+-- update a single user matching provided id
+UPDATE registered_user
+SET    email = :email
+       ,username = :username
+       ,password = :password
+       ,refresh_token = :refresh_token
+WHERE  id = :id;
 
 -- name: delete-user!
 -- delete a single user matching provided id
