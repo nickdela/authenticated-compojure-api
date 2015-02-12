@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.auth-resources.auth-key :refer [auth-key]]
             [authenticated-compojure-api.handler :refer :all]
-            [authenticated-compojure-api.test-utils :refer [parse-body basic-auth-header]]
+            [authenticated-compojure-api.test-utils :as helper]
             [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.sign.generic :as bs]
             [cheshire.core :as ch]
@@ -35,8 +35,8 @@
 (deftest valid-username-and-password-return-correct-auth-credentials
   (testing "Valid username and password return correct auth credentials"
     (let [response (app (-> (mock/request :get "/api/user/token")
-                            (basic-auth-header "Everyman:pass")))
-          body     (parse-body (:body response))]
+                            (helper/basic-auth-header "Everyman:pass")))
+          body     (helper/parse-body (:body response))]
       (is (= 200        (:status response)))
       (is (= "Everyman" (:username body)))
       (is (= 36         (count (:refresh_token body))))
@@ -47,8 +47,8 @@
     (query/insert-permission<! {:permission "admin"})
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
     (let [response (app (-> (mock/request :get "/api/user/token")
-                            (basic-auth-header "JarrodCTaylor:pass")))
-          body     (parse-body (:body response))]
+                            (helper/basic-auth-header "JarrodCTaylor:pass")))
+          body     (helper/parse-body (:body response))]
       (is (= 200             (:status response)))
       (is (= "JarrodCTaylor" (:username body)))
       (is (= 36              (count (:refresh_token body))))
@@ -57,23 +57,23 @@
 (deftest invalid-username-and-password-do-not-return-auth-credentials
   (testing "Invalid username and password do not return auth credentials"
     (let [response (app (-> (mock/request :get "/api/user/token")
-                            (basic-auth-header "JarrodCTaylor:badpass")))
-          body     (parse-body (:body response))]
+                            (helper/basic-auth-header "JarrodCTaylor:badpass")))
+          body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
       (is (= "Not authorized" (:error body))))))
 
 (deftest no-auth-credentials-are-returned-when-no-username-and-password-provided
   (testing "No auth credentials are returned when no username and password provided"
     (let [response (app (mock/request :get "/api/user/token"))
-          body     (parse-body (:body response))]
+          body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
       (is (= "Not authorized" (:error body))))))
 
 (deftest user-can-generate-a-new-token-with-a-valid-refresh-token
   (testing "User can generate a new token with a valid refresh-token"
     (let [initial-response   (app (-> (mock/request :get "/api/user/token")
-                                      (basic-auth-header "JarrodCTaylor:pass")))
-          initial-body       (parse-body (:body initial-response))
+                                      (helper/basic-auth-header "JarrodCTaylor:pass")))
+          initial-body       (helper/parse-body (:body initial-response))
           refresh-token      (:refresh_token initial-body)
           refresh-token-json (ch/generate-string {:refresh-token refresh-token})
           refreshed-response (app (-> (mock/request :post "/api/user/token/refresh" refresh-token-json)
@@ -85,6 +85,6 @@
     (let [bad-token-json (ch/generate-string {:refresh-token "abcd1234"})
           response       (app (-> (mock/request :post "/api/user/token/refresh" bad-token-json)
                                   (mock/content-type "application/json")))
-          body           (parse-body (:body response))]
+          body           (helper/parse-body (:body response))]
       (is (= 400           (:status response)))
       (is (= "Bad Request" (:error body))))))

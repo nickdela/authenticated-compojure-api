@@ -1,6 +1,8 @@
 (ns authenticated-compojure-api.test-utils
   (:require [cheshire.core :as cheshire]
             [ring.mock.request :as mock]
+            [authenticated-compojure-api.handler :refer [app]]
+            [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.core.codecs :refer [str->base64]]))
 
 (defn parse-body [body]
@@ -13,3 +15,15 @@
 (defn token-auth-header
   [request token]
   (mock/header request "Authorization" (str "Token " token)))
+
+(defn get-user-token [username-and-password]
+  (let [initial-response (app (-> (mock/request :get "/api/user/token")
+                                  (basic-auth-header username-and-password)))
+        initial-body     (parse-body (:body initial-response))]
+    (:token initial-body)))
+
+(defn get-token-auth-header-for-user [request username-and-password]
+  (token-auth-header request (get-user-token username-and-password)))
+
+(defn get-permissions-for-user [id]
+  (:permissions (first (query/get-permissions-for-userid {:userid id}))))

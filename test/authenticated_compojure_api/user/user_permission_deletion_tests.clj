@@ -1,7 +1,7 @@
 (ns authenticated-compojure-api.user.user-permission-deletion-tests
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.handler :refer :all]
-            [authenticated-compojure-api.test-utils :refer [parse-body basic-auth-header token-auth-header]]
+            [authenticated-compojure-api.test-utils :as helper]
             [authenticated-compojure-api.queries.query-defs :as query]
             [ring.mock.request :as mock]
             [cheshire.core :as ch]))
@@ -37,28 +37,20 @@
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
     (query/insert-permission-for-user<! {:userid 1 :permission "other"})
     (is (= "basic,other" (:permissions (first (query/get-permissions-for-userid {:userid 1})))))
-    (let [initial-response (app (-> (mock/request :get "/api/user/token")
-                                    (basic-auth-header "JarrodCTaylor:pass")))
-          initial-body     (parse-body (:body initial-response))
-          the-token        (:token initial-body)
-          response         (app (-> (mock/request :delete "/api/user/1/permission/other")
-                                    (token-auth-header the-token)))
-          body             (parse-body (:body response))]
-      (is (= 200           (:status response)))
-      (is (= "Permission 'other' for user 1 successfully removed" (:message body)))
-      (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid 1}))))))))
+    (let [response (app (-> (mock/request :delete "/api/user/1/permission/other")
+                            (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
+          body     (helper/parse-body (:body response))]
+      (is (= 200                                                  (:status response)))
+      (is (= "basic"                                              (helper/get-permissions-for-user 1)))
+      (is (= "Permission 'other' for user 1 successfully removed" (:message body))))))
 
 (deftest can-not-delete-user-permission-with-valid-token-and-no-admin-permissions
   (testing "Can not delete user permission with valid token and no admin permissions"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
     (is (= "basic,admin" (:permissions (first (query/get-permissions-for-userid {:userid 2})))))
-    (let [initial-response (app (-> (mock/request :get "/api/user/token")
-                                    (basic-auth-header "Everyman:pass")))
-          initial-body     (parse-body (:body initial-response))
-          the-token        (:token initial-body)
-          response         (app (-> (mock/request :delete "/api/user/2/permission/other")
-                                    (token-auth-header the-token)))
-          body             (parse-body (:body response))]
-      (is (= 401                       (:status response)))
+    (let [response (app (-> (mock/request :delete "/api/user/2/permission/other")
+                            (helper/get-token-auth-header-for-user "Everyman:pass")))
+          body     (helper/parse-body (:body response))]
+      (is (= 401              (:status response)))
       (is (= "Not authorized" (:error body)))
-      (is (= "basic,admin" (:permissions (first (query/get-permissions-for-userid {:userid 2}))))))))
+      (is (= "basic,admin"    (helper/get-permissions-for-user 2))))))
