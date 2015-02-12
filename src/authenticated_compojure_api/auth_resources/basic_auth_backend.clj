@@ -4,8 +4,8 @@
             [buddy.hashers.bcrypt :as hs]))
 
 ;; ============================================================================
-;  This function will delagate determining if we have the correct username and
-;  password to authroize a user. The return value will be added to the request
+;  This function will delegate determining if we have the correct username and
+;  password to authorize a user. The return value will be added to the request
 ;  with the keyword of :identity
 ;; ============================================================================
 (defn basic-auth [request, auth-data]

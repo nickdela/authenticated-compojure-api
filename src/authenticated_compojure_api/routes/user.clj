@@ -4,36 +4,28 @@
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
             [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
-            [authenticated-compojure-api.route-functions.user :refer [auth-credentials-response
-                                                                      gen-new-token-response
-                                                                      create-user-response
-                                                                      delete-user-response
-                                                                      delete-user-permission-response
-                                                                      add-user-permission-response
-                                                                      modify-user-response]]
+            [authenticated-compojure-api.route-functions.user :as respond-with]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [compojure.api.sweet :refer :all]))
 
-;; ============================================
-;; Routes
-;; ============================================
+
 (defroutes* user-routes
   (context "/api" []
 
-    (POST* "/user"        {:as request}
-           :return        {:username String}
-           :body-params   [email :- String username :- String password :- String]
-           :summary       "Create a new user with provided username and password."
-           (create-user-response email username password))
+    (POST* "/user"      {:as request}
+           :return      {:username String}
+           :body-params [email :- String username :- String password :- String]
+           :summary     "Create a new user with provided username and password."
+           (respond-with/create-user-response email username password))
 
     (wrap-authentication
-      (DELETE* "/user/:id"    {:as request}
-               :path-params   [id :- Long]
-               :return        {:message String}
-               :middlewares   [token-auth-mw]
-               :summary       "Deletes the specified user. Requires token to have `admin` auth."
-               :notes         "Authorization header expects the following format 'Token {token}'"
-               (delete-user-response request id))
+      (DELETE* "/user/:id"  {:as request}
+               :path-params [id :- Long]
+               :return      {:message String}
+               :middlewares [token-auth-mw]
+               :summary     "Deletes the specified user. Requires token to have `admin` auth."
+               :notes       "Authorization header expects the following format 'Token {token}'"
+               (respond-with/delete-user-response request id))
       token-backend)
 
     (wrap-authentication
@@ -44,7 +36,7 @@
                :middlewares  [token-auth-mw]
                :summary      "Update some or all fields of a specified user. Requires token to have `admin` auth."
                :notes        "Authorization header expects the following format 'Token {token}'"
-               (modify-user-response request id username password email))
+               (respond-with/modify-user-response request id username password email))
       token-backend)
 
     (wrap-authentication
@@ -54,7 +46,7 @@
                :middlewares                     [token-auth-mw]
                :summary                         "Adds the specified permission for the specified user. Requires token to have `admin` auth."
                :notes                           "Authorization header expects the following format 'Token {token}'"
-               (add-user-permission-response request id permission))
+               (respond-with/add-user-permission-response request id permission))
       token-backend)
 
     (wrap-authentication
@@ -64,7 +56,7 @@
                :middlewares                       [token-auth-mw]
                :summary                           "Deletes the specified permission for the specified user. Requires token to have `admin` auth."
                :notes                             "Authorization header expects the following format 'Token {token}'"
-               (delete-user-permission-response request id permission))
+               (respond-with/delete-user-permission-response request id permission))
       token-backend)
 
     (wrap-authentication
@@ -74,12 +66,12 @@
            :middlewares   [cors-mw basic-auth-mw]
            :summary       "Returns auth info given a username and password in the 'Authorization' header."
            :notes         "Authorization header expects 'Basic username:password' where username:password is base64 encoded."
-           (auth-credentials-response request))
+           (respond-with/auth-credentials-response request))
      basic-backend)
 
     (POST* "/user/token/refresh" []
-           :return        {:token String}
-           :body-params   [refresh-token :- String]
-           :middlewares   [cors-mw]
-           :summary       "Get a fresh token with a valid re-fresh token."
-           (gen-new-token-response refresh-token))))
+           :return               {:token String}
+           :body-params          [refresh-token :- String]
+           :middlewares          [cors-mw]
+           :summary              "Get a fresh token with a valid re-fresh token."
+           (respond-with/gen-new-token-response refresh-token))))

@@ -6,16 +6,16 @@
             [ring.util.http-response :as respond]))
 
 (defn auth-credentials-response [request]
-  (respond/ok (let [user    (:identity request)
-                    token   (bs/dumps user auth-key)
-                    refresh (:refresh_token user)]
-        {:username (:username user) :token token :refresh_token refresh})))
+  (let [user    (:identity request)
+        token   (bs/dumps user auth-key)
+        refresh (:refresh_token user)]
+    (respond/ok {:username (:username user) :token token :refresh_token refresh})))
 
 (defn gen-new-token-response [refresh_token]
   (let [user (query/get-user-by-reset-token {:refresh_token refresh_token})]
     (if (empty? user)
       (respond/bad-request {:error "Bad Request"})
-      (respond/ok {:token (bs/dumps user auth-key)}))))
+      (respond/ok          {:token (bs/dumps user auth-key)}))))
 
 (defn create-new-user [email username password]
   (let [refresh-token   (str (java.util.UUID/randomUUID))
@@ -42,31 +42,31 @@
 (defn delete-user [id]
   (let [deleted-user (query/delete-user! {:id id})]
     (if (not= 0 deleted-user)
-      (respond/ok {:message (format "User id %d successfully removed" id)})
+      (respond/ok        {:message (format "User id %d successfully removed" id)})
       (respond/not-found {:error "Userid does not exist"}))))
 
 (defn delete-user-response [request id]
-  (let [auth (get-in request [:identity :permissions])
+  (let [auth          (get-in request [:identity :permissions])
         deleting-self (= id (get-in request [:identity :id]))]
     (if (or (.contains auth "admin") deleting-self)
       (delete-user id)
       (respond/unauthorized {:error "Not authorized"}))))
 
 (defn modify-user [current-user-info username password email]
-  (let [new-email         (if (empty? email) (str (:email current-user-info)) email)
-        new-username      (if (empty? username) (str (:username current-user-info)) username)
-        new-password      (if (empty? password) (:password current-user-info) (hasher/make-password password))
-        new-user-info     (query/update-user<! {:id (:id current-user-info)
-                                                :email new-email
-                                                :username new-username
-                                                :password new-password
-                                                :refresh_token (:refresh_token current-user-info)})]
+  (let [new-email     (if (empty? email)    (str (:email current-user-info)) email)
+        new-username  (if (empty? username) (str (:username current-user-info)) username)
+        new-password  (if (empty? password) (:password current-user-info) (hasher/make-password password))
+        new-user-info (query/update-user<! {:id (:id current-user-info)
+                                            :email new-email
+                                            :username new-username
+                                            :password new-password
+                                            :refresh_token (:refresh_token current-user-info)})]
     (respond/ok {:id (:id current-user-info) :email new-email :username new-username})))
 
 (defn modify-user-response [request id username password email]
   (let [auth              (get-in request [:identity :permissions])
-        admin?            (.contains auth "admin")
         current-user-info (first (query/get-registered-user-by-id {:id id}))
+        admin?            (.contains auth "admin")
         modify?           (and admin? (not-empty current-user-info))]
     (cond
       modify?                    (modify-user current-user-info username password email)
@@ -76,21 +76,21 @@
 (defn delete-user-permission [id permission]
   (let [deleted-permission (query/delete-user-permission! {:userid id :permission permission})]
     (if (not= 0 deleted-permission)
-      (respond/ok {:message (format "Permission '%s' for user %d successfully removed" permission id)})
+      (respond/ok        {:message (format "Permission '%s' for user %d successfully removed" permission id)})
       (respond/not-found {:error (format "User %s does not have %s permission" id)}))))
 
 (defn delete-user-permission-response [request id permission]
   (let [auth (get-in request [:identity :permissions])]
-        (if (.contains auth "admin")
-          (delete-user-permission id permission)
-          (respond/unauthorized {:error "Not authorized"}))))
+    (if (.contains auth "admin")
+      (delete-user-permission id permission)
+      (respond/unauthorized {:error "Not authorized"}))))
 
 (defn add-user-permission [id permission]
   (let [added-permission (try
                            (query/insert-permission-for-user<! {:userid id :permission permission})
                            (catch Exception e 0))]
     (if (not= 0 added-permission)
-      (respond/ok {:message (format "Permission '%s' for user %d successfully added" permission id)})
+      (respond/ok        {:message (format "Permission '%s' for user %d successfully added" permission id)})
       (respond/not-found {:error (format "Permission '%s' does not exist" permission)}))))
 
 (defn add-user-permission-response [request id permission]
