@@ -10,7 +10,9 @@
                  [org.clojure/java.jdbc      "0.3.6"]
                  [postgresql/postgresql      "9.3-1102.jdbc41"]
                  [yesql                      "0.5.0-beta2"]
-                 [environ                    "1.0.0"]]
+                 [environ                    "1.0.0"]
+                 [clj-time                   "0.9.0"]
+                 [com.draines/postal         "1.11.3"]]
 
   :plugins      [[lein-ring    "0.9.1"]
                  [lein-environ "1.0.0"]]
@@ -37,4 +39,7 @@
              :dev        [:dev-env-vars]
              :production {:ring {:open-browser? false
                                  :stacktraces?  false
-                                 :auto-reload?  false}}})
+                                 :auto-reload?  false}}}
+
+  :test-selectors {:default (constantly true)
+                   :wip     :wip})

@@ -37,7 +37,7 @@
     (is (= 0 (count (query/all-registered-users))))
     (let [response            (create-user {:email "J@Taylor.com" :username "Jarrod" :password "pass"})
           body                (parse-body (:body response))
-          new-registered-user (first (query/get-user-details-by-username {:username (:username body)}))]
+          new-registered-user (first (query/get-registered-user-details-by-username {:username (:username body)}))]
       (is (= 201      (:status response)))
       (is (= 1        (count (query/all-registered-users))))
       (is (= "Jarrod" (:username body)))

@@ -74,4 +74,17 @@
            :body-params          [refresh-token :- String]
            :middlewares          [cors-mw]
            :summary              "Get a fresh token with a valid re-fresh token."
-           (respond-with/gen-new-token-response refresh-token))))
+           (respond-with/gen-new-token-response refresh-token))
+
+    (POST* "/user/password/request-reset" []
+           :return      {:message String}
+           :body-params [user-email :- String
+                         from-email :- String
+                         subject :- String
+                         {email-body-html :- String  ""}
+                         {email-body-plain :- String ""}
+                         response-base-link :- String]
+           :middlewares [cors-mw]
+           :summary     "Request a password reset for the registered user with the matching email"
+           :notes       "An email with a link to the password reset endpoint will be sent to the registered email"
+           (respond-with/request-password-reset-response user-email from-email subject email-body-plain email-body-html response-base-link))))
