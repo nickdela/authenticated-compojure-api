@@ -1,0 +1,27 @@
+(ns authenticated-compojure-api.route-functions.user.create-user
+  (:require [authenticated-compojure-api.queries.query-defs :as query]
+            [buddy.hashers.bcrypt :as hasher]
+            [ring.util.http-response :as respond]))
+
+(defn create-new-user [email username password]
+  (let [refresh-token   (str (java.util.UUID/randomUUID))
+        hashed-password (hasher/make-password password)
+        new-user        (query/insert-registered-user<! {:email         email
+                                                         :username      username
+                                                         :password      hashed-password
+                                                         :refresh_token refresh-token})
+        permission      (query/insert-permission-for-user<! {:userid     (:id new-user)
+                                                             :permission "basic"})]
+    (respond/created {:username (str (:username new-user))})))
+
+(defn create-user-response [email username password]
+  (let [username-query   (query/get-registered-user-by-username {:username username})
+        email-query      (query/get-registered-user-by-email {:email email})
+        email-exists?    (not-empty email-query)
+        username-exists? (not-empty username-query)]
+    (cond
+      (and username-exists? email-exists?) (respond/conflict {:error "Username and Email already exist"})
+      username-exists?                     (respond/conflict {:error "Username already exists"})
+      email-exists?                        (respond/conflict {:error "Email already exists"})
+      :else                                (create-new-user email username password))))
+

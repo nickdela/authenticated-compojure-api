@@ -4,7 +4,14 @@
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
             [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
-            [authenticated-compojure-api.route-functions.user :as respond-with]
+            [authenticated-compojure-api.route-functions.user.create-user :refer [create-user-response]]
+            [authenticated-compojure-api.route-functions.user.delete-user :refer [delete-user-response]]
+            [authenticated-compojure-api.route-functions.user.modify-user :refer [modify-user-response]]
+            [authenticated-compojure-api.route-functions.user.add-user-permission :refer [add-user-permission-response]]
+            [authenticated-compojure-api.route-functions.user.delete-user-permission :refer [delete-user-permission-response]]
+            [authenticated-compojure-api.route-functions.user.get-auth-credentials :refer [auth-credentials-response]]
+            [authenticated-compojure-api.route-functions.user.gen-new-token :refer [gen-new-token-response]]
+            [authenticated-compojure-api.route-functions.user.request-password-reset :refer [request-password-reset-response]]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [compojure.api.sweet :refer :all]))
 
@@ -14,18 +21,19 @@
 
     (POST* "/user"      {:as request}
            :return      {:username String}
+           :middlewares [cors-mw]
            :body-params [email :- String username :- String password :- String]
            :summary     "Create a new user with provided username and password."
-           (respond-with/create-user-response email username password))
+           (create-user-response email username password))
 
     (wrap-authentication
       (DELETE* "/user/:id"  {:as request}
                :path-params [id :- Long]
                :return      {:message String}
-               :middlewares [token-auth-mw]
+               :middlewares [cors-mw token-auth-mw]
                :summary     "Deletes the specified user. Requires token to have `admin` auth."
                :notes       "Authorization header expects the following format 'Token {token}'"
-               (respond-with/delete-user-response request id))
+               (delete-user-response request id))
       token-backend)
 
     (wrap-authentication
@@ -33,30 +41,30 @@
                :path-params  [id :- Long]
                :body-params  [{username :- String ""} {password :- String ""} {email :- String ""}]
                :return       {:id Long :email String :username String}
-               :middlewares  [token-auth-mw]
+               :middlewares  [cors-mw token-auth-mw]
                :summary      "Update some or all fields of a specified user. Requires token to have `admin` auth."
                :notes        "Authorization header expects the following format 'Token {token}'"
-               (respond-with/modify-user-response request id username password email))
+               (modify-user-response request id username password email))
       token-backend)
 
     (wrap-authentication
       (POST* "/user/:id/permission/:permission" {:as request}
                :path-params                     [id :- Long permission :- String]
                :return                          {:message String}
-               :middlewares                     [token-auth-mw]
+               :middlewares                     [cors-mw token-auth-mw]
                :summary                         "Adds the specified permission for the specified user. Requires token to have `admin` auth."
                :notes                           "Authorization header expects the following format 'Token {token}'"
-               (respond-with/add-user-permission-response request id permission))
+               (add-user-permission-response request id permission))
       token-backend)
 
     (wrap-authentication
       (DELETE* "/user/:id/permission/:permission" {:as request}
                :path-params                       [id :- Long permission :- String]
                :return                            {:message String}
-               :middlewares                       [token-auth-mw]
+               :middlewares                       [cors-mw token-auth-mw]
                :summary                           "Deletes the specified permission for the specified user. Requires token to have `admin` auth."
                :notes                             "Authorization header expects the following format 'Token {token}'"
-               (respond-with/delete-user-permission-response request id permission))
+               (delete-user-permission-response request id permission))
       token-backend)
 
     (wrap-authentication
@@ -66,7 +74,7 @@
            :middlewares   [cors-mw basic-auth-mw]
            :summary       "Returns auth info given a username and password in the 'Authorization' header."
            :notes         "Authorization header expects 'Basic username:password' where username:password is base64 encoded."
-           (respond-with/auth-credentials-response request))
+           (auth-credentials-response request))
      basic-backend)
 
     (POST* "/user/token/refresh" []
@@ -74,7 +82,7 @@
            :body-params          [refresh-token :- String]
            :middlewares          [cors-mw]
            :summary              "Get a fresh token with a valid re-fresh token."
-           (respond-with/gen-new-token-response refresh-token))
+           (gen-new-token-response refresh-token))
 
     (POST* "/user/password/request-reset" []
            :return      {:message String}
@@ -87,4 +95,4 @@
            :middlewares [cors-mw]
            :summary     "Request a password reset for the registered user with the matching email"
            :notes       "An email with a link to the password reset endpoint will be sent to the registered email"
-           (respond-with/request-password-reset-response user-email from-email subject email-body-plain email-body-html response-base-link))))
+           (request-password-reset-response user-email from-email subject email-body-plain email-body-html response-base-link))))

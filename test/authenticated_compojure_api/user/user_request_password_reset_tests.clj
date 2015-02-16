@@ -3,7 +3,7 @@
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :as helper]
             [authenticated-compojure-api.queries.query-defs :as query]
-            [authenticated-compojure-api.route-functions.user :as unit-test]
+            [authenticated-compojure-api.route-functions.user.request-password-reset :as unit-test]
             [ring.mock.request :as mock]
             [cheshire.core :as ch]
             [clj-time.core :as t]
@@ -14,6 +14,13 @@
 (defn add-users []
   (app (-> (mock/request :post "/api/user" (ch/generate-string example-user))
            (mock/content-type "application/json"))))
+
+(defn gen-reset-json [email]
+  (ch/generate-string {:user-email         email
+                       :from-email         "admin@something.com"
+                       :subject            "Password reset"
+                       :email-body-plain   "Here is your link.\nThanks,"
+                       :response-base-link "http://something/reset"}))
 
 (defn setup-teardown [f]
   (try
@@ -34,27 +41,22 @@
 
 (deftest test-add-response-link-to-html-body-returns-desired-string
   (testing "test add response link to html body returns desired string"
-    (let [body              "<html><body><p>Hello There</p></body></html>"
-          response-link     "http://somesite/reset/234"
-          body-with-link    (unit-test/add-response-link-to-html-body body response-link)]
+    (let [body           "<html><body><p>Hello There</p></body></html>"
+          response-link  "http://somesite/reset/234"
+          body-with-link (unit-test/add-response-link-to-html-body body response-link)]
       (is (= "<html><body><p>Hello There</p><br><p>http://somesite/reset/234</p></body></html>" body-with-link)))))
 
 (deftest test-add-response-link-to-plain-body-returns-desired-string
   (testing "Test add response link to plain body reutrns desired string"
-    (let [body          "Hello there"
-          response-link "http://somesite/reset/123"
+    (let [body           "Hello there"
+          response-link  "http://somesite/reset/123"
           body-with-link (unit-test/add-response-link-to-plain-body body response-link)]
       (is (= "Hello there\n\nhttp://somesite/reset/123" body-with-link)))))
 
 (deftest successfully-request-password-reset-with-email-for-a-valid-registered-user
   (testing "Successfully request password reset with email for a valid registered user"
     (with-redefs [unit-test/send-reset-email (fn [to-email from-email subject html-body plain-body] nil)]
-      (let [reset-info-json  (ch/generate-string {:user-email         "Jarrod@JarrodCTaylor.com"
-                                                  :from-email         "admin@something.com"
-                                                  :subject            "Password reset"
-                                                  :email-body-plain   "Here is your link.\nThanks,"
-                                                  :email-body-html    "<html><body><h2>Hello son</h2></body></html>"
-                                                  :response-base-link "http://something/reset"})
+      (let [reset-info-json  (gen-reset-json "Jarrod@JarrodCTaylor.com")
             response         (app (-> (mock/request :post "/api/user/password/request-reset" reset-info-json)
                                       (mock/content-type "application/json")))
             body             (helper/parse-body (:body response))
@@ -71,13 +73,9 @@
 
 (deftest invalid-user-email-return-404-when-requesting-password-reset
   (testing "Invalid user email returns 404 when requesting password reset"
-    (let [reset-info-json (ch/generate-string {:user-email         "J@jrock.com"
-                                               :from-email         "admin@something.com"
-                                               :subject            "Password reset"
-                                               :email-body-plain   "Here is your link.\nThanks,"
-                                               :response-base-link "http://something/reset"})
-          response (app (-> (mock/request :post "/api/user/password/request-reset" reset-info-json)
-                            (mock/content-type "application/json")))
-          body     (helper/parse-body (:body response))]
+    (let [reset-info-json (gen-reset-json "J@jrock.com")
+          response        (app (-> (mock/request :post "/api/user/password/request-reset" reset-info-json)
+                                   (mock/content-type "application/json")))
+          body            (helper/parse-body (:body response))]
       (is (= 404                                         (:status response)))
       (is (= "No user exists with the email J@jrock.com" (:error body))))))
