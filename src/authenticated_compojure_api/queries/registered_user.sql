@@ -79,6 +79,12 @@ SET    email = :email
        , refresh_token = :refresh_token
 WHERE  id = :id;
 
+-- name: update-registered-user-password<!
+-- update the password for the user matching the given userid
+UPDATE registered_user
+SET    password = :password
+WHERE  id = :id;
+
 -- name: delete-registered-user!
 -- delete a single user matching provided id
 DELETE FROM registered_user

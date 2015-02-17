@@ -12,6 +12,7 @@
             [authenticated-compojure-api.route-functions.user.get-auth-credentials :refer [auth-credentials-response]]
             [authenticated-compojure-api.route-functions.user.gen-new-token :refer [gen-new-token-response]]
             [authenticated-compojure-api.route-functions.user.request-password-reset :refer [request-password-reset-response]]
+            [authenticated-compojure-api.route-functions.user.password-reset :refer [password-reset-response]]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [compojure.api.sweet :refer :all]))
 
@@ -94,5 +95,15 @@
                          response-base-link :- String]
            :middlewares [cors-mw]
            :summary     "Request a password reset for the registered user with the matching email"
-           :notes       "An email with a link to the password reset endpoint will be sent to the registered email"
-           (request-password-reset-response user-email from-email subject email-body-plain email-body-html response-base-link))))
+           :notes       "The `respose-base-link` will get a reset key appended to it and then the
+                         link itself will be appended to the email body. The reset key will be valid
+                         for 24 hours after creation."
+           (request-password-reset-response user-email from-email subject email-body-plain email-body-html response-base-link))
+
+    (POST* "/user/password/reset" []
+     :return      {:message String}
+     :body-params [reset-key :- String
+                   new-password :- String]
+     :middlewares [cors-mw]
+     :summary     "Replace an existing user password with the new-passowrd given a valid reset-key"
+     (password-reset-response reset-key new-password))))

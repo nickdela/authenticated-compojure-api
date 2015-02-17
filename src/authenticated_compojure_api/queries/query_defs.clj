@@ -1,6 +1,6 @@
 (ns authenticated-compojure-api.queries.query-defs
   (:require [environ.core :refer [env]]
-            [yesql.core :refer [defqueries]]))
+            [yesql.core   :refer [defqueries]]))
 
 (def db-connection {:connection (env :database-url)})
 
