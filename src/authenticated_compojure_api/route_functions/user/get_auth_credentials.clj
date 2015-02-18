@@ -5,6 +5,6 @@
 
 (defn auth-credentials-response [request]
   (let [user    (:identity request)
-        token   (bs/dumps user (env :auth-key))
+        token   (bs/dumps (dissoc user :refresh_token) (env :auth-key))
         refresh (:refresh_token user)]
     (respond/ok {:username (:username user) :token token :refresh_token refresh})))

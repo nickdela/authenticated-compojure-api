@@ -12,8 +12,11 @@
   (let [username             (:username auth-data)
         password             (:password auth-data)
         reg-user-with-citext (first (query/get-registered-user-details-by-username {:username username}))
-        reg-user-with-strs   (assoc-in reg-user-with-citext [:username] (str (:username reg-user-with-citext)))
-        pass-match           (hs/check-password password (:password reg-user-with-strs))]
+        reg-user-with-strs   (-> reg-user-with-citext
+                                 (assoc-in [:username] (str (:username reg-user-with-citext)))
+                                 (assoc-in [:email]    (str (:email reg-user-with-citext)))
+                                 (dissoc   :password))
+        pass-match           (hs/check-password password (:password reg-user-with-citext))]
     (if pass-match reg-user-with-strs false)))
 
 ;; ============================================================================
