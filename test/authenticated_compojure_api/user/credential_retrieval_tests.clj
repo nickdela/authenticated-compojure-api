@@ -1,6 +1,6 @@
 (ns authenticated-compojure-api.user.credential-retrieval-tests
   (:require [clojure.test :refer :all]
-            [authenticated-compojure-api.auth-resources.auth-key :refer [auth-key]]
+            [environ.core :refer [env]]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :as helper]
             [authenticated-compojure-api.queries.query-defs :as query]
@@ -40,7 +40,7 @@
       (is (= 200        (:status response)))
       (is (= "Everyman" (:username body)))
       (is (= 36         (count (:refresh_token body))))
-      (is (= "basic"    (:permissions (bs/loads (:token body) auth-key)))))))
+      (is (= "basic"    (:permissions (bs/loads (:token body) (env :auth-key))))))))
 
 (deftest mutiple-permissions-are-properly-formated
   (testing "Multiple permissions are properly formated"
@@ -52,7 +52,7 @@
       (is (= 200             (:status response)))
       (is (= "JarrodCTaylor" (:username body)))
       (is (= 36              (count (:refresh_token body))))
-      (is (= "basic,admin"   (:permissions (bs/loads (:token body) auth-key)))))))
+      (is (= "basic,admin"   (:permissions (bs/loads (:token body) (env :auth-key))))))))
 
 (deftest invalid-username-and-password-do-not-return-auth-credentials
   (testing "Invalid username and password do not return auth credentials"
