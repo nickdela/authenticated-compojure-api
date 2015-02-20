@@ -71,7 +71,7 @@
 
     (wrap-authentication
      (GET* "/user/token"  {:as request}
-           :return        {:username String :token String :refresh-token String}
+           :return        {:username String :permissions String :token String :refresh-token String}
            :header-params [authorization :- String]
            :middlewares   [cors-mw basic-auth-mw]
            :summary       "Returns auth info given a username and password in the 'Authorization' header."
