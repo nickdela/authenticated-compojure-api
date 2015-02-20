@@ -89,6 +89,12 @@ UPDATE registered_user
 SET    refresh_token = :refresh_token
 WHERE  id = :id;
 
+-- name: null-refresh-token<!
+-- set refresh token to null for row matching the given refresh token
+UPDATE registered_user
+SET    refresh_token = NULL
+WHERE  refresh_token = :refresh_token;
+
 -- name: delete-registered-user!
 -- delete a single user matching provided id
 DELETE FROM registered_user

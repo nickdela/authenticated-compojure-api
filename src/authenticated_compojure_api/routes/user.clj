@@ -11,6 +11,7 @@
             [authenticated-compojure-api.route-functions.user.delete-user-permission :refer [delete-user-permission-response]]
             [authenticated-compojure-api.route-functions.user.get-auth-credentials :refer [auth-credentials-response]]
             [authenticated-compojure-api.route-functions.user.gen-new-token :refer [gen-new-token-response]]
+            [authenticated-compojure-api.route-functions.user.delete-refresh-token :refer [remove-refresh-token-response]]
             [authenticated-compojure-api.route-functions.user.request-password-reset :refer [request-password-reset-response]]
             [authenticated-compojure-api.route-functions.user.password-reset :refer [password-reset-response]]
             [buddy.auth.middleware :refer [wrap-authentication]]
@@ -84,6 +85,13 @@
            :middlewares          [cors-mw]
            :summary              "Get a fresh token with a valid re-fresh token."
            (gen-new-token-response refresh-token))
+
+    (DELETE* "/user/refresh-token/:token" []
+             :path-params                 [token :- String]
+             :return                      {:message String}
+             :middlewares                 [cors-mw]
+             :summary                     "Delete the specific refresh token"
+             (remove-refresh-token-response token))
 
     (POST* "/user/password/request-reset" []
            :return      {:message String}
