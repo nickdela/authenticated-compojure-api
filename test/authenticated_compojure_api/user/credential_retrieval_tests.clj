@@ -34,13 +34,18 @@
 
 (deftest valid-username-and-password-return-correct-auth-credentials
   (testing "Valid username and password return correct auth credentials"
-    (let [response (app (-> (mock/request :get "/api/user/token")
-                            (helper/basic-auth-header "Everyman:pass")))
-          body     (helper/parse-body (:body response))]
-      (is (= 200        (:status response)))
-      (is (= "Everyman" (:username body)))
-      (is (= 36         (count (:refresh_token body))))
-      (is (= "basic"    (:permissions (bs/loads (:token body) (env :auth-key))))))))
+    (let [response       (app (-> (mock/request :get "/api/user/token")
+                                  (helper/basic-auth-header "Everyman:pass")))
+          body           (helper/parse-body (:body response))
+          token-contents (bs/loads (:token body) (env :auth-key))]
+      (is (= 200         (:status response)))
+      (is (= "Everyman"  (:username body)))
+      (is (= 36          (count (:refresh_token body))))
+      (is (= 4           (count token-contents)))
+      (is (= "basic"     (:permissions token-contents)))
+      (is (= 1           (:id token-contents)))
+      (is (= "e@man.com" (:email token-contents)))
+      (is (= "Everyman"  (:username token-contents))))))
 
 (deftest mutiple-permissions-are-properly-formated
   (testing "Multiple permissions are properly formated"
