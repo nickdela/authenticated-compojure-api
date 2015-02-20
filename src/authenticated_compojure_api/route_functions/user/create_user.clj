@@ -4,12 +4,10 @@
             [ring.util.http-response :as respond]))
 
 (defn create-new-user [email username password]
-  (let [refresh-token   (str (java.util.UUID/randomUUID))
-        hashed-password (hasher/make-password password)
+  (let [hashed-password (hasher/make-password password)
         new-user        (query/insert-registered-user<! {:email         email
                                                          :username      username
-                                                         :password      hashed-password
-                                                         :refresh_token refresh-token})
+                                                         :password      hashed-password})
         permission      (query/insert-permission-for-user<! {:userid     (:id new-user)
                                                              :permission "basic"})]
     (respond/created {:username (str (:username new-user))})))

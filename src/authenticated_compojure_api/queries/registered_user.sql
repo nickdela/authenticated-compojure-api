@@ -62,13 +62,11 @@ GROUP BY reg_user.id;
 INSERT INTO registered_user (
     email
     , username
-    , password
-    , refresh_token)
+    , password)
 VALUES (
     :email
     , :username
-    , :password
-    , :refresh_token);
+    , :password);
 
 -- name: update-registered-user<!
 -- update a single user matching provided id
@@ -83,6 +81,12 @@ WHERE  id = :id;
 -- update the password for the user matching the given userid
 UPDATE registered_user
 SET    password = :password
+WHERE  id = :id;
+
+-- name: update-registered-user-refresh-token<!
+-- update the refresh token for the user matching the given userid
+UPDATE registered_user
+SET    refresh_token = :refresh_token
 WHERE  id = :id;
 
 -- name: delete-registered-user!
@@ -101,5 +105,5 @@ CREATE TABLE IF NOT EXISTS registered_user (
    , email         CITEXT             NOT NULL UNIQUE
    , username      CITEXT             NOT NULL UNIQUE
    , password      TEXT               NOT NULL
-   , refresh_token TEXT               NOT NULL
+   , refresh_token TEXT
 );
