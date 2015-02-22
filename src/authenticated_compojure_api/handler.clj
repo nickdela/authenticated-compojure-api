@@ -1,6 +1,7 @@
 (ns authenticated-compojure-api.handler
   (:require [compojure.api.sweet :refer :all]
             [authenticated-compojure-api.routes.user :refer :all]
+            [authenticated-compojure-api.routes.preflight :refer :all]
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
             [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
@@ -19,6 +20,10 @@
   (swagger-docs
    :title "Authenticated-compojure-api"
    :apiVersion "0.0.1")
+
+  (swaggered "Preflight"
+             :description "Provide a successful response for all preflight requests from the browser"
+             preflight-route)
 
   (swaggered "User"
              :description "Create and reset user details"
