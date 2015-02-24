@@ -4,20 +4,31 @@
             [buddy.hashers.bcrypt :as hs]))
 
 ;; ============================================================================
+;; The username and email fields are stored in citext fields in Postgres thus
+;; the need to convert them to strings for future use.
+;; ============================================================================
+(defn get-user-info [username]
+  (let [registered-user (first (query/get-registered-user-details-by-username {:username username}))]
+    (if (nil? registered-user)
+      nil
+      {:user-data (-> registered-user
+                      (assoc-in [:username] (str (:username registered-user)))
+                      (assoc-in [:email]    (str (:email registered-user)))
+                      (dissoc   :password))
+       :password  (:password registered-user)})))
+
+;; ============================================================================
 ;  This function will delegate determining if we have the correct username and
 ;  password to authorize a user. The return value will be added to the request
 ;  with the keyword of :identity
 ;; ============================================================================
 (defn basic-auth [request, auth-data]
-  (let [username             (:username auth-data)
-        password             (:password auth-data)
-        reg-user-with-citext (first (query/get-registered-user-details-by-username {:username username}))
-        reg-user-with-strs   (-> reg-user-with-citext
-                                 (assoc-in [:username] (str (:username reg-user-with-citext)))
-                                 (assoc-in [:email]    (str (:email reg-user-with-citext)))
-                                 (dissoc   :password))
-        pass-match           (hs/check-password password (:password reg-user-with-citext))]
-    (if pass-match reg-user-with-strs false)))
+  (let [username  (:username auth-data)
+        password  (:password auth-data)
+        user-info (get-user-info username)]
+    (if (and user-info (hs/check-password password (:password user-info)))
+      (:user-data user-info)
+      false)))
 
 ;; ============================================================================
 ;  Create authentication backend

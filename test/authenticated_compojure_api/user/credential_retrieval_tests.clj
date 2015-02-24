@@ -60,10 +60,18 @@
       (is (= 36              (count (:refresh-token body))))
       (is (= "basic,admin"   (:permissions (bs/loads (:token body) (env :auth-key))))))))
 
-(deftest invalid-username-and-password-do-not-return-auth-credentials
-  (testing "Invalid username and password do not return auth credentials"
+(deftest invlid-password-does-not-return-auth-credentials
+  (testing "Invalid password does not return auth credentials"
     (let [response (app (-> (mock/request :get "/api/user/token")
                             (helper/basic-auth-header "JarrodCTaylor:badpass")))
+          body     (helper/parse-body (:body response))]
+      (is (= 401              (:status response)))
+      (is (= "Not authorized" (:error body))))))
+
+(deftest invlid-username-does-not-return-auth-credentials
+  (testing "Invalid username does not return auth credentials"
+    (let [response (app (-> (mock/request :get "/api/user/token")
+                            (helper/basic-auth-header "baduser:badpass")))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
       (is (= "Not authorized" (:error body))))))
