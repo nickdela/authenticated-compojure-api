@@ -71,7 +71,7 @@
 
     (wrap-authentication
      (GET* "/user/token"  {:as request}
-           :return        {:username String :permissions String :token String :refresh-token String}
+           :return        {:username String :permissions String :token String :refreshToken String}
            :header-params [authorization :- String]
            :middlewares   [cors-mw basic-auth-mw]
            :summary       "Returns auth info given a username and password in the 'Authorization' header."
@@ -80,11 +80,11 @@
      basic-backend)
 
     (POST* "/user/token/refresh" []
-           :return               {:token String :refresh-token String}
-           :body-params          [refresh-token :- String]
+           :return               {:token String :refreshToken String}
+           :body-params          [refreshToken :- String]
            :middlewares          [cors-mw]
            :summary              "Get a fresh token with a valid re-fresh token."
-           (gen-new-token-response refresh-token))
+           (gen-new-token-response refreshToken))
 
     (DELETE* "/user/refresh-token/:token" []
              :path-params                 [token :- String]

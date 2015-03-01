@@ -11,4 +11,4 @@
     (respond/ok {:username      (:username user)
                  :permissions   (:permissions user)
                  :token         (create-token user)
-                 :refresh-token refresh-token})))
+                 :refreshToken  refresh-token})))
