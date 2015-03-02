@@ -18,7 +18,9 @@
   (let [auth              (get-in request [:identity :permissions])
         current-user-info (first (query/get-registered-user-by-id {:id id}))
         admin?            (.contains auth "admin")
-        modify?           (and admin? (not-empty current-user-info))]
+        modifying-self    (= id (get-in request [:identity :id]))
+        admin-or-self     (or admin? modifying-self)
+        modify?           (and admin-or-self (not-empty current-user-info))]
     (cond
       modify?                    (modify-user current-user-info username password email)
       (not admin?)               (respond/unauthorized {:error "Not authorized"})

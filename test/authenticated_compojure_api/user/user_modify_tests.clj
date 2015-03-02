@@ -67,6 +67,16 @@
       (is (= 200  (:status response)))
       (is (= true (hs/check-password "newPass" (:password updated-user)))))))
 
+(deftest can-modify-your-own-password-with-valid-token-and-no-admin-permissions
+  (testing "Can modify your own password with valid token and no admin permissions"
+    (let [response     (app (-> (mock/request :put "/api/user/1" (ch/generate-string {:password "newPass"}))
+                                (mock/content-type "application/json")
+                                (helper/get-token-auth-header-for-user "SomeGuy:pass")))
+          body         (helper/parse-body (:body response))
+          updated-user (first (query/get-registered-user-by-id {:id 1}))]
+      (is (= 200  (:status response)))
+      (is (= true (hs/check-password "newPass" (:password updated-user)))))))
+
 (deftest can-not-modify-a-user-with-valid-token-and-no-admin-permissions
   (testing "Can not modify a user with valid token and no admin permissions"
     (let [response         (app (-> (mock/request :put "/api/user/1" (ch/generate-string {:email "bad@mail.com"}))

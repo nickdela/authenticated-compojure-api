@@ -33,7 +33,7 @@
                :path-params [id :- Long]
                :return      {:message String}
                :middlewares [cors-mw token-auth-mw]
-               :summary     "Deletes the specified user. Requires token to have `admin` auth."
+               :summary     "Deletes the specified user. Requires token to have `admin` auth or self ID."
                :notes       "Authorization header expects the following format 'Token {token}'"
                (delete-user-response request id))
       token-backend)
@@ -44,7 +44,7 @@
                :body-params  [{username :- String ""} {password :- String ""} {email :- String ""}]
                :return       {:id Long :email String :username String}
                :middlewares  [cors-mw token-auth-mw]
-               :summary      "Update some or all fields of a specified user. Requires token to have `admin` auth."
+               :summary      "Update some or all fields of a specified user. Requires token to have `admin` auth or self ID."
                :notes        "Authorization header expects the following format 'Token {token}'"
                (modify-user-response request id username password email))
       token-backend)
