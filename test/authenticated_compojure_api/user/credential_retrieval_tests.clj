@@ -38,9 +38,11 @@
                                   (helper/basic-auth-header "Everyman:pass")))
           body           (helper/parse-body (:body response))
           token-contents (bs/loads (:token body) (env :auth-key))]
-      (is (= 4           (count body)))
+      (is (= 5           (count body)))
       (is (= 200         (:status response)))
       (is (= "Everyman"  (:username body)))
+      (is (= 1           (:id body)))
+      (is (= "basic"     (:permissions body)))
       (is (= 36          (count (:refreshToken body))))
       (is (= 4           (count token-contents)))
       (is (= "basic"     (:permissions token-contents)))

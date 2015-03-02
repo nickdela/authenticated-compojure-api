@@ -8,7 +8,8 @@
   (let [user          (:identity request)
         refresh-token (str (java.util.UUID/randomUUID))
         _ (query/update-registered-user-refresh-token<! {:refresh_token refresh-token :id (:id user)})]
-    (respond/ok {:username      (:username user)
+    (respond/ok {:id            (:id user)
+                 :username      (:username user)
                  :permissions   (:permissions user)
                  :token         (create-token user)
                  :refreshToken  refresh-token})))
