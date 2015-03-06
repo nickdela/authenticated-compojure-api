@@ -16,11 +16,11 @@
            (mock/content-type "application/json"))))
 
 (defn gen-reset-json [email]
-  (ch/generate-string {:user-email         email
-                       :from-email         "admin@something.com"
-                       :subject            "Password reset"
-                       :email-body-plain   "Here is your link.\nThanks,"
-                       :response-base-link "http://something/reset"}))
+  (ch/generate-string {:userEmail        email
+                       :fromEmail        "admin@something.com"
+                       :subject          "Password reset"
+                       :emailBodyPlain   "Here is your link.\nThanks,"
+                       :responseBaseLink "http://something/reset"}))
 
 (defn setup-teardown [f]
   (try

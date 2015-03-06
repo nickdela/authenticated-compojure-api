@@ -95,18 +95,18 @@
 
     (POST* "/user/password/request-reset" []
            :return      {:message String}
-           :body-params [user-email :- String
-                         from-email :- String
-                         subject :- String
-                         {email-body-html :- String  ""}
-                         {email-body-plain :- String ""}
-                         response-base-link :- String]
+           :body-params [userEmail         :- String
+                         fromEmail         :- String
+                         subject           :- String
+                         {email-body-html  :- String ""}
+                         {emailBodyPlain   :- String ""}
+                         responseBaseLink  :- String]
            :middlewares [cors-mw]
            :summary     "Request a password reset for the registered user with the matching email"
            :notes       "The `respose-base-link` will get a reset key appended to it and then the
                          link itself will be appended to the email body. The reset key will be valid
                          for 24 hours after creation."
-           (request-password-reset-response user-email from-email subject email-body-plain email-body-html response-base-link))
+           (request-password-reset-response userEmail fromEmail subject emailBodyPlain email-body-html responseBaseLink))
 
     (POST* "/user/password/reset" []
      :return      {:message String}
