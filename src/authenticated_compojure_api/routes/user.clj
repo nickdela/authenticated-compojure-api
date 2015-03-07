@@ -98,7 +98,7 @@
            :body-params [userEmail         :- String
                          fromEmail         :- String
                          subject           :- String
-                         {email-body-html  :- String ""}
+                         {emailBodyHtml    :- String ""}
                          {emailBodyPlain   :- String ""}
                          responseBaseLink  :- String]
            :middlewares [cors-mw]
@@ -106,7 +106,7 @@
            :notes       "The `respose-base-link` will get a reset key appended to it and then the
                          link itself will be appended to the email body. The reset key will be valid
                          for 24 hours after creation."
-           (request-password-reset-response userEmail fromEmail subject emailBodyPlain email-body-html responseBaseLink))
+           (request-password-reset-response userEmail fromEmail subject emailBodyPlain emailBodyHtml responseBaseLink))
 
     (POST* "/user/password/reset" []
      :return      {:message String}
