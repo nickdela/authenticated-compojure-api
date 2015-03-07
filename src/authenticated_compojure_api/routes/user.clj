@@ -110,8 +110,8 @@
 
     (POST* "/user/password/reset" []
      :return      {:message String}
-     :body-params [reset-key :- String
-                   new-password :- String]
+     :body-params [resetKey :- String
+                   newPassword :- String]
      :middlewares [cors-mw]
-     :summary     "Replace an existing user password with the new-passowrd given a valid reset-key"
-     (password-reset-response reset-key new-password))))
+     :summary     "Replace an existing user password with the newPassowrd given a valid resetKey"
+     (password-reset-response resetKey newPassword))))

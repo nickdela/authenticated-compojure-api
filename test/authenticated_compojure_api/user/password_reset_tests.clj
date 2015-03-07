@@ -33,9 +33,9 @@
 (use-fixtures :each setup-teardown)
 
 (deftest test-password-is-reset-with-valid-reset-key
-  (testing "Test password is reset with valid reset-key"
+  (testing "Test password is reset with valid resetKey"
     (query/insert-password-reset-key-with-default-valid-until<! {:reset_key "123" :user_id 1})
-    (let [response     (app (-> (mock/request :post "/api/user/password/reset" (ch/generate-string {:reset-key "123" :new-password "new-pass"}))
+    (let [response     (app (-> (mock/request :post "/api/user/password/reset" (ch/generate-string {:resetKey "123" :newPassword "new-pass"}))
                                 (mock/content-type "application/json")))
           body         (helper/parse-body (:body response))
           updated-user (first (query/get-registered-user-by-id {:id 1}))]
@@ -45,7 +45,7 @@
 
 (deftest not-found-404-is-returned-when-invlid-reset-key-id-used
   (testing "Not found 404 is returned when invalid reset key is used"
-    (let [response     (app (-> (mock/request :post "/api/user/password/reset" (ch/generate-string {:reset-key "123" :new-password "new-pass"}))
+    (let [response     (app (-> (mock/request :post "/api/user/password/reset" (ch/generate-string {:resetKey "123" :newPassword "new-pass"}))
                                 (mock/content-type "application/json")))
           body         (helper/parse-body (:body response))
           updated-user (first (query/get-registered-user-by-id {:id 1}))]
@@ -55,7 +55,7 @@
 (deftest not-found-404-is-returned-when-valid-reset-key-has-expired
   (testing "Not found 404 is returned when valid reset key has expired"
     (query/insert-password-reset-key-with-provide-valid-until-date<! {:reset_key "123" :user_id 1 :valid_until (c/to-sql-time (t/minus (t/now) (t/hours 24)))})
-    (let [response     (app (-> (mock/request :post "/api/user/password/reset" (ch/generate-string {:reset-key "123" :new-password "new-pass"}))
+    (let [response     (app (-> (mock/request :post "/api/user/password/reset" (ch/generate-string {:resetKey "123" :newPassword "new-pass"}))
                                 (mock/content-type "application/json")))
           body         (helper/parse-body (:body response))
           updated-user (first (query/get-registered-user-by-id {:id 1}))]
