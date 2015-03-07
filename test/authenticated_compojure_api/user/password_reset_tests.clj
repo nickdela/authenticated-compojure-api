@@ -61,3 +61,17 @@
           updated-user (first (query/get-registered-user-by-id {:id 1}))]
       (is (= 404 (:status response)))
       (is (= "Reset key has expired" (:error body))))))
+
+(deftest password-is-not-reset-if-reset-key-has-already-been-used
+  (testing "Password is not reset if reset key has already been used"
+    (query/insert-password-reset-key-with-default-valid-until<! {:reset_key "123" :user_id 1})
+    (let [initial-response (app (-> (mock/request :post "/api/user/password/reset" (ch/generate-string {:resetKey "123" :newPassword "new-pass"}))
+                                    (mock/content-type "application/json")))
+          second-response  (app (-> (mock/request :post "/api/user/password/reset" (ch/generate-string {:resetKey "123" :newPassword "nono"}))
+                                    (mock/content-type "application/json")))
+          body             (helper/parse-body (:body second-response))
+          updated-user     (first (query/get-registered-user-by-id {:id 1}))]
+      (is (= 200 (:status initial-response)))
+      (is (= 404 (:status second-response)))
+      (is (= true (hs/check-password "new-pass" (:password updated-user))))
+      (is (= "Reset key already used" (:error body))))))

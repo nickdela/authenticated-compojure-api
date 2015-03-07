@@ -19,6 +19,7 @@
         key-valid-until  (c/from-sql-time (:valid_until key-row))
         key-valid?       (t/before? (t/now) key-valid-until)]
     (cond
-      key-exists? (respond/not-found {:error "Reset key does not exist"})
-      key-valid?  (update-password reset-key key-row new-password)
-      :else       (respond/not-found {:error "Reset key has expired"}))))
+      key-exists?             (respond/not-found {:error "Reset key does not exist"})
+      (:already_used key-row) (respond/not-found {:error "Reset key already used"})
+      key-valid?              (update-password reset-key key-row new-password)
+      :else                   (respond/not-found {:error "Reset key has expired"}))))
