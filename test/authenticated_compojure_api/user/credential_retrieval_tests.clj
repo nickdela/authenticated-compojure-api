@@ -50,6 +50,24 @@
       (is (= "e@man.com" (:email token-contents)))
       (is (= "Everyman"  (:username token-contents))))))
 
+(deftest valid-email-and-password-return-correct-auth-credentials
+  (testing "Valid email and password return correct auth credentials"
+    (let [response       (app (-> (mock/request :get "/api/user/token")
+                                  (helper/basic-auth-header "e@man.com:pass")))
+          body           (helper/parse-body (:body response))
+          token-contents (bs/loads (:token body) (env :auth-key))]
+      (is (= 5           (count body)))
+      (is (= 200         (:status response)))
+      (is (= "Everyman"  (:username body)))
+      (is (= 1           (:id body)))
+      (is (= "basic"     (:permissions body)))
+      (is (= 36          (count (:refreshToken body))))
+      (is (= 4           (count token-contents)))
+      (is (= "basic"     (:permissions token-contents)))
+      (is (= 1           (:id token-contents)))
+      (is (= "e@man.com" (:email token-contents)))
+      (is (= "Everyman"  (:username token-contents))))))
+
 (deftest mutiple-permissions-are-properly-formated
   (testing "Multiple permissions are properly formated"
     (query/insert-permission<! {:permission "admin"})

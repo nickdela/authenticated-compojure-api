@@ -57,6 +57,20 @@ FROM     registered_user                    AS reg_user
 WHERE    reg_user.username = :username
 GROUP BY reg_user.id;
 
+-- name: get-registered-user-details-by-email
+-- Selects user details for matching email
+SELECT   reg_user.id
+         , reg_user.email
+         , reg_user.username
+         , reg_user.password
+         , reg_user.refresh_token
+         , STRING_AGG(perm.permission, ',') AS permissions
+FROM     registered_user                    AS reg_user
+         JOIN user_permission               AS perm
+           ON (reg_user.id = perm.user_id)
+WHERE    reg_user.email = :email
+GROUP BY reg_user.id;
+
 -- name: insert-registered-user<!
 -- inserts a single user
 INSERT INTO registered_user (

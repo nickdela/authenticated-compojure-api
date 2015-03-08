@@ -4,11 +4,15 @@
             [buddy.hashers.bcrypt :as hs]))
 
 ;; ============================================================================
-;; The username and email fields are stored in citext fields in Postgres thus
-;; the need to convert them to strings for future use.
+;; The username and email values are stored in citext fields in Postgres thus
+;; the need to convert them to strings for future use. Since we want to accept
+;; eiter username or email as an identifier we will query for both and check
+;; for a match.
 ;; ============================================================================
-(defn get-user-info [username]
-  (let [registered-user (first (query/get-registered-user-details-by-username {:username username}))]
+(defn get-user-info [identifier]
+  (let [registered-user-username (first (query/get-registered-user-details-by-username {:username identifier}))
+        registered-user-email    (first (query/get-registered-user-details-by-email {:email identifier}))
+        registered-user          (first (remove nil? [registered-user-username registered-user-email]))]
     (if (nil? registered-user)
       nil
       {:user-data (-> registered-user
@@ -20,12 +24,15 @@
 ;; ============================================================================
 ;  This function will delegate determining if we have the correct username and
 ;  password to authorize a user. The return value will be added to the request
-;  with the keyword of :identity
+;  with the keyword of :identity. We will accept either a valid username or
+;  valid user email in the username field. It is a little strange but to adhere
+;  to legacy basic auth api of using username:password we have to make the
+;  field do double duty.
 ;; ============================================================================
 (defn basic-auth [request, auth-data]
-  (let [username  (:username auth-data)
-        password  (:password auth-data)
-        user-info (get-user-info username)]
+  (let [identifier  (:username auth-data)
+        password    (:password auth-data)
+        user-info   (get-user-info identifier)]
     (if (and user-info (hs/check-password password (:password user-info)))
       (:user-data user-info)
       false)))

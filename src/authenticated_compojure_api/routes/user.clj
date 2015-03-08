@@ -75,7 +75,9 @@
            :header-params [authorization :- String]
            :middlewares   [cors-mw basic-auth-mw]
            :summary       "Returns auth info given a username and password in the 'Authorization' header."
-           :notes         "Authorization header expects 'Basic username:password' where username:password is base64 encoded."
+           :notes         "Authorization header expects 'Basic username:password' where username:password
+                           is base64 encoded. To adhere to basic auth standards we have to use a field called
+                           `username` however we will accept a valid username or email as a value for this key."
            (auth-credentials-response request))
      basic-backend)
 
