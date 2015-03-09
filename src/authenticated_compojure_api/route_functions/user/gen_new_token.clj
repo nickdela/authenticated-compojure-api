@@ -10,7 +10,7 @@
     {:token (create-token user) :refreshToken new-refresh-token}))
 
 (defn gen-new-token-response [refresh-token]
-  (let [user (first (query/get-registered-user-by-reset-token {:refresh_token refresh-token}))]
+  (let [user (first (query/get-registered-user-details-by-refresh-token {:refresh_token refresh-token}))]
     (if (empty? user)
       (respond/bad-request {:error "Bad Request"})
       (respond/ok          (create-new-tokens user)))))

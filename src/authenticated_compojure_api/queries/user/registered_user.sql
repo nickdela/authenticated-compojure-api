@@ -7,16 +7,6 @@ SELECT id
        , refresh_token
 FROM   registered_user;
 
--- name: get-registered-user-by-reset-token
--- Selects a user with matching reset-token
-SELECT id
-       , email
-       , username
-       , password
-       , refresh_token
-FROM   registered_user
-WHERE  refresh_token = :refresh_token;
-
 -- name: get-registered-user-by-id
 -- Selects the (id, email, username, password, refresh_token) for registered user matching the id
 SELECT id
@@ -69,6 +59,20 @@ FROM     registered_user                    AS reg_user
          JOIN user_permission               AS perm
            ON (reg_user.id = perm.user_id)
 WHERE    reg_user.email = :email
+GROUP BY reg_user.id;
+
+-- name: get-registered-user-details-by-refresh-token
+-- Selects user details for matching refresh token
+SELECT   reg_user.id
+         , reg_user.email
+         , reg_user.username
+         , reg_user.password
+         , reg_user.refresh_token
+         , STRING_AGG(perm.permission, ',') AS permissions
+FROM     registered_user                    AS reg_user
+         JOIN user_permission               AS perm
+           ON (reg_user.id = perm.user_id)
+WHERE    reg_user.refresh_token = :refresh_token
 GROUP BY reg_user.id;
 
 -- name: insert-registered-user<!
