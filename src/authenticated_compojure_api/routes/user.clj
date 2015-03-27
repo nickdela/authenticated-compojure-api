@@ -50,13 +50,14 @@
       token-backend)
 
     (wrap-authentication
-      (POST* "/user/:id/permission/:permission" {:as request}
-               :path-params                     [id :- Long permission :- String]
-               :header-params                   [authorization :- String]
-               :return                          {:message String}
-               :middlewares                     [cors-mw token-auth-mw]
-               :summary                         "Adds the specified permission for the specified user. Requires token to have `admin` auth."
-               :notes                           "Authorization header expects the following format 'Token {token}'"
+      (POST* "/user/:id/permission" {:as request}
+               :path-params         [id :- Long]
+               :body-params         [permission :- String]
+               :header-params       [authorization :- String]
+               :return              {:message String}
+               :middlewares         [cors-mw token-auth-mw]
+               :summary             "Adds the specified permission for the specified user. Requires token to have `admin` auth."
+               :notes               "Authorization header expects the following format 'Token {token}'"
                (add-user-permission-response request id permission))
       token-backend)
 

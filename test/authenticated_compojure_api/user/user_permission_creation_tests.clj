@@ -36,7 +36,8 @@
   (testing "Can add user permission with valid token and admin permissions"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
     (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid 1})))))
-    (let [response (app (-> (mock/request :post "/api/user/1/permission/other")
+    (let [response (app (-> (mock/request :post "/api/user/1/permission" (ch/generate-string {:permission "other"}))
+                            (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body     (helper/parse-body (:body response))]
       (is (= 200                                                (:status response)))
@@ -47,7 +48,8 @@
   (testing "Attempting to add a permission that does not exist returns 404"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
     (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid 1})))))
-    (let [response (app (-> (mock/request :post "/api/user/1/permission/stranger")
+    (let [response (app (-> (mock/request :post "/api/user/1/permission" (ch/generate-string {:permission "stranger"}))
+                            (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body     (helper/parse-body (:body response))]
       (is (= 404                                    (:status response)))
@@ -57,7 +59,8 @@
 (deftest can-not-add-user-permission-with-valid-token-and-no-admin-permissions
   (testing "Can not add user permission with valid token and no admin permissions"
     (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid 2})))))
-    (let [response (app (-> (mock/request :post "/api/user/2/permission/other")
+    (let [response (app (-> (mock/request :post "/api/user/2/permission"  (ch/generate-string {:permission "other"}))
+                            (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "Everyman:pass")))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
