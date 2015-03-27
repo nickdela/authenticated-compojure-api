@@ -39,9 +39,8 @@
       token-backend)
 
     (wrap-authentication
-      (PUT* "/user/:id"       {:as request}
-               :path-params   [id :- Long]
-               :body-params   [{username :- String ""} {password :- String ""} {email :- String ""}]
+      (PATCH*  "/user"       {:as request}
+               :body-params   [id :- Long {username :- String ""} {password :- String ""} {email :- String ""}]
                :header-params [authorization :- String]
                :return        {:id Long :email String :username String}
                :middlewares   [cors-mw token-auth-mw]

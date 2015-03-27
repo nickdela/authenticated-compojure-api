@@ -35,7 +35,7 @@
 (deftest can-modify-a-users-username-with-valid-token-and-admin-permissions
   (testing "Can modify a users username with valid token and admin permissions"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (let [response  (app (-> (mock/request :put "/api/user/1" (ch/generate-string {:username "Newman"}))
+    (let [response  (app (-> (mock/request :patch "/api/user" (ch/generate-string {:id 1 :username "Newman"}))
                              (mock/content-type "application/json")
                              (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body      (helper/parse-body (:body response))]
@@ -46,7 +46,7 @@
 (deftest can-modify-a-users-email-with-valid-token-and-admin-permissions
   (testing "Can modify a users email with valid token and admin permissions"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (let [response     (app (-> (mock/request :put "/api/user/1" (ch/generate-string {:email "new@email.com"}))
+    (let [response     (app (-> (mock/request :patch "/api/user" (ch/generate-string {:id 1 :email "new@email.com"}))
                                 (mock/content-type "application/json")
                                 (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body         (helper/parse-body (:body response))
@@ -59,7 +59,7 @@
 (deftest can-modify-a-users-password-with-valid-token-and-admin-permissions
   (testing "Can modify a users password with valid token and admin permissions"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (let [response     (app (-> (mock/request :put "/api/user/1" (ch/generate-string {:password "newPass"}))
+    (let [response     (app (-> (mock/request :patch "/api/user" (ch/generate-string {:id 1 :password "newPass"}))
                                 (mock/content-type "application/json")
                                 (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body         (helper/parse-body (:body response))
@@ -69,7 +69,7 @@
 
 (deftest can-modify-your-own-password-with-valid-token-and-no-admin-permissions
   (testing "Can modify your own password with valid token and no admin permissions"
-    (let [response     (app (-> (mock/request :put "/api/user/1" (ch/generate-string {:password "newPass"}))
+    (let [response     (app (-> (mock/request :patch "/api/user" (ch/generate-string {:id 1 :password "newPass"}))
                                 (mock/content-type "application/json")
                                 (helper/get-token-auth-header-for-user "SomeGuy:pass")))
           body         (helper/parse-body (:body response))
@@ -79,7 +79,7 @@
 
 (deftest can-not-modify-a-user-with-valid-token-and-no-admin-permissions
   (testing "Can not modify a user with valid token and no admin permissions"
-    (let [response         (app (-> (mock/request :put "/api/user/1" (ch/generate-string {:email "bad@mail.com"}))
+    (let [response         (app (-> (mock/request :patch "/api/user" (ch/generate-string {:id 1 :email "bad@mail.com"}))
                                     (mock/content-type "application/json")
                                     (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body             (helper/parse-body (:body response))
@@ -91,7 +91,7 @@
 (deftest trying-to-modify-a-user-that-does-not-exist-return-a-404
   (testing "Trying to modify a user that does not exist returns a 404"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (let [response (app (-> (mock/request :put "/api/user/99" (ch/generate-string {:email "not@real.com"}))
+    (let [response (app (-> (mock/request :patch "/api/user" (ch/generate-string {:id 99 :email "not@real.com"}))
                             (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body     (helper/parse-body (:body response))]
