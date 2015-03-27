@@ -29,8 +29,8 @@
            (create-user-response email username password))
 
     (wrap-authentication
-      (DELETE* "/user/:id"  {:as request}
-               :path-params [id :- Long]
+      (DELETE* "/user"      {:as request}
+               :body-params [id :- Long]
                :return      {:message String}
                :middlewares [cors-mw token-auth-mw]
                :summary     "Deletes the specified user. Requires token to have `admin` auth or self ID."
