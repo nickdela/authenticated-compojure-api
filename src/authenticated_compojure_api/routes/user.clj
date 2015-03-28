@@ -62,13 +62,14 @@
       token-backend)
 
     (wrap-authentication
-      (DELETE* "/user/:id/permission/:permission" {:as request}
-               :path-params                       [id :- Long permission :- String]
-               :header-params                     [authorization :- String]
-               :return                            {:message String}
-               :middlewares                       [cors-mw token-auth-mw]
-               :summary                           "Deletes the specified permission for the specified user. Requires token to have `admin` auth."
-               :notes                             "Authorization header expects the following format 'Token {token}'"
+      (DELETE* "/user/:id/permission" {:as request}
+               :path-params           [id :- Long]
+               :body-params           [permission :- String]
+               :header-params         [authorization :- String]
+               :return                {:message String}
+               :middlewares           [cors-mw token-auth-mw]
+               :summary               "Deletes the specified permission for the specified user. Requires token to have `admin` auth."
+               :notes                 "Authorization header expects the following format 'Token {token}'"
                (delete-user-permission-response request id permission))
       token-backend)
 

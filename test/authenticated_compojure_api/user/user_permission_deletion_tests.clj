@@ -37,7 +37,8 @@
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
     (query/insert-permission-for-user<! {:userid 1 :permission "other"})
     (is (= "basic,other" (:permissions (first (query/get-permissions-for-userid {:userid 1})))))
-    (let [response (app (-> (mock/request :delete "/api/user/1/permission/other")
+    (let [response (app (-> (mock/request :delete "/api/user/1/permission"  (ch/generate-string {:permission "other"}))
+                            (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body     (helper/parse-body (:body response))]
       (is (= 200                                                  (:status response)))
@@ -48,7 +49,8 @@
   (testing "Can not delete user permission with valid token and no admin permissions"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
     (is (= "basic,admin" (:permissions (first (query/get-permissions-for-userid {:userid 2})))))
-    (let [response (app (-> (mock/request :delete "/api/user/2/permission/other")
+    (let [response (app (-> (mock/request :delete "/api/user/2/permission"  (ch/generate-string {:permission "other"}))
+                            (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "Everyman:pass")))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
