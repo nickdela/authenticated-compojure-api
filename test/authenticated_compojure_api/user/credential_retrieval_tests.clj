@@ -110,7 +110,7 @@
           initial-body       (helper/parse-body (:body initial-response))
           refresh-token      (:refreshToken initial-body)
           refresh-token-json (ch/generate-string {:refreshToken refresh-token})
-          refreshed-response (app (-> (mock/request :post "/api/user/token/refresh" refresh-token-json)
+          refreshed-response (app (-> (mock/request :post "/api/user/refresh-token" refresh-token-json)
                                       (mock/content-type "application/json")))
           body               (helper/parse-body (:body refreshed-response))
           token-contents     (bs/loads (:token body) (env :auth-key))]
@@ -128,7 +128,7 @@
 (deftest invalid-refresh-token-does-not-return-a-new-token
   (testing "Invalid refresh token does not return a new token"
     (let [bad-token-json (ch/generate-string {:refreshToken "abcd1234"})
-          response       (app (-> (mock/request :post "/api/user/token/refresh" bad-token-json)
+          response       (app (-> (mock/request :post "/api/user/refresh-token" bad-token-json)
                                   (mock/content-type "application/json")))
           body           (helper/parse-body (:body response))]
       (is (= 400           (:status response)))

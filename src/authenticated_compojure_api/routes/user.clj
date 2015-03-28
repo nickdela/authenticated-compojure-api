@@ -85,18 +85,18 @@
            (auth-credentials-response request))
      basic-backend)
 
-    (POST* "/user/token/refresh" []
+    (POST* "/user/refresh-token" []
            :return               {:token String :refreshToken String}
            :body-params          [refreshToken :- String]
            :middlewares          [cors-mw]
            :summary              "Get a fresh token with a valid re-fresh token."
            (gen-new-token-response refreshToken))
 
-    (DELETE* "/user/refresh-token/:token" []
-             :path-params                 [token :- String]
-             :return                      {:message String}
-             :middlewares                 [cors-mw]
-             :summary                     "Delete the specific refresh token"
+    (DELETE* "/user/refresh-token" []
+             :body-params          [token :- String]
+             :return               {:message String}
+             :middlewares          [cors-mw]
+             :summary              "Delete the specific refresh token"
              (remove-refresh-token-response token))
 
     (POST* "/user/password/request-reset" []
