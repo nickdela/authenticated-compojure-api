@@ -13,8 +13,7 @@
   (let [registered-user-username (first (query/get-registered-user-details-by-username {:username identifier}))
         registered-user-email    (first (query/get-registered-user-details-by-email {:email identifier}))
         registered-user          (first (remove nil? [registered-user-username registered-user-email]))]
-    (if (nil? registered-user)
-      nil
+    (when-not (nil? registered-user)
       {:user-data (-> registered-user
                       (assoc-in [:username] (str (:username registered-user)))
                       (assoc-in [:email]    (str (:email registered-user)))

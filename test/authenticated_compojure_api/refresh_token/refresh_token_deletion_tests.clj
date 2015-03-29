@@ -33,7 +33,7 @@
                                             (helper/basic-auth-header "JarrodCTaylor:pass")))
           initial-body             (helper/parse-body (:body initial-response))
           refresh-token            (:refreshToken initial-body)
-          refresh-delete-response  (app (-> (mock/request :delete (str "/api/refresh-token/" refresh-token))))
+          refresh-delete-response  (app (mock/request :delete (str "/api/refresh-token/" refresh-token)))
           body                     (helper/parse-body (:body refresh-delete-response))
           registered-user-row      (first (query/get-registered-user-by-id {:id 1}))]
       (is (= 200 (:status refresh-delete-response)))
@@ -42,7 +42,7 @@
 
 (deftest attempting-to-delete-an-invalid-refresh-token-returns-an-error
   (testing "Attempting to delete an invalid refresh token returns an error"
-    (let [refresh-delete-response  (app (-> (mock/request :delete (str "/api/refresh-token/" "123abc"))))
+    (let [refresh-delete-response  (app (mock/request :delete (str "/api/refresh-token/" "123abc")))
           body                     (helper/parse-body (:body refresh-delete-response))]
       (is (= 404 (:status refresh-delete-response)))
       (is (= "The refresh token does not exist" (:error body))))))

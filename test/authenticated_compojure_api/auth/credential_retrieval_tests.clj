@@ -109,7 +109,7 @@
                                       (helper/basic-auth-header "JarrodCTaylor:pass")))
           initial-body       (helper/parse-body (:body initial-response))
           refresh-token      (:refreshToken initial-body)
-          refreshed-response (app (-> (mock/request :get (str "/api/refresh-token/" refresh-token))))
+          refreshed-response (app (mock/request :get (str "/api/refresh-token/" refresh-token)))
           body               (helper/parse-body (:body refreshed-response))
           token-contents     (bs/loads (:token body) (env :auth-key))]
       (is (= 200              (:status refreshed-response)))
@@ -125,7 +125,7 @@
 
 (deftest invalid-refresh-token-does-not-return-a-new-token
   (testing "Invalid refresh token does not return a new token"
-    (let [response       (app (-> (mock/request :get "/api/refresh-token/abcd1234")))
+    (let [response       (app (mock/request :get "/api/refresh-token/abcd1234"))
           body           (helper/parse-body (:body response))]
       (is (= 400           (:status response)))
       (is (= "Bad Request" (:error body))))))
