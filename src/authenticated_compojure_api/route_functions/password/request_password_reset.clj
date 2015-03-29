@@ -20,8 +20,8 @@
                  :to to-email
                  :subject subject
                  :body [:alternative
-                         {:type "text/plain" :content plain-body}
-                         {:type "text/html"  :content html-body}]}))
+                        {:type "text/plain" :content plain-body}
+                        {:type "text/html"  :content html-body}]}))
 
 (defn process-password-reset-request [user from-email subject email-body-plain email-body-html response-base-link]
   (let [reset-key     (str (java.util.UUID/randomUUID))

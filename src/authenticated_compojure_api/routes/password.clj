@@ -23,9 +23,9 @@
            (request-password-reset-response userEmail fromEmail subject emailBodyPlain emailBodyHtml responseBaseLink))
 
     (POST* "/password/reset-confirm" []
-     :return      {:message String}
-     :body-params [resetKey    :- String
-                   newPassword :- String]
-     :middlewares [cors-mw]
-     :summary     "Replace an existing user password with the newPassowrd given a valid resetKey"
-     (password-reset-response resetKey newPassword))))
+           :return      {:message String}
+           :body-params [resetKey    :- String
+                         newPassword :- String]
+           :middlewares [cors-mw]
+           :summary     "Replace an existing user password with the newPassowrd given a valid resetKey"
+           (password-reset-response resetKey newPassword))))

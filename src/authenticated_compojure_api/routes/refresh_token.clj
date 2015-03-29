@@ -9,11 +9,11 @@
   (context "/api" []
 
     (GET* "/refresh-token/:refreshToken" []
-           :return          {:token String :refreshToken String}
-           :path-params     [refreshToken :- String]
-           :middlewares     [cors-mw]
-           :summary         "Get a fresh token and new refresh-token with a valid refresh-token."
-           (gen-new-token-response refreshToken))
+          :return          {:token String :refreshToken String}
+          :path-params     [refreshToken :- String]
+          :middlewares     [cors-mw]
+          :summary         "Get a fresh token and new refresh-token with a valid refresh-token."
+          (gen-new-token-response refreshToken))
 
     (DELETE* "/refresh-token/:refreshToken" []
              :return          {:message String}

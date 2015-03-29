@@ -8,9 +8,9 @@
 
 
 (defn add-user []
- (let [user-map {:email "J@man.com" :username "JarrodCTaylor" :password "pass"}]
-   (app (-> (mock/request :post "/api/user" (ch/generate-string user-map))
-            (mock/content-type "application/json")))))
+  (let [user-map {:email "J@man.com" :username "JarrodCTaylor" :password "pass"}]
+    (app (-> (mock/request :post "/api/user" (ch/generate-string user-map))
+             (mock/content-type "application/json")))))
 
 (defn setup-teardown [f]
   (try
