@@ -7,8 +7,6 @@
             [authenticated-compojure-api.route-functions.user.create-user :refer [create-user-response]]
             [authenticated-compojure-api.route-functions.user.delete-user :refer [delete-user-response]]
             [authenticated-compojure-api.route-functions.user.modify-user :refer [modify-user-response]]
-            [authenticated-compojure-api.route-functions.user.add-user-permission :refer [add-user-permission-response]]
-            [authenticated-compojure-api.route-functions.user.delete-user-permission :refer [delete-user-permission-response]]
             [authenticated-compojure-api.route-functions.user.get-auth-credentials :refer [auth-credentials-response]]
             [authenticated-compojure-api.route-functions.user.gen-new-token :refer [gen-new-token-response]]
             [authenticated-compojure-api.route-functions.user.delete-refresh-token :refer [remove-refresh-token-response]]
@@ -47,30 +45,6 @@
                :summary       "Update some or all fields of a specified user. Requires token to have `admin` auth or self ID."
                :notes         "Authorization header expects the following format 'Token {token}'"
                (modify-user-response request id username password email))
-      token-backend)
-
-    (wrap-authentication
-      (POST* "/user/:id/permission" {:as request}
-               :path-params         [id :- Long]
-               :body-params         [permission :- String]
-               :header-params       [authorization :- String]
-               :return              {:message String}
-               :middlewares         [cors-mw token-auth-mw]
-               :summary             "Adds the specified permission for the specified user. Requires token to have `admin` auth."
-               :notes               "Authorization header expects the following format 'Token {token}'"
-               (add-user-permission-response request id permission))
-      token-backend)
-
-    (wrap-authentication
-      (DELETE* "/user/:id/permission" {:as request}
-               :path-params           [id :- Long]
-               :body-params           [permission :- String]
-               :header-params         [authorization :- String]
-               :return                {:message String}
-               :middlewares           [cors-mw token-auth-mw]
-               :summary               "Deletes the specified permission for the specified user. Requires token to have `admin` auth."
-               :notes                 "Authorization header expects the following format 'Token {token}'"
-               (delete-user-permission-response request id permission))
       token-backend)
 
     (wrap-authentication

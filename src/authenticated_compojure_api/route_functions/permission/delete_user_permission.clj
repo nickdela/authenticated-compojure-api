@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.route-functions.user.delete-user-permission
+(ns authenticated-compojure-api.route-functions.permission.delete-user-permission
   (:require [authenticated-compojure-api.queries.query-defs :as query]
             [ring.util.http-response :as respond]))
 

@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.user.user-permission-creation-tests
+(ns authenticated-compojure-api.permission.permission-deletion-tests
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :as helper]
@@ -32,37 +32,27 @@
 
 (use-fixtures :each setup-teardown)
 
-(deftest can-add-user-permission-with-valid-token-and-admin-permissions
-  (testing "Can add user permission with valid token and admin permissions"
+(deftest can-delete-user-permission-with-valid-token-and-admin-permissions
+  (testing "Can delete user permission with valid token and admin permissions"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid 1})))))
-    (let [response (app (-> (mock/request :post "/api/user/1/permission" (ch/generate-string {:permission "other"}))
+    (query/insert-permission-for-user<! {:userid 1 :permission "other"})
+    (is (= "basic,other" (:permissions (first (query/get-permissions-for-userid {:userid 1})))))
+    (let [response (app (-> (mock/request :delete "/api/permission/user/1"  (ch/generate-string {:permission "other"}))
                             (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body     (helper/parse-body (:body response))]
-      (is (= 200                                                (:status response)))
-      (is (= "Permission 'other' for user 1 successfully added" (:message body)))
-      (is (= "basic,other"                                      (helper/get-permissions-for-user 1))))))
+      (is (= 200                                                  (:status response)))
+      (is (= "basic"                                              (helper/get-permissions-for-user 1)))
+      (is (= "Permission 'other' for user 1 successfully removed" (:message body))))))
 
-(deftest attempting-to-add-a-permission-that-does-not-exist-returns-404
-  (testing "Attempting to add a permission that does not exist returns 404"
+(deftest can-not-delete-user-permission-with-valid-token-and-no-admin-permissions
+  (testing "Can not delete user permission with valid token and no admin permissions"
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid 1})))))
-    (let [response (app (-> (mock/request :post "/api/user/1/permission" (ch/generate-string {:permission "stranger"}))
-                            (mock/content-type "application/json")
-                            (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
-          body     (helper/parse-body (:body response))]
-      (is (= 404                                    (:status response)))
-      (is (= "Permission 'stranger' does not exist" (:error body)))
-      (is (= "basic"                                (helper/get-permissions-for-user 1))))))
-
-(deftest can-not-add-user-permission-with-valid-token-and-no-admin-permissions
-  (testing "Can not add user permission with valid token and no admin permissions"
-    (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid 2})))))
-    (let [response (app (-> (mock/request :post "/api/user/2/permission"  (ch/generate-string {:permission "other"}))
+    (is (= "basic,admin" (:permissions (first (query/get-permissions-for-userid {:userid 2})))))
+    (let [response (app (-> (mock/request :delete "/api/permission/user/2"  (ch/generate-string {:permission "other"}))
                             (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "Everyman:pass")))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
       (is (= "Not authorized" (:error body)))
-      (is (= "basic"          (helper/get-permissions-for-user 2))))))
+      (is (= "basic,admin"    (helper/get-permissions-for-user 2))))))

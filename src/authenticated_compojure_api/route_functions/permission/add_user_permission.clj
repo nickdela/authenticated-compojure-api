@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.route-functions.user.add-user-permission
+(ns authenticated-compojure-api.route-functions.permission.add-user-permission
   (:require [authenticated-compojure-api.queries.query-defs :as query]
             [ring.util.http-response :as respond]))
 

@@ -2,6 +2,7 @@
   (:require [compojure.api.sweet :refer :all]
             [authenticated-compojure-api.routes.user :refer :all]
             [authenticated-compojure-api.routes.preflight :refer :all]
+            [authenticated-compojure-api.routes.permission :refer :all]
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
             [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
@@ -22,9 +23,13 @@
    :apiVersion "0.0.1")
 
   (swaggered "Preflight"
-             :description "Provide a successful response for all preflight requests from the browser"
+             :description "Return successful response for all preflight requests"
              preflight-route)
 
   (swaggered "User"
              :description "Create and reset user details"
-             user-routes))
+             user-routes)
+
+  (swaggered "Permission"
+             :description "Add and remove permissions tied to specific users"
+             permission-routes))
