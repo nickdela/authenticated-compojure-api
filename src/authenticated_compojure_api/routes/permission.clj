@@ -1,9 +1,7 @@
 (ns authenticated-compojure-api.routes.permission
-  (:require [authenticated-compojure-api.auth-resources.basic-auth-backend :refer [basic-backend]]
-            [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]
-            [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
-            [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
+  (:require [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
+            [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.route-functions.permission.add-user-permission :refer [add-user-permission-response]]
             [authenticated-compojure-api.route-functions.permission.delete-user-permission :refer [delete-user-permission-response]]
             [buddy.auth.middleware :refer [wrap-authentication]]

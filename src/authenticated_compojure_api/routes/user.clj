@@ -1,17 +1,10 @@
 (ns authenticated-compojure-api.routes.user
-  (:require [authenticated-compojure-api.auth-resources.basic-auth-backend :refer [basic-backend]]
-            [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]
-            [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
-            [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
+  (:require [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
+            [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.route-functions.user.create-user :refer [create-user-response]]
             [authenticated-compojure-api.route-functions.user.delete-user :refer [delete-user-response]]
             [authenticated-compojure-api.route-functions.user.modify-user :refer [modify-user-response]]
-            [authenticated-compojure-api.route-functions.auth.get-auth-credentials :refer [auth-credentials-response]]
-            [authenticated-compojure-api.route-functions.refresh-token.gen-new-token :refer [gen-new-token-response]]
-            [authenticated-compojure-api.route-functions.refresh-token.delete-refresh-token :refer [remove-refresh-token-response]]
-            [authenticated-compojure-api.route-functions.user.request-password-reset :refer [request-password-reset-response]]
-            [authenticated-compojure-api.route-functions.user.password-reset :refer [password-reset-response]]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [compojure.api.sweet :refer :all]))
 

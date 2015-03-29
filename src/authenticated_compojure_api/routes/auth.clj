@@ -1,8 +1,6 @@
 (ns authenticated-compojure-api.routes.auth
   (:require [authenticated-compojure-api.auth-resources.basic-auth-backend :refer [basic-backend]]
-            [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
-            [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
             [authenticated-compojure-api.route-functions.auth.get-auth-credentials :refer [auth-credentials-response]]
             [buddy.auth.middleware :refer [wrap-authentication]]

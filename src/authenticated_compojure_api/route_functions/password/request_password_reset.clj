@@ -1,8 +1,8 @@
 (ns authenticated-compojure-api.route-functions.password.request-password-reset
   (:require [authenticated-compojure-api.queries.query-defs :as query]
             [environ.core :refer [env]]
-            [ring.util.http-response :as respond]
-            [postal.core :refer [send-message]]))
+            [postal.core :refer [send-message]]
+            [ring.util.http-response :as respond]))
 
 (defn add-response-link-to-plain-body [body response-link]
   (str body "\n\n" response-link))

@@ -1,12 +1,7 @@
 (ns authenticated-compojure-api.routes.refresh-token
-  (:require [authenticated-compojure-api.auth-resources.basic-auth-backend :refer [basic-backend]]
-            [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]
-            [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
-            [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
-            [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
-            [authenticated-compojure-api.route-functions.refresh-token.gen-new-token :refer [gen-new-token-response]]
+  (:require [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
             [authenticated-compojure-api.route-functions.refresh-token.delete-refresh-token :refer [remove-refresh-token-response]]
-            [buddy.auth.middleware :refer [wrap-authentication]]
+            [authenticated-compojure-api.route-functions.refresh-token.gen-new-token :refer [gen-new-token-response]]
             [compojure.api.sweet :refer :all]))
 
 

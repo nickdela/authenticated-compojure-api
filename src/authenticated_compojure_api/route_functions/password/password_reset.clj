@@ -1,9 +1,9 @@
 (ns authenticated-compojure-api.route-functions.password.password-reset
   (:require [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.hashers.bcrypt :as hasher]
-            [ring.util.http-response :as respond]
+            [clj-time.coerce :as c]
             [clj-time.core :as t]
-            [clj-time.coerce :as c]))
+            [ring.util.http-response :as respond]))
 
 (defn update-password [reset-key key-row new-password]
   (let [user-id         (:user_id key-row)
