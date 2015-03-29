@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.route-functions.user.get-auth-credentials
+(ns authenticated-compojure-api.route-functions.auth.get-auth-credentials
   (:require [authenticated-compojure-api.general-functions.user.create-token :refer [create-token]]
             [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.sign.generic :as bs]

@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.route-functions.user.request-password-reset
+(ns authenticated-compojure-api.route-functions.password.request-password-reset
   (:require [authenticated-compojure-api.queries.query-defs :as query]
             [environ.core :refer [env]]
             [ring.util.http-response :as respond]

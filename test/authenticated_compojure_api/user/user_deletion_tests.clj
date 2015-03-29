@@ -36,7 +36,7 @@
     (is (= "basic" (helper/get-permissions-for-user 1)))
     (query/insert-permission<! {:permission "admin"})
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (let [response (app (-> (mock/request :delete "/api/user" (ch/generate-string {:id 1}))
+    (let [response (app (-> (mock/request :delete "/api/user/1")
                             (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body     (helper/parse-body (:body response))]
@@ -49,7 +49,7 @@
   (testing "Can delete self and associated permissions with valid token and basic permissions"
     (is (= 2 (count (query/all-registered-users))))
     (is (= "basic" (helper/get-permissions-for-user 1)))
-    (let [response (app (-> (mock/request :delete "/api/user" (ch/generate-string {:id 1}))
+    (let [response (app (-> (mock/request :delete "/api/user/1")
                             (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "Everyman:pass")))
           body     (helper/parse-body (:body response))]
@@ -61,7 +61,7 @@
 (deftest can-not-delete-user-who-is-not-self-with-valid-token-and-basic-permissions
   (testing "Can not delete user who is not self with valid token and basic permissions"
     (is (= 2 (count (query/all-registered-users))))
-    (let [response (app (-> (mock/request :delete "/api/user" (ch/generate-string {:id 2}))
+    (let [response (app (-> (mock/request :delete "/api/user/2")
                             (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "Everyman:pass")))
           body     (helper/parse-body (:body response))]
@@ -73,7 +73,7 @@
   (testing "Return 404 when trying to delete a user that does not exists"
     (query/insert-permission<! {:permission "admin"})
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (let [response (app (-> (mock/request :delete "/api/user" (ch/generate-string {:id 99}))
+    (let [response (app (-> (mock/request :delete "/api/user/99")
                             (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body     (helper/parse-body (:body response))]

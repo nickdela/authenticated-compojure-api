@@ -3,6 +3,9 @@
             [authenticated-compojure-api.routes.user :refer :all]
             [authenticated-compojure-api.routes.preflight :refer :all]
             [authenticated-compojure-api.routes.permission :refer :all]
+            [authenticated-compojure-api.routes.refresh-token :refer :all]
+            [authenticated-compojure-api.routes.auth :refer :all]
+            [authenticated-compojure-api.routes.password :refer :all]
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
             [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
@@ -27,9 +30,21 @@
              preflight-route)
 
   (swaggered "User"
-             :description "Create and reset user details"
+             :description "Create, delete and update user details"
              user-routes)
 
   (swaggered "Permission"
              :description "Add and remove permissions tied to specific users"
-             permission-routes))
+             permission-routes)
+
+  (swaggered "Refresh-Token"
+             :description "Get and delete refresh-tokens"
+             refresh-token-routes)
+
+  (swaggered "Auth"
+             :description "Get auth information for a user"
+             auth-routes)
+
+  (swaggered "Password"
+             :description "Request and confirm password resets"
+             password-routes))

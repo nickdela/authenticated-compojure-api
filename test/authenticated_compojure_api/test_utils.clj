@@ -17,7 +17,7 @@
   (mock/header request "Authorization" (str "Token " token)))
 
 (defn get-user-token [username-and-password]
-  (let [initial-response (app (-> (mock/request :get "/api/user/token")
+  (let [initial-response (app (-> (mock/request :get "/api/auth/user")
                                   (basic-auth-header username-and-password)))
         initial-body     (parse-body (:body initial-response))]
     (:token initial-body)))

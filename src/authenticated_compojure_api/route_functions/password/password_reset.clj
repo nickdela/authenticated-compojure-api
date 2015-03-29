@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.route-functions.user.password-reset
+(ns authenticated-compojure-api.route-functions.password.password-reset
   (:require [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.hashers.bcrypt :as hasher]
             [ring.util.http-response :as respond]

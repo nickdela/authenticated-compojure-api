@@ -1,9 +1,9 @@
-(ns authenticated-compojure-api.user.user-request-password-reset-tests
+(ns authenticated-compojure-api.password.request-password-reset-tests
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :as helper]
             [authenticated-compojure-api.queries.query-defs :as query]
-            [authenticated-compojure-api.route-functions.user.request-password-reset :as unit-test]
+            [authenticated-compojure-api.route-functions.password.request-password-reset :as unit-test]
             [ring.mock.request :as mock]
             [cheshire.core :as ch]
             [clj-time.core :as t]
@@ -57,7 +57,7 @@
   (testing "Successfully request password reset with email for a valid registered user"
     (with-redefs [unit-test/send-reset-email (fn [to-email from-email subject html-body plain-body] nil)]
       (let [reset-info-json  (gen-reset-json "Jarrod@JarrodCTaylor.com")
-            response         (app (-> (mock/request :post "/api/user/password/request-reset" reset-info-json)
+            response         (app (-> (mock/request :post "/api/password/reset-request" reset-info-json)
                                       (mock/content-type "application/json")))
             body             (helper/parse-body (:body response))
             pass-reset-row   (query/get-password-reset-keys-for-userid {:userid 1})
@@ -74,7 +74,7 @@
 (deftest invalid-user-email-return-404-when-requesting-password-reset
   (testing "Invalid user email returns 404 when requesting password reset"
     (let [reset-info-json (gen-reset-json "J@jrock.com")
-          response        (app (-> (mock/request :post "/api/user/password/request-reset" reset-info-json)
+          response        (app (-> (mock/request :post "/api/password/reset-request" reset-info-json)
                                    (mock/content-type "application/json")))
           body            (helper/parse-body (:body response))]
       (is (= 404                                         (:status response)))

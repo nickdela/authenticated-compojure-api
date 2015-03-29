@@ -1,4 +1,4 @@
-(ns authenticated-compojure-api.user.reset-token-deletion-tests
+(ns authenticated-compojure-api.refresh-token.refresh-token-deletion-tests
   (:require [clojure.test :refer :all]
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :as helper]
@@ -29,12 +29,11 @@
 
 (deftest can-delete-refresh-token-with-valid-refresh-token
   (testing "Can delete refresh token with valid refresh token"
-    (let [initial-response         (app (-> (mock/request :get "/api/user/token")
+    (let [initial-response         (app (-> (mock/request :get "/api/auth/user")
                                             (helper/basic-auth-header "JarrodCTaylor:pass")))
           initial-body             (helper/parse-body (:body initial-response))
           refresh-token            (:refreshToken initial-body)
-          refresh-delete-response  (app (-> (mock/request :delete "/api/user/refresh-token" (ch/generate-string {:token refresh-token}))
-                                            (mock/content-type "application/json")))
+          refresh-delete-response  (app (-> (mock/request :delete (str "/api/refresh-token/" refresh-token))))
           body                     (helper/parse-body (:body refresh-delete-response))
           registered-user-row      (first (query/get-registered-user-by-id {:id 1}))]
       (is (= 200 (:status refresh-delete-response)))
@@ -43,8 +42,7 @@
 
 (deftest attempting-to-delete-an-invalid-refresh-token-returns-an-error
   (testing "Attempting to delete an invalid refresh token returns an error"
-    (let [refresh-delete-response  (app (-> (mock/request :delete "/api/user/refresh-token" (ch/generate-string {:token "123abc"}))
-                                            (mock/content-type "application/json")))
+    (let [refresh-delete-response  (app (-> (mock/request :delete (str "/api/refresh-token/" "123abc"))))
           body                     (helper/parse-body (:body refresh-delete-response))]
       (is (= 404 (:status refresh-delete-response)))
       (is (= "The refresh token does not exist" (:error body))))))
