@@ -10,7 +10,7 @@
   (context "/api" []
 
     (wrap-authentication
-     (GET* "/auth/user"   {:as request}
+     (GET* "/auth"        {:as request}
            :return        {:id Integer :username String :permissions String :token String :refreshToken String}
            :header-params [authorization :- String]
            :middlewares   [cors-mw basic-auth-mw]

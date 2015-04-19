@@ -34,7 +34,7 @@
 
 (deftest valid-username-and-password-return-correct-auth-credentials
   (testing "Valid username and password return correct auth credentials"
-    (let [response       (app (-> (mock/request :get "/api/auth/user")
+    (let [response       (app (-> (mock/request :get "/api/auth")
                                   (helper/basic-auth-header "Everyman:pass")))
           body           (helper/parse-body (:body response))
           token-contents (bs/loads (:token body) (env :auth-key))]
@@ -52,7 +52,7 @@
 
 (deftest valid-email-and-password-return-correct-auth-credentials
   (testing "Valid email and password return correct auth credentials"
-    (let [response       (app (-> (mock/request :get "/api/auth/user")
+    (let [response       (app (-> (mock/request :get "/api/auth")
                                   (helper/basic-auth-header "e@man.com:pass")))
           body           (helper/parse-body (:body response))
           token-contents (bs/loads (:token body) (env :auth-key))]
@@ -72,7 +72,7 @@
   (testing "Multiple permissions are properly formated"
     (query/insert-permission<! {:permission "admin"})
     (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (let [response (app (-> (mock/request :get "/api/auth/user")
+    (let [response (app (-> (mock/request :get "/api/auth")
                             (helper/basic-auth-header "JarrodCTaylor:pass")))
           body     (helper/parse-body (:body response))]
       (is (= 200             (:status response)))
@@ -82,7 +82,7 @@
 
 (deftest invlid-password-does-not-return-auth-credentials
   (testing "Invalid password does not return auth credentials"
-    (let [response (app (-> (mock/request :get "/api/auth/user")
+    (let [response (app (-> (mock/request :get "/api/auth")
                             (helper/basic-auth-header "JarrodCTaylor:badpass")))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
@@ -90,7 +90,7 @@
 
 (deftest invlid-username-does-not-return-auth-credentials
   (testing "Invalid username does not return auth credentials"
-    (let [response (app (-> (mock/request :get "/api/auth/user")
+    (let [response (app (-> (mock/request :get "/api/auth")
                             (helper/basic-auth-header "baduser:badpass")))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
@@ -98,14 +98,14 @@
 
 (deftest no-auth-credentials-are-returned-when-no-username-and-password-provided
   (testing "No auth credentials are returned when no username and password provided"
-    (let [response (app (mock/request :get "/api/auth/user"))
+    (let [response (app (mock/request :get "/api/auth"))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
       (is (= "Not authorized" (:error body))))))
 
 (deftest user-can-generate-a-new-token-with-a-valid-refresh-token
   (testing "User can generate a new tokens with a valid refresh-token"
-    (let [initial-response   (app (-> (mock/request :get "/api/auth/user")
+    (let [initial-response   (app (-> (mock/request :get "/api/auth")
                                       (helper/basic-auth-header "JarrodCTaylor:pass")))
           initial-body       (helper/parse-body (:body initial-response))
           refresh-token      (:refreshToken initial-body)

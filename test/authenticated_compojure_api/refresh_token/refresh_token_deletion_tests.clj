@@ -29,7 +29,7 @@
 
 (deftest can-delete-refresh-token-with-valid-refresh-token
   (testing "Can delete refresh token with valid refresh token"
-    (let [initial-response         (app (-> (mock/request :get "/api/auth/user")
+    (let [initial-response         (app (-> (mock/request :get "/api/auth")
                                             (helper/basic-auth-header "JarrodCTaylor:pass")))
           initial-body             (helper/parse-body (:body initial-response))
           refresh-token            (:refreshToken initial-body)
