@@ -14,7 +14,7 @@
                  [clj-time                   "0.9.0"]
                  [com.draines/postal         "1.11.3"]]
 
-  :plugins      [[lein-ring    "0.9.1"]
+  :plugins      [[lein-ring    "0.9.3"]
                  [lein-environ "1.0.0"]]
 
   :ring {:handler authenticated-compojure-api.handler/app
