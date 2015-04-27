@@ -1,12 +1,12 @@
 (ns authenticated-compojure-api.route-functions.user.modify-user
   (:require [authenticated-compojure-api.queries.query-defs :as query]
-            [buddy.hashers.bcrypt :as hasher]
+            [buddy.hashers :as hashers]
             [ring.util.http-response :as respond]))
 
 (defn modify-user [current-user-info username password email]
   (let [new-email     (if (empty? email)    (str (:email current-user-info)) email)
         new-username  (if (empty? username) (str (:username current-user-info)) username)
-        new-password  (if (empty? password) (:password current-user-info) (hasher/make-password password))
+        new-password  (if (empty? password) (:password current-user-info) (hashers/encrypt password))
         new-user-info (query/update-registered-user<! {:id (:id current-user-info)
                                                        :email new-email
                                                        :username new-username

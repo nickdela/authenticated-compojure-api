@@ -1,10 +1,10 @@
 (ns authenticated-compojure-api.route-functions.user.create-user
   (:require [authenticated-compojure-api.queries.query-defs :as query]
-            [buddy.hashers.bcrypt :as hasher]
+            [buddy.hashers :as hashers]
             [ring.util.http-response :as respond]))
 
 (defn create-new-user [email username password]
-  (let [hashed-password (hasher/make-password password)
+  (let [hashed-password (hashers/encrypt password)
         new-user        (query/insert-registered-user<! {:email         email
                                                          :username      username
                                                          :password      hashed-password})

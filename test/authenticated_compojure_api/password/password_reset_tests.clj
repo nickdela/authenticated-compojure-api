@@ -3,7 +3,7 @@
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :as helper]
             [authenticated-compojure-api.queries.query-defs :as query]
-            [buddy.hashers.bcrypt :as hs]
+            [buddy.hashers :as hashers]
             [ring.mock.request :as mock]
             [cheshire.core :as ch]
             [clj-time.core :as t]
@@ -40,7 +40,7 @@
           body         (helper/parse-body (:body response))
           updated-user (first (query/get-registered-user-by-id {:id 1}))]
       (is (= 200 (:status response)))
-      (is (= true (hs/check-password "new-pass" (:password updated-user))))
+      (is (= true (hashers/check "new-pass" (:password updated-user))))
       (is (= "Password successfully reset" (:message body))))))
 
 (deftest not-found-404-is-returned-when-invlid-reset-key-id-used
@@ -73,5 +73,5 @@
           updated-user     (first (query/get-registered-user-by-id {:id 1}))]
       (is (= 200 (:status initial-response)))
       (is (= 404 (:status second-response)))
-      (is (= true (hs/check-password "new-pass" (:password updated-user))))
+      (is (= true (hashers/check "new-pass" (:password updated-user))))
       (is (= "Reset key already used" (:error body))))))

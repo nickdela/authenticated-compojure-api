@@ -3,7 +3,7 @@
             [authenticated-compojure-api.handler :refer [app]]
             [authenticated-compojure-api.test-utils :as helper]
             [authenticated-compojure-api.queries.query-defs :as query]
-            [buddy.hashers.bcrypt :as hs]
+            [buddy.hashers :as hashers]
             [cheshire.core :as ch]
             [ring.mock.request :as mock]))
 
@@ -65,7 +65,7 @@
           body         (helper/parse-body (:body response))
           updated-user (first (query/get-registered-user-by-id {:id 1}))]
       (is (= 200  (:status response)))
-      (is (= true (hs/check-password "newPass" (:password updated-user)))))))
+      (is (= true (hashers/check "newPass" (:password updated-user)))))))
 
 (deftest can-modify-your-own-password-with-valid-token-and-no-admin-permissions
   (testing "Can modify your own password with valid token and no admin permissions"
@@ -75,7 +75,7 @@
           body         (helper/parse-body (:body response))
           updated-user (first (query/get-registered-user-by-id {:id 1}))]
       (is (= 200  (:status response)))
-      (is (= true (hs/check-password "newPass" (:password updated-user)))))))
+      (is (= true (hashers/check "newPass" (:password updated-user)))))))
 
 (deftest can-not-modify-a-user-with-valid-token-and-no-admin-permissions
   (testing "Can not modify a user with valid token and no admin permissions"

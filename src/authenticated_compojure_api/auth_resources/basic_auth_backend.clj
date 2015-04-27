@@ -1,7 +1,7 @@
 (ns authenticated-compojure-api.auth-resources.basic-auth-backend
   (:require [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.auth.backends.httpbasic :refer [http-basic-backend]]
-            [buddy.hashers.bcrypt :as hs]))
+            [buddy.hashers :as hashers]))
 
 ;; ============================================================================
 ;; The username and email values are stored in citext fields in Postgres thus
@@ -32,7 +32,7 @@
   (let [identifier  (:username auth-data)
         password    (:password auth-data)
         user-info   (get-user-info identifier)]
-    (if (and user-info (hs/check-password password (:password user-info)))
+    (if (and user-info (hashers/check password (:password user-info)))
       (:user-data user-info)
       false)))
 

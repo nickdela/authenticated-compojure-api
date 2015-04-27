@@ -1,13 +1,13 @@
 (ns authenticated-compojure-api.route-functions.password.password-reset
   (:require [authenticated-compojure-api.queries.query-defs :as query]
-            [buddy.hashers.bcrypt :as hasher]
+            [buddy.hashers :as hashers]
             [clj-time.coerce :as c]
             [clj-time.core :as t]
             [ring.util.http-response :as respond]))
 
 (defn update-password [reset-key key-row new-password]
   (let [user-id         (:user_id key-row)
-        hashed-password (hasher/make-password new-password)]
+        hashed-password (hashers/encrypt new-password)]
     (query/invalidate-reset-key<! {:reset_key reset-key})
     (query/update-registered-user-password<! {:id user-id :password hashed-password})
     (respond/ok {:message "Password successfully reset"})))
