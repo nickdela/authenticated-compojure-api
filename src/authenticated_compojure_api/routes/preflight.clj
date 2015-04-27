@@ -7,6 +7,7 @@
   (context "/api" []
 
     (OPTIONS* "*"      {:as request}
+              :tags        ["Preflight"]
               :return      {}
               :middlewares [cors-mw]
               :summary     "This will catch all OPTIONS preflight requests from the

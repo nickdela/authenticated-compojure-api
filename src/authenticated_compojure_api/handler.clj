@@ -22,29 +22,17 @@
 (defapi app
   (swagger-ui)
   (swagger-docs
-   :title "Authenticated-compojure-api"
-   :apiVersion "0.0.1")
-
-  (swaggered "Preflight"
-             :description "Return successful response for all preflight requests"
-             preflight-route)
-
-  (swaggered "User"
-             :description "Create, delete and update user details"
-             user-routes)
-
-  (swaggered "Permission"
-             :description "Add and remove permissions tied to specific users"
-             permission-routes)
-
-  (swaggered "Refresh-Token"
-             :description "Get and delete refresh-tokens"
-             refresh-token-routes)
-
-  (swaggered "Auth"
-             :description "Get auth information for a user"
-             auth-routes)
-
-  (swaggered "Password"
-             :description "Request and confirm password resets"
-             password-routes))
+    {:info {:title "Authenticated-compojure-api"
+            :version "0.0.1"}
+     :tags [{:name "Preflight"     :description "Return successful response for all preflight requests"}
+            {:name "User"          :description "Create, delete and update user details"}
+            {:name "Permission"    :description "Add and remove permissions tied to specific users"}
+            {:name "Refresh-Token" :description "Get and delete refresh-tokens"}
+            {:name "Auth"          :description "Get auth information for a user"}
+            {:name "Password"      :description "Request and confirm password resets"}]})
+  preflight-route
+  user-routes
+  permission-routes
+  refresh-token-routes
+  auth-routes
+  password-routes)

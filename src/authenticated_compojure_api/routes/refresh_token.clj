@@ -9,6 +9,7 @@
   (context "/api" []
 
     (GET* "/refresh-token/:refreshToken" []
+          :tags            ["Refresh-Token"]
           :return          {:token String :refreshToken String}
           :path-params     [refreshToken :- String]
           :middlewares     [cors-mw]
@@ -16,6 +17,7 @@
           (gen-new-token-response refreshToken))
 
     (DELETE* "/refresh-token/:refreshToken" []
+             :tags            ["Refresh-Token"]
              :return          {:message String}
              :path-params     [refreshToken :- String]
              :middlewares     [cors-mw]

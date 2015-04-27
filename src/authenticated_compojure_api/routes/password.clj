@@ -8,6 +8,7 @@
   (context "/api" []
 
     (POST* "/password/reset-request" []
+           :tags        ["Password"]
            :return      {:message String}
            :body-params [userEmail         :- String
                          fromEmail         :- String
@@ -17,12 +18,13 @@
                          responseBaseLink  :- String]
            :middlewares [cors-mw]
            :summary     "Request a password reset for the registered user with the matching email"
-           :notes       "The `respose-base-link` will get a reset key appended to it and then the
+           :description "The `respose-base-link` will get a reset key appended to it and then the
                          link itself will be appended to the email body. The reset key will be valid
                          for 24 hours after creation."
            (request-password-reset-response userEmail fromEmail subject emailBodyPlain emailBodyHtml responseBaseLink))
 
     (POST* "/password/reset-confirm" []
+           :tags        ["Password"]
            :return      {:message String}
            :body-params [resetKey    :- String
                          newPassword :- String]
