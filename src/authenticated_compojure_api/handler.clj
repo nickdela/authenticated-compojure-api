@@ -22,7 +22,7 @@
 (defapi app
   (swagger-ui)
   (swagger-docs
-    {:info {:title "Authenticated-compojure-api"
+    {:info {:title "authenticated-compojure-api"
             :version "0.0.1"}
      :tags [{:name "Preflight"     :description "Return successful response for all preflight requests"}
             {:name "User"          :description "Create, delete and update user details"}
