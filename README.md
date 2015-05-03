@@ -38,7 +38,7 @@ GRANT ALL PRIVILEGES ON DATABASE auth_test to auth_user;
 
 ### Running Locally
 
-`lein ring server`
+`lein run -m authenticated-compojure-api.server 3000`
 
 ### Running Tests
 

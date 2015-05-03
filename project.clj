@@ -6,6 +6,7 @@
                  [metosin/ring-http-response "0.6.1"]
                  [metosin/ring-swagger-ui    "2.1.1-M2"]
                  [cheshire                   "5.4.0"]
+                 [http-kit                   "2.1.18"]
                  [buddy                      "0.5.2"]
                  [org.clojure/java.jdbc      "0.3.6"]
                  [postgresql/postgresql      "9.3-1102.jdbc41"]
@@ -14,11 +15,7 @@
                  [clj-time                   "0.9.0"]
                  [com.draines/postal         "1.11.3"]]
 
-  :plugins      [[lein-ring    "0.9.3"]
-                 [lein-environ "1.0.0"]]
-
-  :ring {:handler authenticated-compojure-api.handler/app
-         :init    authenticated-compojure-api.handler/init}
+  :plugins      [[lein-environ "1.0.0"]]
 
   :min-lein-version  "2.5.0"
 

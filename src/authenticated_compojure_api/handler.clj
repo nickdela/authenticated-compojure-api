@@ -9,15 +9,8 @@
             [authenticated-compojure-api.middleware.basic-auth :refer [basic-auth-mw]]
             [authenticated-compojure-api.middleware.token-auth :refer [token-auth-mw]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
-            [authenticated-compojure-api.queries.query-defs :as query]
             [ring.util.http-response :refer :all]
             [schema.core :as s]))
-
-(defn init []
-  (query/create-registered-user-table-if-not-exists!)
-  (query/create-permission-table-if-not-exists!)
-  (query/create-user-permission-table-if-not-exists!)
-  (query/create-password-reset-key-table-if-not-exists!))
 
 (defapi app
   (swagger-ui)
