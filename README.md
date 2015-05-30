@@ -40,6 +40,19 @@ GRANT ALL PRIVILEGES ON DATABASE auth_test to auth_user;
 
 `lein run -m authenticated-compojure-api.server 3000`
 
+### Add the required permission
+
+When you start the server any needed tables will be created automatically.
+Starting out you will need to create a `basic` permission in the permissions
+table.
+
+``` sql
+INSERT INTO permission (permission)
+VALUES ('basic');
+```
+
+You will now be able to create new users.
+
 ### Running Tests
 
-`lein test-refresh`
+`lein test`
