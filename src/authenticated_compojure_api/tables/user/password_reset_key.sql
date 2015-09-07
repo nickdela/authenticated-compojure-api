@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS password_reset_key (
   , reset_key     TEXT                  NOT NULL UNIQUE
   , already_used  BOOLEAN               NOT NULL DEFAULT FALSE
   , user_id       INTEGER   REFERENCES registered_user (id) ON DELETE CASCADE
-  , valid_until   TIMESTAMP WITH TIME ZONE DEFAULT NOW() + INTERVAL '24 hours'
+  , valid_until   TIMESTAMP WITH TIME ZONE DEFAULT CLOCK_TIMESTAMP() + INTERVAL '24 hours'
 );
 
 -- name: drop-password-reset-key-table!
