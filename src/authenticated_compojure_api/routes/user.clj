@@ -10,7 +10,7 @@
 
 
 (defroutes* user-routes
-  (context "/api" []
+  (context* "/api" []
 
     (POST* "/user"      {:as request}
            :tags        ["User"]

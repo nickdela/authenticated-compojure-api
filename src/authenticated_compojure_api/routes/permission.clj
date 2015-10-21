@@ -9,7 +9,7 @@
 
 
 (defroutes* permission-routes
-  (context "/api" []
+  (context* "/api" []
 
     (wrap-authentication
      (POST* "/permission/user/:id" {:as request}

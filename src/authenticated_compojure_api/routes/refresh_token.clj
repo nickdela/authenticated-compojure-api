@@ -6,7 +6,7 @@
 
 
 (defroutes* refresh-token-routes
-  (context "/api" []
+  (context* "/api" []
 
     (GET* "/refresh-token/:refreshToken" []
           :tags            ["Refresh-Token"]

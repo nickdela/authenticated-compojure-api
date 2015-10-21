@@ -5,7 +5,7 @@
             [compojure.api.sweet :refer :all]))
 
 (defroutes* password-routes
-  (context "/api" []
+  (context* "/api" []
 
     (POST* "/password/reset-request" []
            :tags        ["Password"]
