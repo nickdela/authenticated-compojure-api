@@ -7,7 +7,7 @@
             [compojure.api.sweet :refer :all]))
 
 (defroutes* auth-routes
-  (context "/api" []
+  (context* "/api" []
 
     (wrap-authentication
      (GET* "/auth"        {:as request}
