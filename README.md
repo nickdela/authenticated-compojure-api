@@ -28,7 +28,7 @@ CREATE DATABASE auth;
 CREATE DATABASE auth_test;
 \c auth;
 CREATE EXTENSION citext;
-c\ auth_test;
+\c auth_test;
 CREATE EXTENSION citext;
 CREATE ROLE auth_user LOGIN;
 ALTER ROLE auth_user WITH PASSWORD 'password1';
