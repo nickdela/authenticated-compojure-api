@@ -2,12 +2,12 @@
   :description "An example compojure-api app with authentication using buddy"
 
   :dependencies [[org.clojure/clojure        "1.7.0"]
-                 [metosin/compojure-api      "0.23.1"]
+                 [metosin/compojure-api      "0.24.1"]
                  [metosin/ring-http-response "0.6.5"]
-                 [metosin/ring-swagger-ui    "2.1.3"]
+                 [metosin/ring-swagger-ui    "2.1.3-4"]
                  [cheshire                   "5.5.0"]
                  [http-kit                   "2.1.19"]
-                 [buddy                      "0.7.2"]
+                 [buddy                      "0.8.2"]
                  [org.clojure/java.jdbc      "0.4.2"]
                  [postgresql/postgresql      "9.3-1102.jdbc41"]
                  [yesql                      "0.5.1"]
