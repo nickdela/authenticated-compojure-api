@@ -6,7 +6,7 @@
 (defroutes* preflight-route
   (context* "/api" []
 
-    (OPTIONS* "*"      {:as request}
+    (OPTIONS* "*"          {:as request}
               :tags        ["Preflight"]
               :return      {}
               :middlewares [cors-mw]

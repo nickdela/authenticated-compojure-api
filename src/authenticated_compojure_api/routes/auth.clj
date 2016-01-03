@@ -6,9 +6,9 @@
             [compojure.api.sweet :refer :all]))
 
 (defroutes* auth-routes
-  (context* "/api" []
+  (context* "/api/auth" []
 
-     (GET* "/auth"        {:as request}
+     (GET* "/"            {:as request}
            :tags          ["Auth"]
            :return        {:id Integer :username String :permissions String :token String :refreshToken String}
            :header-params [authorization :- String]

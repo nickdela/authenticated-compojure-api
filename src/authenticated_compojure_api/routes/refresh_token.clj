@@ -4,11 +4,10 @@
             [authenticated-compojure-api.route-functions.refresh-token.gen-new-token :refer [gen-new-token-response]]
             [compojure.api.sweet :refer :all]))
 
-
 (defroutes* refresh-token-routes
-  (context* "/api" []
+  (context* "/api/refresh-token" []
 
-    (GET* "/refresh-token/:refreshToken" []
+    (GET* "/:refreshToken" []
           :tags            ["Refresh-Token"]
           :return          {:token String :refreshToken String}
           :path-params     [refreshToken :- String]
@@ -16,7 +15,7 @@
           :summary         "Get a fresh token and new refresh-token with a valid refresh-token."
           (gen-new-token-response refreshToken))
 
-    (DELETE* "/refresh-token/:refreshToken" []
+    (DELETE* "/:refreshToken" []
              :tags            ["Refresh-Token"]
              :return          {:message String}
              :path-params     [refreshToken :- String]
