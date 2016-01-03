@@ -1,9 +1,8 @@
 (ns authenticated-compojure-api.middleware.basic-auth
-  (:require [buddy.auth :refer [authenticated?]]
-            [ring.util.http-response :refer [unauthorized]]))
+  (:require [buddy.auth.middleware :refer [wrap-authentication]]
+            [authenticated-compojure-api.auth-resources.basic-auth-backend :refer [basic-backend]]))
 
 (defn basic-auth-mw [handler]
   (fn [request]
-    (if (authenticated? request)
-      (handler request)
-      (unauthorized {:error "Not authorized"}))))
+    (-> handler
+      (wrap-authentication basic-backend))))
