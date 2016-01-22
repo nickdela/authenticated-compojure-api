@@ -12,7 +12,7 @@
            :tags          ["Auth"]
            :return        {:id Integer :username String :permissions String :token String :refreshToken String}
            :header-params [authorization :- String]
-           :middlewares   [basic-auth-mw cors-mw authenticated-mw]
+           :middleware    [basic-auth-mw cors-mw authenticated-mw]
            :summary       "Returns auth info given a username and password in the 'Authorization' header."
            :description   "Authorization header expects 'Basic username:password' where username:password
                            is base64 encoded. To adhere to basic auth standards we have to use a field called

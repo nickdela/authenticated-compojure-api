@@ -10,24 +10,24 @@
 (def permission-routes
   (context "/api/permission/user" []
 
-    (POST "/:id"         {:as request}
+    (POST "/:id"          {:as request}
            :tags          ["Permission"]
            :path-params   [id :- Long]
            :body-params   [permission :- String]
            :header-params [authorization :- String]
            :return        {:message String}
-           :middlewares   [token-auth-mw cors-mw authenticated-mw]
+           :middleware    [token-auth-mw cors-mw authenticated-mw]
            :summary       "Adds the specified permission for the specified user. Requires token to have `admin` auth."
            :description   "Authorization header expects the following format 'Token {token}'"
            (add-user-permission-response request id permission))
 
     (DELETE "/:id"          {:as request}
-             :tags           ["Permission"]
-             :path-params    [id :- Long]
-             :body-params    [permission :- String]
-             :header-params  [authorization :- String]
-             :return         {:message String}
-             :middlewares    [token-auth-mw cors-mw authenticated-mw]
-             :summary        "Deletes the specified permission for the specified user. Requires token to have `admin` auth."
-             :description    "Authorization header expects the following format 'Token {token}'"
+             :tags          ["Permission"]
+             :path-params   [id :- Long]
+             :body-params   [permission :- String]
+             :header-params [authorization :- String]
+             :return        {:message String}
+             :middleware    [token-auth-mw cors-mw authenticated-mw]
+             :summary       "Deletes the specified permission for the specified user. Requires token to have `admin` auth."
+             :description   "Authorization header expects the following format 'Token {token}'"
              (delete-user-permission-response request id permission))))

@@ -11,7 +11,7 @@
           :tags           ["Refresh-Token"]
           :return         {:token String :refreshToken String}
           :path-params    [refreshToken :- String]
-          :middlewares    [cors-mw]
+          :middleware     [cors-mw]
           :summary        "Get a fresh token and new refresh-token with a valid refresh-token."
           (gen-new-token-response refreshToken))
 
@@ -19,6 +19,6 @@
              :tags           ["Refresh-Token"]
              :return         {:message String}
              :path-params    [refreshToken :- String]
-             :middlewares    [cors-mw]
+             :middleware     [cors-mw]
              :summary        "Delete the specific refresh-token"
              (remove-refresh-token-response refreshToken))))

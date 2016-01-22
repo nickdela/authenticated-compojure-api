@@ -14,7 +14,7 @@
     (POST "/"           {:as request}
            :tags        ["User"]
            :return      {:username String}
-           :middlewares [cors-mw]
+           :middleware  [cors-mw]
            :body-params [email :- String username :- String password :- String]
            :summary     "Create a new user with provided username, email and password."
            (create-user-response email username password))
@@ -23,7 +23,7 @@
               :tags        ["User"]
               :path-params [id :- Long]
               :return      {:message String}
-              :middlewares [token-auth-mw cors-mw authenticated-mw]
+              :middleware  [token-auth-mw cors-mw authenticated-mw]
               :summary     "Deletes the specified user. Requires token to have `admin` auth or self ID."
               :description "Authorization header expects the following format 'Token {token}'"
               (delete-user-response request id))
@@ -34,7 +34,7 @@
               :body-params   [{username :- String ""} {password :- String ""} {email :- String ""}]
               :header-params [authorization :- String]
               :return        {:id Long :email String :username String}
-              :middlewares   [token-auth-mw cors-mw authenticated-mw]
+              :middleware    [token-auth-mw cors-mw authenticated-mw]
               :summary       "Update some or all fields of a specified user. Requires token to have `admin` auth or self ID."
               :description   "Authorization header expects the following format 'Token {token}'"
               (modify-user-response request id username password email))))
