@@ -3,7 +3,9 @@
             [authenticated-compojure-api.queries.query-defs :as query]
             [ring.util.http-response :as respond]))
 
-(defn auth-credentials-response [request]
+(defn auth-credentials-response
+  "Update token if needed??"
+  [request]
   (let [user          (:identity request)
         refresh-token (str (java.util.UUID/randomUUID))
         _ (query/update-registered-user-refresh-token<! {:refresh_token refresh-token :id (:id user)})]

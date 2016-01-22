@@ -2,7 +2,9 @@
   (:require [buddy.auth :refer [authenticated?]]
             [ring.util.http-response :refer [unauthorized]]))
 
-(defn authenticated-mw [handler]
+(defn authenticated-mw
+  "authenticated? Buddy auth middleware"
+  [handler]
   (fn [request]
     (if (authenticated? request)
       (handler request)

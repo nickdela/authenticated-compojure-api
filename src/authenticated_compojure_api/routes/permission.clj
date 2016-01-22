@@ -8,6 +8,7 @@
 
 
 (def permission-routes
+  "Specify routes for User Permission-related functions"
   (context "/api/permission/user" []
 
     (POST "/:id"          {:as request}

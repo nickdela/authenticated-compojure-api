@@ -3,7 +3,10 @@
              [clj-time.core :as time]
              [buddy.sign.jws :as jws]))
 
-(defn create-token [user]
+(defn create-token
+  "Create a token \\
+  (requires `:username` or `:email` and `:password`)"
+  [user]
   (let [stringify-user (-> user
                            (update-in [:username] str)
                            (update-in [:email] str)

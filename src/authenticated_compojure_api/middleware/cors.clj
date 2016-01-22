@@ -1,9 +1,9 @@
 (ns authenticated-compojure-api.middleware.cors)
 
-;; ============================================
-;  Allow requests from all origins
-;; ============================================
-(defn cors-mw [handler]
+(defn cors-mw
+  "Cross-origin Resource Sharing (CORS) middleware \\
+  Allow requests from all origins"
+  [handler]
   (fn [request]
     (let [response (handler request)]
       (-> response

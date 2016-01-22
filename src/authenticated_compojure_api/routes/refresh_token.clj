@@ -5,6 +5,7 @@
             [compojure.api.sweet :refer :all]))
 
 (def refresh-token-routes
+  "Specify routes for Refresh-Token functions"
   (context "/api/refresh-token" []
 
     (GET "/:refreshToken" []

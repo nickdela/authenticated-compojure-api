@@ -9,6 +9,7 @@
 
 
 (def user-routes
+  "Specify routes for User functions"
   (context "/api/user" []
 
     (POST "/"           {:as request}

@@ -5,6 +5,7 @@
             [compojure.api.sweet :refer :all]))
 
 (def password-routes
+  "Specify routes for User Password functions"
   (context "/api/password" []
 
     (POST "/reset-request" []

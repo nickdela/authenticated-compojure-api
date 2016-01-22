@@ -4,6 +4,7 @@
             [ring.util.http-response :as respond]))
 
 (def preflight-route
+  "Specify routes for Preflight functions"
   (context "/api" []
 
     (OPTIONS "*"           {:as request}

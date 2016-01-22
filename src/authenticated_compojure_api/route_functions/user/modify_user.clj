@@ -3,7 +3,9 @@
             [buddy.hashers :as hashers]
             [ring.util.http-response :as respond]))
 
-(defn modify-user [current-user-info username password email]
+(defn modify-user
+  "Update user info (`:email`/`:username`/`:password`)"
+  [current-user-info username password email]
   (let [new-email     (if (empty? email)    (str (:email current-user-info)) email)
         new-username  (if (empty? username) (str (:username current-user-info)) username)
         new-password  (if (empty? password) (:password current-user-info) (hashers/encrypt password))
@@ -14,7 +16,9 @@
                                                        :refresh_token (:refresh_token current-user-info)})]
     (respond/ok {:id (:id current-user-info) :email new-email :username new-username})))
 
-(defn modify-user-response [request id username password email]
+(defn modify-user-response
+  "Generate response for user update"
+  [request id username password email]
   (let [auth              (get-in request [:identity :permissions])
         current-user-info (first (query/get-registered-user-by-id {:id id}))
         admin?            (.contains auth "admin")

@@ -15,11 +15,15 @@
                  [clj-time                   "0.11.0"]
                  [com.draines/postal         "1.11.4"]]
 
-  :plugins      [[lein-environ "1.0.1"]]
+  :plugins      [[lein-environ "1.0.1"]
+                 [funcool/codeina "0.3.0" :exclusions [org.clojure/clojure]]]
 
   :min-lein-version  "2.5.0"
 
   :uberjar-name "server.jar"
+
+  :codeina {:sources ["src"]
+            :reader :clojure}
 
   :profiles {:uberjar {:resource-paths ["swagger-ui"]
                        :aot :all}
