@@ -1,6 +1,5 @@
 -- allow low-level commands on a remote DB
 CREATE EXTENSION IF NOT EXISTS dblink;
-CREATE EXTENSION IF NOT EXISTS citext;
 
 -- ensure required user has been created
 DO
@@ -31,9 +30,6 @@ END IF;
 END
 $doDev$;
 
--- \c auth;
--- CREATE EXTENSION citext;
-
 
 DO
 $doTest$
@@ -49,8 +45,12 @@ END IF;
 END
 $doTest$;
 
--- \c auth;
--- CREATE EXTENSION citext;
-
 GRANT ALL PRIVILEGES ON DATABASE auth to auth_user;
 GRANT ALL PRIVILEGES ON DATABASE auth_test to auth_user;
+
+-- add case-insensitive option to both databases
+\c auth;
+CREATE EXTENSION IF NOT EXISTS citext;
+
+\c auth_test;
+CREATE EXTENSION IF NOT EXISTS citext;
