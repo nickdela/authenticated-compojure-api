@@ -3,10 +3,10 @@
             [compojure.api.sweet :refer :all]
             [ring.util.http-response :as respond]))
 
-(defroutes* preflight-route
-  (context* "/api" []
+(def preflight-route
+  (context "/api" []
 
-    (OPTIONS* "*"          {:as request}
+    (OPTIONS "*"           {:as request}
               :tags        ["Preflight"]
               :return      {}
               :middlewares [cors-mw]

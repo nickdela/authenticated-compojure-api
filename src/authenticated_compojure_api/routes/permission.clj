@@ -7,10 +7,10 @@
             [compojure.api.sweet :refer :all]))
 
 
-(defroutes* permission-routes
-  (context* "/api/permission/user" []
+(def permission-routes
+  (context "/api/permission/user" []
 
-    (POST* "/:id"         {:as request}
+    (POST "/:id"         {:as request}
            :tags          ["Permission"]
            :path-params   [id :- Long]
            :body-params   [permission :- String]
@@ -21,7 +21,7 @@
            :description   "Authorization header expects the following format 'Token {token}'"
            (add-user-permission-response request id permission))
 
-    (DELETE* "/:id"          {:as request}
+    (DELETE "/:id"          {:as request}
              :tags           ["Permission"]
              :path-params    [id :- Long]
              :body-params    [permission :- String]

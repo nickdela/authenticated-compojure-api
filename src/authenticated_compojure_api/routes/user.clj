@@ -8,10 +8,10 @@
             [compojure.api.sweet :refer :all]))
 
 
-(defroutes* user-routes
-  (context* "/api/user" []
+(def user-routes
+  (context "/api/user" []
 
-    (POST* "/"          {:as request}
+    (POST "/"           {:as request}
            :tags        ["User"]
            :return      {:username String}
            :middlewares [cors-mw]
@@ -19,7 +19,7 @@
            :summary     "Create a new user with provided username, email and password."
            (create-user-response email username password))
 
-     (DELETE* "/:id"       {:as request}
+     (DELETE "/:id"        {:as request}
               :tags        ["User"]
               :path-params [id :- Long]
               :return      {:message String}
@@ -28,7 +28,7 @@
               :description "Authorization header expects the following format 'Token {token}'"
               (delete-user-response request id))
 
-     (PATCH*  "/:id"         {:as request}
+     (PATCH  "/:id"          {:as request}
               :tags          ["User"]
               :path-params   [id :- Long]
               :body-params   [{username :- String ""} {password :- String ""} {email :- String ""}]

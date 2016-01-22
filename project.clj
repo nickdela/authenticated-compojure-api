@@ -2,7 +2,7 @@
   :description "An example compojure-api app with authentication using buddy"
 
   :dependencies [[org.clojure/clojure        "1.7.0"]
-                 [metosin/compojure-api      "0.24.5"]
+                 [metosin/compojure-api      "1.0.0-SNAPSHOT"]
                  [metosin/ring-http-response "0.6.5"]
                  [metosin/ring-swagger-ui    "2.1.4-0"]
                  [cheshire                   "5.5.0"]

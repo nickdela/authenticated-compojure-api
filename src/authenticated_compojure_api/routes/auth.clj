@@ -5,10 +5,10 @@
             [authenticated-compojure-api.route-functions.auth.get-auth-credentials :refer [auth-credentials-response]]
             [compojure.api.sweet :refer :all]))
 
-(defroutes* auth-routes
-  (context* "/api/auth" []
+(def auth-routes
+  (context "/api/auth" []
 
-     (GET* "/"            {:as request}
+     (GET "/"            {:as request}
            :tags          ["Auth"]
            :return        {:id Integer :username String :permissions String :token String :refreshToken String}
            :header-params [authorization :- String]

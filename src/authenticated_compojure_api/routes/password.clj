@@ -4,10 +4,10 @@
             [authenticated-compojure-api.route-functions.password.request-password-reset :refer [request-password-reset-response]]
             [compojure.api.sweet :refer :all]))
 
-(defroutes* password-routes
-  (context* "/api/password" []
+(def password-routes
+  (context "/api/password" []
 
-    (POST* "/reset-request" []
+    (POST "/reset-request" []
            :tags        ["Password"]
            :return      {:message String}
            :body-params [userEmail         :- String
@@ -23,7 +23,7 @@
                          for 24 hours after creation."
            (request-password-reset-response userEmail fromEmail subject emailBodyPlain emailBodyHtml responseBaseLink))
 
-    (POST* "/reset-confirm" []
+    (POST "/reset-confirm" []
            :tags        ["Password"]
            :return      {:message String}
            :body-params [resetKey    :- String
