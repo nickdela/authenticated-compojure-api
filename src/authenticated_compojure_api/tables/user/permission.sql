@@ -7,3 +7,9 @@ CREATE TABLE IF NOT EXISTS permission (
 -- name: drop-permission-table!
 -- drop the permission table
 DROP TABLE permission;
+
+-- name: create-basic-permission-if-not-exists!
+-- create the 'basic' permission if it does not exist
+INSERT INTO permission (permission)
+ SELECT 'basic'
+ WHERE NOT EXISTS (SELECT 1 FROM permission WHERE permission='basic');

@@ -8,6 +8,7 @@
   []
   (query/create-registered-user-table-if-not-exists!)
   (query/create-permission-table-if-not-exists!)
+  (query/create-basic-permission-if-not-exists!)
   (query/create-user-permission-table-if-not-exists!)
   (query/create-password-reset-key-table-if-not-exists!))
 
