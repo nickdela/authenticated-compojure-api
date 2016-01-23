@@ -56,3 +56,9 @@ You will now be able to create new users.
 ### Running Tests
 
 `lein test`
+
+### Documentation
+
+`lein doc`
+
+HTML documentation will be generated in `doc/api`.

@@ -3,7 +3,9 @@
             [authenticated-compojure-api.queries.query-defs :as query]
             [authenticated-compojure-api.handler :refer [app]]))
 
-(defn create-tables []
+(defn create-tables
+  "Create database tables if they don't exist"
+  []
   (query/create-registered-user-table-if-not-exists!)
   (query/create-permission-table-if-not-exists!)
   (query/create-user-permission-table-if-not-exists!)

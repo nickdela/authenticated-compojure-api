@@ -3,7 +3,9 @@
             [buddy.hashers :as hashers]
             [ring.util.http-response :as respond]))
 
-(defn create-new-user [email username password]
+(defn create-new-user
+  "Create user with `email`, `username`, `password`"
+  [email username password]
   (let [hashed-password (hashers/encrypt password)
         new-user        (query/insert-registered-user<! {:email         email
                                                          :username      username
@@ -12,7 +14,9 @@
                                                              :permission "basic"})]
     (respond/created {:username (str (:username new-user))})))
 
-(defn create-user-response [email username password]
+(defn create-user-response
+  "Generate response for user creation"
+  [email username password]
   (let [username-query   (query/get-registered-user-by-username {:username username})
         email-query      (query/get-registered-user-by-email {:email email})
         email-exists?    (not-empty email-query)

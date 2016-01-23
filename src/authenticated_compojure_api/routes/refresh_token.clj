@@ -4,21 +4,22 @@
             [authenticated-compojure-api.route-functions.refresh-token.gen-new-token :refer [gen-new-token-response]]
             [compojure.api.sweet :refer :all]))
 
-(defroutes* refresh-token-routes
-  (context* "/api/refresh-token" []
+(def refresh-token-routes
+  "Specify routes for Refresh-Token functions"
+  (context "/api/refresh-token" []
 
-    (GET* "/:refreshToken" []
-          :tags            ["Refresh-Token"]
-          :return          {:token String :refreshToken String}
-          :path-params     [refreshToken :- String]
-          :middlewares     [cors-mw]
-          :summary         "Get a fresh token and new refresh-token with a valid refresh-token."
+    (GET "/:refreshToken" []
+          :tags           ["Refresh-Token"]
+          :return         {:token String :refreshToken String}
+          :path-params    [refreshToken :- String]
+          :middleware     [cors-mw]
+          :summary        "Get a fresh token and new refresh-token with a valid refresh-token."
           (gen-new-token-response refreshToken))
 
-    (DELETE* "/:refreshToken" []
-             :tags            ["Refresh-Token"]
-             :return          {:message String}
-             :path-params     [refreshToken :- String]
-             :middlewares     [cors-mw]
-             :summary         "Delete the specific refresh-token"
+    (DELETE "/:refreshToken" []
+             :tags           ["Refresh-Token"]
+             :return         {:message String}
+             :path-params    [refreshToken :- String]
+             :middleware     [cors-mw]
+             :summary        "Delete the specific refresh-token"
              (remove-refresh-token-response refreshToken))))

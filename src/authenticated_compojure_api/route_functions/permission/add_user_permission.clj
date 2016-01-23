@@ -2,7 +2,9 @@
   (:require [authenticated-compojure-api.queries.query-defs :as query]
             [ring.util.http-response :as respond]))
 
-(defn add-user-permission [id permission]
+(defn add-user-permission
+  "Create user permission"
+  [id permission]
   (let [added-permission (try
                            (query/insert-permission-for-user<! {:userid id :permission permission})
                            (catch Exception e 0))]
@@ -10,7 +12,9 @@
       (respond/ok        {:message (format "Permission '%s' for user %d successfully added" permission id)})
       (respond/not-found {:error (format "Permission '%s' does not exist" permission)}))))
 
-(defn add-user-permission-response [request id permission]
+(defn add-user-permission-response
+  "Generate response for permission creation"
+  [request id permission]
   (let [auth (get-in request [:identity :permissions])]
     (if (.contains auth "admin")
       (add-user-permission id permission)

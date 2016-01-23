@@ -3,12 +3,16 @@
             [authenticated-compojure-api.queries.query-defs :as query]
             [ring.util.http-response :as respond]))
 
-(defn create-new-tokens [user]
+(defn create-new-tokens
+  "Create a new user token"
+  [user]
   (let [new-refresh-token (str (java.util.UUID/randomUUID))
         _ (query/update-registered-user-refresh-token<! {:refresh_token new-refresh-token :id (:id user)})]
     {:token (create-token user) :refreshToken new-refresh-token}))
 
-(defn gen-new-token-response [refresh-token]
+(defn gen-new-token-response
+  "Generate response for user token creation"
+  [refresh-token]
   (let [user (first (query/get-registered-user-details-by-refresh-token {:refresh_token refresh-token}))]
     (if (empty? user)
       (respond/bad-request {:error "Bad Request"})

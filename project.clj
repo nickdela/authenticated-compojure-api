@@ -2,12 +2,12 @@
   :description "An example compojure-api app with authentication using buddy"
 
   :dependencies [[org.clojure/clojure        "1.7.0"]
-                 [metosin/compojure-api      "0.24.1"]
+                 [metosin/compojure-api      "1.0.0-SNAPSHOT"]
                  [metosin/ring-http-response "0.6.5"]
-                 [metosin/ring-swagger-ui    "2.1.3-4"]
+                 [metosin/ring-swagger-ui    "2.1.4-0"]
                  [cheshire                   "5.5.0"]
                  [http-kit                   "2.1.19"]
-                 [buddy                      "0.8.2"]
+                 [buddy                      "0.9.0"]
                  [org.clojure/java.jdbc      "0.4.2"]
                  [postgresql/postgresql      "9.3-1102.jdbc41"]
                  [yesql                      "0.5.1"]
@@ -15,11 +15,15 @@
                  [clj-time                   "0.11.0"]
                  [com.draines/postal         "1.11.4"]]
 
-  :plugins      [[lein-environ "1.0.1"]]
+  :plugins      [[lein-environ "1.0.1"]
+                 [funcool/codeina "0.3.0" :exclusions [org.clojure/clojure]]]
 
   :min-lein-version  "2.5.0"
 
   :uberjar-name "server.jar"
+
+  :codeina {:sources ["src"]
+            :reader :clojure}
 
   :profiles {:uberjar {:resource-paths ["swagger-ui"]
                        :aot :all}

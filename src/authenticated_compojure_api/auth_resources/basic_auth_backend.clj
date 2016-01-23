@@ -3,13 +3,12 @@
             [buddy.auth.backends.httpbasic :refer [http-basic-backend]]
             [buddy.hashers :as hashers]))
 
-;; ============================================================================
-;; The username and email values are stored in citext fields in Postgres thus
-;; the need to convert them to strings for future use. Since we want to accept
-;; eiter username or email as an identifier we will query for both and check
-;; for a match.
-;; ============================================================================
-(defn get-user-info [identifier]
+(defn get-user-info
+  "The username and email values are stored in citext fields in Postgres thus \\
+   the need to convert them to strings for future use. Since we want to accept \\
+   eiter username or email as an identifier we will query for both and check \\
+   for a match."
+  [identifier]
   (let [registered-user-username (first (query/get-registered-user-details-by-username {:username identifier}))
         registered-user-email    (first (query/get-registered-user-details-by-email {:email identifier}))
         registered-user          (first (remove nil? [registered-user-username registered-user-email]))]
@@ -20,15 +19,14 @@
                       (dissoc   :password))
        :password  (:password registered-user)})))
 
-;; ============================================================================
-;  This function will delegate determining if we have the correct username and
-;  password to authorize a user. The return value will be added to the request
-;  with the keyword of :identity. We will accept either a valid username or
-;  valid user email in the username field. It is a little strange but to adhere
-;  to legacy basic auth api of using username:password we have to make the
-;  field do double duty.
-;; ============================================================================
-(defn basic-auth [request, auth-data]
+(defn basic-auth
+  "This function will delegate determining if we have the correct username and
+   password to authorize a user. The return value will be added to the request
+   with the keyword of :identity. We will accept either a valid username or
+   valid user email in the username field. It is a little strange but to adhere
+   to legacy basic auth api of using username:password we have to make the
+   field do double duty."
+  [request, auth-data]
   (let [identifier  (:username auth-data)
         password    (:password auth-data)
         user-info   (get-user-info identifier)]
@@ -36,7 +34,6 @@
       (:user-data user-info)
       false)))
 
-;; ============================================================================
-;  Create authentication backend
-;; ============================================================================
-(def basic-backend (http-basic-backend {:authfn basic-auth}))
+(def basic-backend
+  "Create authentication backend"
+  (http-basic-backend {:authfn basic-auth}))

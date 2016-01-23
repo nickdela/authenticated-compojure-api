@@ -5,14 +5,18 @@
             [clj-time.core :as t]
             [ring.util.http-response :as respond]))
 
-(defn update-password [reset-key key-row new-password]
+(defn update-password
+  "Update user's password"
+  [reset-key key-row new-password]
   (let [user-id         (:user_id key-row)
         hashed-password (hashers/encrypt new-password)]
     (query/invalidate-reset-key<! {:reset_key reset-key})
     (query/update-registered-user-password<! {:id user-id :password hashed-password})
     (respond/ok {:message "Password successfully reset"})))
 
-(defn password-reset-response [reset-key new-password]
+(defn password-reset-response
+  "Generate response for password update"
+  [reset-key new-password]
   (let [key-row-query    (query/get-reset-row-by-reset-key {:reset_key reset-key})
         key-row          (first key-row-query)
         key-exists?      (empty? key-row)

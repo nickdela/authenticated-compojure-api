@@ -2,7 +2,9 @@
   (:require [authenticated-compojure-api.queries.query-defs :as query]
             [ring.util.http-response :as respond]))
 
-(defn remove-refresh-token-response [refresh-token]
+(defn remove-refresh-token-response
+  "Remove refresh token (error if doesn't exist)"
+  [refresh-token]
   (let [null-refresh-token (query/null-refresh-token<! {:refresh_token refresh-token})]
     (if (nil? null-refresh-token)
       (respond/not-found  {:error "The refresh token does not exist"})
