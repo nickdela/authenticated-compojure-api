@@ -59,6 +59,5 @@ You will now be able to create new users.
 
 ### Documentation
 
-`lein doc`
-
-HTML documentation will be generated in `doc/api`.
+The HTML documentation can be viewed online at [authenticated-compojure-api](http://www.jarrodctaylor.com/authenticated-compojure-api/)
+or generated locally with `lein doc` the output will be saved in `doc/api`.
