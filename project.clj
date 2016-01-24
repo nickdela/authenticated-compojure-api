@@ -1,5 +1,7 @@
 (defproject authenticated-compojure-api "0.1.0-SNAPSHOT"
   :description "An example compojure-api app with authentication using buddy"
+  :license {:name "MIT"
+            :url "https://opensource.org/licenses/MIT"}
 
   :dependencies [[org.clojure/clojure        "1.7.0"]
                  [metosin/compojure-api      "1.0.0-SNAPSHOT"]
