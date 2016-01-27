@@ -9,12 +9,6 @@
             [clj-time.core :as t]
             [clj-time.coerce :as c]))
 
-(def example-user {:email "Jarrod@JarrodCTaylor.com" :username "JarrodCTaylor" :password "pass"})
-
-(defn add-users []
-  (app (-> (mock/request :post "/api/user" (ch/generate-string example-user))
-           (mock/content-type "application/json"))))
-
 (defn gen-reset-json [email]
   (ch/generate-string {:userEmail        email
                        :fromEmail        "admin@something.com"
@@ -24,20 +18,14 @@
 
 (defn setup-teardown [f]
   (try
-    (query/create-registered-user-table-if-not-exists!)
-    (query/create-permission-table-if-not-exists!)
-    (query/create-user-permission-table-if-not-exists!)
-    (query/create-password-reset-key-table-if-not-exists!)
     (query/insert-permission<! {:permission "basic"})
-    (add-users)
+    (helper/add-users)
     (f)
-    (finally
-      (query/drop-user-permission-table!)
-      (query/drop-permission-table!)
-      (query/drop-password-reset-key-table!)
-      (query/drop-registered-user-table!))))
+    (finally (query/truncate-all-tables-in-database!))))
 
+(use-fixtures :once helper/create-tables)
 (use-fixtures :each setup-teardown)
+
 
 (deftest test-add-response-link-to-html-body-returns-desired-string
   (testing "test add response link to html body returns desired string"
@@ -56,11 +44,12 @@
 (deftest successfully-request-password-reset-with-email-for-a-valid-registered-user
   (testing "Successfully request password reset with email for a valid registered user"
     (with-redefs [unit-test/send-reset-email (fn [to-email from-email subject html-body plain-body] nil)]
-      (let [reset-info-json  (gen-reset-json "Jarrod@JarrodCTaylor.com")
+      (let [user-id-1        (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
+            reset-info-json  (gen-reset-json "j@man.com")
             response         (app (-> (mock/request :post "/api/password/reset-request" reset-info-json)
                                       (mock/content-type "application/json")))
             body             (helper/parse-body (:body response))
-            pass-reset-row   (query/get-password-reset-keys-for-userid {:userid 1})
+            pass-reset-row   (query/get-password-reset-keys-for-userid {:userid user-id-1})
             pass-reset-key   (:reset_key (first pass-reset-row))
             valid-until-ts   (:valid_until (first pass-reset-row))
             ; shave off the last four digits so we can compare
@@ -69,7 +58,7 @@
         (is (= 200                                                         (:status response)))
         (is (= 1                                                           (count pass-reset-row)))
         (is (= valid-until-str                                             one-day-from-now))
-        (is (= "Reset email successfully sent to Jarrod@JarrodCTaylor.com" (:message body)))))))
+        (is (= "Reset email successfully sent to j@man.com" (:message body)))))))
 
 (deftest invalid-user-email-return-404-when-requesting-password-reset
   (testing "Invalid user email returns 404 when requesting password reset"

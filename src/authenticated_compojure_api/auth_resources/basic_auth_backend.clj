@@ -4,9 +4,9 @@
             [buddy.hashers :as hashers]))
 
 (defn get-user-info
-  "The username and email values are stored in citext fields in Postgres thus \\
-   the need to convert them to strings for future use. Since we want to accept \\
-   eiter username or email as an identifier we will query for both and check \\
+  "The username and email values are stored in citext fields in Postgres thus
+   the need to convert them to strings for future use. Since we want to accept
+   eiter username or email as an identifier we will query for both and check
    for a match."
   [identifier]
   (let [registered-user-username (first (query/get-registered-user-details-by-username {:username identifier}))

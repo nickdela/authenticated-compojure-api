@@ -6,64 +6,57 @@
             [ring.mock.request :as mock]
             [cheshire.core :as ch]))
 
-(def basic-user {:email "e@man.com" :username "Everyman"      :password "pass"})
-(def admin-user {:email "J@man.com" :username "JarrodCTaylor" :password "pass"})
-
-(defn add-users []
-  (app (-> (mock/request :post "/api/user" (ch/generate-string basic-user))
-           (mock/content-type "application/json")))
-  (app (-> (mock/request :post "/api/user" (ch/generate-string admin-user))
-           (mock/content-type "application/json"))))
-
 (defn setup-teardown [f]
   (try
-    (query/create-registered-user-table-if-not-exists!)
-    (query/create-permission-table-if-not-exists!)
-    (query/create-user-permission-table-if-not-exists!)
     (query/insert-permission<! {:permission "basic"})
-    (add-users)
+    (helper/add-users)
     (f)
-    (finally
-      (query/drop-user-permission-table!)
-      (query/drop-permission-table!)
-      (query/drop-registered-user-table!))))
+    (finally (query/truncate-all-tables-in-database!))))
 
+(use-fixtures :once helper/create-tables)
 (use-fixtures :each setup-teardown)
 
 (deftest can-delete-user-who-is-not-self-and-associated-permissions-with-valid-token-and-admin-permissions
   (testing "Can delete user who is not self and associated permissions with valid token and admin permissions"
-    (is (= 2 (count (query/all-registered-users))))
-    (is (= "basic" (helper/get-permissions-for-user 1)))
-    (query/insert-permission<! {:permission "admin"})
-    (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (let [response (app (-> (mock/request :delete "/api/user/1")
-                            (mock/content-type "application/json")
-                            (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
-          body     (helper/parse-body (:body response))]
-      (is (= 200                              (:status response)))
-      (is (= "User id 1 successfully removed" (:message body)))
-      (is (= 1 (count (query/all-registered-users))))
-      (is (= nil (helper/get-permissions-for-user 1))))))
+    (let [user-id-1         (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
+          user-id-2         (:id (first (query/get-registered-user-by-username {:username "Everyman"})))
+          _                 (is (= 2 (count (query/all-registered-users))))
+          _                 (is (= "basic" (helper/get-permissions-for-user user-id-2)))
+          _                 (query/insert-permission<! {:permission "admin"})
+          _                 (query/insert-permission-for-user<! {:userid user-id-1 :permission "admin"})
+          response          (app (-> (mock/request :delete (str "/api/user/" user-id-2))
+                                     (mock/content-type "application/json")
+                                     (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
+          body              (helper/parse-body (:body response))
+          expected-response (str "User id " user-id-2 " successfully removed")]
+      (is (= 200               (:status response)))
+      (is (= expected-response (:message body)))
+      (is (= 1                 (count (query/all-registered-users))))
+      (is (= nil (helper/get-permissions-for-user user-id-2))))))
 
 (deftest can-delete-self-and-associated-permissions-with-valid-token-and-basic-permissions
   (testing "Can delete self and associated permissions with valid token and basic permissions"
-    (is (= 2 (count (query/all-registered-users))))
-    (is (= "basic" (helper/get-permissions-for-user 1)))
-    (let [response (app (-> (mock/request :delete "/api/user/1")
-                            (mock/content-type "application/json")
-                            (helper/get-token-auth-header-for-user "Everyman:pass")))
-          body     (helper/parse-body (:body response))]
-      (is (= 200                              (:status response)))
-      (is (= "User id 1 successfully removed" (:message body)))
-      (is (= 1 (count (query/all-registered-users))))
-      (is (= nil (helper/get-permissions-for-user 1))))))
+    (let [user-id-1         (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
+          _                 (is (= "basic" (helper/get-permissions-for-user user-id-1)))
+          _                 (is (= 2 (count (query/all-registered-users))))
+          response          (app (-> (mock/request :delete (str "/api/user/" user-id-1))
+                                     (mock/content-type "application/json")
+                                     (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
+          body              (helper/parse-body (:body response))
+          expected-response (str "User id " user-id-1 " successfully removed")]
+      (is (= 200               (:status response)))
+      (is (= expected-response (:message body)))
+      (is (= 1                 (count (query/all-registered-users))))
+      (is (= nil               (helper/get-permissions-for-user user-id-1))))))
 
 (deftest can-not-delete-user-who-is-not-self-with-valid-token-and-basic-permissions
   (testing "Can not delete user who is not self with valid token and basic permissions"
-    (is (= 2 (count (query/all-registered-users))))
-    (let [response (app (-> (mock/request :delete "/api/user/2")
+    (let [user-id-1         (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
+          user-id-2         (:id (first (query/get-registered-user-by-username {:username "Everyman"})))
+          _                 (is (= 2 (count (query/all-registered-users))))
+          response (app (-> (mock/request :delete (str "/api/user/" user-id-2))
                             (mock/content-type "application/json")
-                            (helper/get-token-auth-header-for-user "Everyman:pass")))
+                            (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
       (is (= "Not authorized" (:error body)))
@@ -71,11 +64,12 @@
 
 (deftest return-404-when-trying-to-delete-a-user-that-does-not-exists
   (testing "Return 404 when trying to delete a user that does not exists"
-    (query/insert-permission<! {:permission "admin"})
-    (query/insert-permission-for-user<! {:userid 2 :permission "admin"})
-    (let [response (app (-> (mock/request :delete "/api/user/99")
-                            (mock/content-type "application/json")
-                            (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
-          body     (helper/parse-body (:body response))]
-      (is (= 404                    (:status response)))
+    (let [user-id-1  (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
+          _          (query/insert-permission<! {:permission "admin"})
+          _          (query/insert-permission-for-user<! {:userid user-id-1 :permission "admin"})
+          response   (app (-> (mock/request :delete "/api/user/99")
+                              (mock/content-type "application/json")
+                              (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
+          body       (helper/parse-body (:body response))]
+      (is (= 404                     (:status response)))
       (is (= "Userid does not exist" (:error body))))))

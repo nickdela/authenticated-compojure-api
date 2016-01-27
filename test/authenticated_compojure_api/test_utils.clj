@@ -1,12 +1,12 @@
 (ns authenticated-compojure-api.test-utils
-  (:require [cheshire.core :as cheshire]
+  (:require [cheshire.core :as ch]
             [ring.mock.request :as mock]
             [authenticated-compojure-api.handler :refer [app]]
             [authenticated-compojure-api.queries.query-defs :as query]
             [buddy.core.codecs :refer [str->base64]]))
 
 (defn parse-body [body]
-  (cheshire/parse-string (slurp body) true))
+  (ch/parse-string (slurp body) true))
 
 (defn basic-auth-header
   [request original]
@@ -27,3 +27,19 @@
 
 (defn get-permissions-for-user [id]
   (:permissions (first (query/get-permissions-for-userid {:userid id}))))
+
+(defn add-users []
+  (let [user-1 {:email "j@man.com" :username "JarrodCTaylor" :password "pass"}
+        user-2 {:email "e@man.com" :username "Everyman"      :password "pass"}]
+    (app (-> (mock/request :post "/api/user" (ch/generate-string user-1))
+             (mock/content-type "application/json")))
+    (app (-> (mock/request :post "/api/user" (ch/generate-string user-2))
+             (mock/content-type "application/json")))))
+
+(defn create-tables [f]
+  (query/create-registered-user-table-if-not-exists!)
+  (query/create-permission-table-if-not-exists!)
+  (query/create-user-permission-table-if-not-exists!)
+  (query/create-password-reset-key-table-if-not-exists!)
+  (f))
+
