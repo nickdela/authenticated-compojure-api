@@ -3,6 +3,7 @@
             [authenticated-compojure-api.middleware.authenticated :refer [authenticated-mw]]
             [authenticated-compojure-api.middleware.cors :refer [cors-mw]]
             [authenticated-compojure-api.route-functions.auth.get-auth-credentials :refer [auth-credentials-response]]
+            [schema.core :as s]
             [compojure.api.sweet :refer :all]))
 
 (def auth-routes
@@ -11,7 +12,7 @@
 
      (GET "/"            {:as request}
            :tags          ["Auth"]
-           :return        {:id Integer :username String :permissions String :token String :refreshToken String}
+           :return        {:id s/Uuid :username String :permissions String :token String :refreshToken String}
            :header-params [authorization :- String]
            :middleware    [basic-auth-mw cors-mw authenticated-mw]
            :summary       "Returns auth info given a username and password in the '`Authorization`' header."

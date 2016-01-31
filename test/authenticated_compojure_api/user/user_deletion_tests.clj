@@ -67,7 +67,7 @@
     (let [user-id-1  (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
           _          (query/insert-permission<! {:permission "admin"})
           _          (query/insert-permission-for-user<! {:userid user-id-1 :permission "admin"})
-          response   (app (-> (mock/request :delete "/api/user/99")
+          response   (app (-> (mock/request :delete "/api/user/83b811-edf0-48ec-84-5a142e2c3a75")
                               (mock/content-type "application/json")
                               (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body       (helper/parse-body (:body response))]

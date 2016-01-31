@@ -51,6 +51,8 @@ GRANT ALL PRIVILEGES ON DATABASE auth_test to auth_user;
 -- add case-insensitive option to both databases
 \c auth;
 CREATE EXTENSION IF NOT EXISTS citext;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 \c auth_test;
 CREATE EXTENSION IF NOT EXISTS citext;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

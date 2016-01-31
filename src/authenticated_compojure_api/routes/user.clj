@@ -5,6 +5,7 @@
             [authenticated-compojure-api.route-functions.user.create-user :refer [create-user-response]]
             [authenticated-compojure-api.route-functions.user.delete-user :refer [delete-user-response]]
             [authenticated-compojure-api.route-functions.user.modify-user :refer [modify-user-response]]
+            [schema.core :as s]
             [compojure.api.sweet :refer :all]))
 
 
@@ -22,7 +23,7 @@
 
      (DELETE "/:id"        {:as request}
               :tags        ["User"]
-              :path-params [id :- Long]
+              :path-params [id :- s/Uuid]
               :return      {:message String}
               :middleware  [token-auth-mw cors-mw authenticated-mw]
               :summary     "Deletes the specified user. Requires token to have `admin` auth or self ID."
@@ -31,10 +32,10 @@
 
      (PATCH  "/:id"          {:as request}
               :tags          ["User"]
-              :path-params   [id :- Long]
+              :path-params   [id :- s/Uuid]
               :body-params   [{username :- String ""} {password :- String ""} {email :- String ""}]
               :header-params [authorization :- String]
-              :return        {:id Long :email String :username String}
+              :return        {:id s/Uuid :email String :username String}
               :middleware    [token-auth-mw cors-mw authenticated-mw]
               :summary       "Update some or all fields of a specified user. Requires token to have `admin` auth or self ID."
               :description   "Authorization header expects the following format 'Token {token}'"

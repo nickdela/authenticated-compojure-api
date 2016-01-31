@@ -83,7 +83,7 @@
   (testing "Trying to modify a user that does not exist returns a 404"
     (let [user-id-1  (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
           _          (query/insert-permission-for-user<! {:userid user-id-1 :permission "admin"})
-          response   (app (-> (mock/request :patch "/api/user/99" (ch/generate-string {:email "not@real.com"}))
+          response   (app (-> (mock/request :patch "/api/user/83b811-edf0-48ec-84-5a142e2c3a75" (ch/generate-string {:email "not@real.com"}))
                               (mock/content-type "application/json")
                               (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body       (helper/parse-body (:body response))]

@@ -4,6 +4,7 @@
             [authenticated-compojure-api.middleware.authenticated :refer [authenticated-mw]]
             [authenticated-compojure-api.route-functions.permission.add-user-permission :refer [add-user-permission-response]]
             [authenticated-compojure-api.route-functions.permission.delete-user-permission :refer [delete-user-permission-response]]
+            [schema.core :as s]
             [compojure.api.sweet :refer :all]))
 
 
@@ -13,7 +14,7 @@
 
     (POST "/:id"          {:as request}
            :tags          ["Permission"]
-           :path-params   [id :- Long]
+           :path-params   [id :- s/Uuid]
            :body-params   [permission :- String]
            :header-params [authorization :- String]
            :return        {:message String}
@@ -24,7 +25,7 @@
 
     (DELETE "/:id"          {:as request}
              :tags          ["Permission"]
-             :path-params   [id :- Long]
+             :path-params   [id :- s/Uuid]
              :body-params   [permission :- String]
              :header-params [authorization :- String]
              :return        {:message String}

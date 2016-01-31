@@ -9,7 +9,7 @@
                            (query/insert-permission-for-user<! {:userid id :permission permission})
                            (catch Exception e 0))]
     (if (not= 0 added-permission)
-      (respond/ok        {:message (format "Permission '%s' for user %d successfully added" permission id)})
+      (respond/ok        {:message (format "Permission '%s' for user %s successfully added" permission id)})
       (respond/not-found {:error (format "Permission '%s' does not exist" permission)}))))
 
 (defn add-user-permission-response
