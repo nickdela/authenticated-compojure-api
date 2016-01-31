@@ -5,7 +5,9 @@
             [authenticated-compojure-api.queries.query-defs :as query]
             [authenticated-compojure-api.test-utils :as helper]
             [ring.mock.request :as mock]
-            [cheshire.core :as ch]))
+            [cheshire.core :as ch]
+            [clj-time.core :as t]
+            [clj-time.coerce :as c]))
 
 (defn create-user [user-map]
   (app (-> (mock/request :post "/api/user" (ch/generate-string user-map))
@@ -33,12 +35,15 @@
     (is (= 0 (count (query/all-registered-users))))
     (let [response            (create-user {:email "new@user.com" :username "NewUser" :password "pass"})
           body                (parse-body (:body response))
-          new-registered-user (first (query/get-registered-user-details-by-username {:username (:username body)}))]
-      (is (= 201       (:status response)))
-      (is (= 1         (count (query/all-registered-users))))
-      (is (= "NewUser" (:username body)))
-      (is (= "NewUser" (str (:username new-registered-user))))
-      (is (= "basic"   (:permissions new-registered-user))))))
+          new-registered-user (first (query/get-registered-user-details-by-username {:username (:username body)}))
+          registered-at       (subs (str (c/to-long (:created_on new-registered-user))) 0 8)
+          expected-time       (subs (str (c/to-long (t/now))) 0 8)]
+      (is (= 201           (:status response)))
+      (is (= 1             (count (query/all-registered-users))))
+      (is (= "NewUser"     (:username body)))
+      (is (= "NewUser"     (str (:username new-registered-user))))
+      (is (= expected-time registered-at) )
+      (is (= "basic"       (:permissions new-registered-user))))))
 
 (deftest can-not-create-a-user-if-username-already-exists-using-the-same-case
   (testing "Can not create a user if username already exists using the same case"

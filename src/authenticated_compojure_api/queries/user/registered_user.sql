@@ -36,6 +36,7 @@ WHERE  email = :email
 -- name: get-registered-user-details-by-username
 -- Selects user details for matching username
 SELECT   reg_user.id
+         , reg_user.created_on
          , reg_user.email
          , reg_user.username
          , reg_user.password

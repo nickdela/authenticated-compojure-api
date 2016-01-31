@@ -16,6 +16,7 @@
       {:user-data (-> registered-user
                       (assoc-in [:username] (str (:username registered-user)))
                       (assoc-in [:email]    (str (:email registered-user)))
+                      (dissoc   :created_on)
                       (dissoc   :password))
        :password  (:password registered-user)})))
 
