@@ -17,7 +17,8 @@
     (respond/ok {:id (:id current-user-info) :email new-email :username new-username})))
 
 (defn modify-user-response
-  "Generate response for user update"
+  "User is allowed to update attributes for a user if the requester is
+   modifying attributes associated with its own id or has admin permissions."
   [request id username password email]
   (let [auth              (get-in request [:identity :permissions])
         current-user-info (first (query/get-registered-user-by-id {:id id}))

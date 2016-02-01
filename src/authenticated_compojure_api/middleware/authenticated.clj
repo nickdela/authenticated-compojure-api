@@ -3,7 +3,8 @@
             [ring.util.http-response :refer [unauthorized]]))
 
 (defn authenticated-mw
-  "authenticated? Buddy auth middleware"
+  "Middleware used in routes that require authentication. If request is not
+   authenticated a 401 not authorized response will be returned"
   [handler]
   (fn [request]
     (if (authenticated? request)

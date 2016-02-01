@@ -3,7 +3,7 @@
             [authenticated-compojure-api.auth-resources.token-auth-backend :refer [token-backend]]))
 
 (defn token-auth-mw
-  "Token-based authentication middleware"
+  "Middleware used on routes requiring token authentication"
   [handler]
   (fn [request]
     (-> handler

@@ -3,7 +3,7 @@
             [authenticated-compojure-api.auth-resources.basic-auth-backend :refer [basic-backend]]))
 
 (defn basic-auth-mw
-  "HTTP Basic Authentication middleware"
+  "Middleware used on routes requiring basic authentication"
   [handler]
   (fn [request]
     (-> handler

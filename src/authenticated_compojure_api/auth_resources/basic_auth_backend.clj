@@ -36,5 +36,6 @@
       false)))
 
 (def basic-backend
-  "Create authentication backend"
+  "Use the basic-auth function defined in this file as the authentication
+   function for the http-basic-backend"
   (http-basic-backend {:authfn basic-auth}))

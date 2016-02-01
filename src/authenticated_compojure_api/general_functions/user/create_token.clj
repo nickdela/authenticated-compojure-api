@@ -4,8 +4,8 @@
              [buddy.sign.jws :as jws]))
 
 (defn create-token
-  "Create a token \\
-  (requires `:username` or `:email` and `:password`)"
+  "Create a signed json web token. The token contents are; username, email, id,
+   permissions and token expiration time. Tokens are valid for 15 minutes."
   [user]
   (let [stringify-user (-> user
                            (update-in [:username] str)

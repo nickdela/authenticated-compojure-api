@@ -4,7 +4,9 @@
             [ring.util.http-response :as respond]))
 
 (defn auth-credentials-response
-  "Update token if needed??"
+  "Generate response for get requests to /api/auth. This route requires basic
+   authentication. A successful request to this route will generate a new
+   refresh-token, and return {:id :username :permissions :token :refreshToken}"
   [request]
   (let [user          (:identity request)
         refresh-token (str (java.util.UUID/randomUUID))
