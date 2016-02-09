@@ -47,7 +47,7 @@
 (deftest can-modify-a-users-password-with-valid-token-and-admin-permissions
   (testing "Can modify a users password with valid token and admin permissions"
     (let [user-id-1    (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
-                       _ (query/insert-permission-for-user<! {:userid user-id-1 :permission "admin"})
+          _            (query/insert-permission-for-user<! {:userid user-id-1 :permission "admin"})
           response     (app (-> (mock/request :patch (str "/api/user/" user-id-1) (ch/generate-string {:password "newPass"}))
                                 (mock/content-type "application/json")
                                 (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
