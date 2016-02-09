@@ -5,6 +5,4 @@
 (defn basic-auth-mw
   "Middleware used on routes requiring basic authentication"
   [handler]
-  (fn [request]
-    (-> handler
-      (wrap-authentication basic-backend))))
+  (wrap-authentication handler basic-backend))

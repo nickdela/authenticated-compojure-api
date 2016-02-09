@@ -5,6 +5,4 @@
 (defn token-auth-mw
   "Middleware used on routes requiring token authentication"
   [handler]
-  (fn [request]
-    (-> handler
-      (wrap-authentication token-backend))))
+  (wrap-authentication handler token-backend))
