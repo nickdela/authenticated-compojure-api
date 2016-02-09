@@ -6,20 +6,17 @@
 
 (def refresh-token-routes
   "Specify routes for Refresh-Token functions"
-  (context "/api/refresh-token" []
+  (context "/api/refresh-token/:refreshToken" []
+           :tags        ["Refresh-Token"]
+           :middleware  [cors-mw]
+           :path-params [refreshToken :- String]
 
-    (GET "/:refreshToken" []
-          :tags           ["Refresh-Token"]
+    (GET "/" request
           :return         {:token String :refreshToken String}
-          :path-params    [refreshToken :- String]
-          :middleware     [cors-mw]
           :summary        "Get a fresh token and new refresh-token with a valid refresh-token."
           (gen-new-token-response refreshToken))
 
-    (DELETE "/:refreshToken" []
-             :tags           ["Refresh-Token"]
-             :return         {:message String}
-             :path-params    [refreshToken :- String]
-             :middleware     [cors-mw]
-             :summary        "Delete the specific refresh-token"
-             (remove-refresh-token-response refreshToken))))
+    (DELETE "/" request
+            :return         {:message String}
+            :summary        "Delete the specific refresh-token"
+            (remove-refresh-token-response refreshToken))))
