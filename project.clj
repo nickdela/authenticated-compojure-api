@@ -4,12 +4,12 @@
             :url "https://opensource.org/licenses/MIT"}
 
   :dependencies [[org.clojure/clojure        "1.7.0"]
-                 [metosin/compojure-api      "1.0.0-SNAPSHOT"]
+                 [metosin/compojure-api      "1.0.0-RC1"]
                  [metosin/ring-http-response "0.6.5"]
                  [metosin/ring-swagger-ui    "2.1.4-0"]
                  [cheshire                   "5.5.0"]
                  [http-kit                   "2.1.19"]
-                 [buddy                      "0.9.0"]
+                 [buddy                      "0.10.0"]
                  [org.clojure/java.jdbc      "0.4.2"]
                  [postgresql/postgresql      "9.3-1102.jdbc41"]
                  [yesql                      "0.5.1"]

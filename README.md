@@ -34,6 +34,8 @@ You can run the same script on remote servers -- see psql documentation.
 
 `lein run -m authenticated-compojure-api.server 3000`
 
+Then visit [http://localhost:3000/api-docs/index.html](http://localhost:3000/api-docs/index.html)
+
 ### Table migrations / creation
 
 When you start the server any needed tables will be created automatically.
