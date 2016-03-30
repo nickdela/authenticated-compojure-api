@@ -18,10 +18,10 @@
 
 (defn setup-teardown [f]
   (try
-    (query/insert-permission<! {:permission "basic"})
+    (query/insert-permission! query/db {:permission "basic"})
     (helper/add-users)
     (f)
-    (finally (query/truncate-all-tables-in-database!))))
+    (finally (query/truncate-all-tables-in-database! query/db))))
 
 (use-fixtures :once helper/create-tables)
 (use-fixtures :each setup-teardown)
@@ -44,12 +44,12 @@
 (deftest successfully-request-password-reset-with-email-for-a-valid-registered-user
   (testing "Successfully request password reset with email for a valid registered user"
     (with-redefs [unit-test/send-reset-email (fn [to-email from-email subject html-body plain-body] nil)]
-      (let [user-id-1        (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
+      (let [user-id-1        (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
             reset-info-json  (gen-reset-json "j@man.com")
             response         (app (-> (mock/request :post "/api/password/reset-request" reset-info-json)
                                       (mock/content-type "application/json")))
             body             (helper/parse-body (:body response))
-            pass-reset-row   (query/get-password-reset-keys-for-userid {:userid user-id-1})
+            pass-reset-row   (query/get-password-reset-keys-for-userid query/db {:userid user-id-1})
             pass-reset-key   (:reset_key (first pass-reset-row))
             valid-until-ts   (:valid_until (first pass-reset-row))
             ; shave off the last four digits so we can compare

@@ -7,18 +7,18 @@
   "Create user with `email`, `username`, `password`"
   [email username password]
   (let [hashed-password (hashers/encrypt password)
-        new-user        (query/insert-registered-user<! {:email         email
-                                                         :username      username
-                                                         :password      hashed-password})
-        permission      (query/insert-permission-for-user<! {:userid     (:id new-user)
-                                                             :permission "basic"})]
+        new-user        (query/insert-registered-user! query/db {:email         email
+                                                                 :username      username
+                                                                 :password      hashed-password})
+        permission      (query/insert-permission-for-user! query/db {:userid     (:id new-user)
+                                                                     :permission "basic"})]
     (respond/created {:username (str (:username new-user))})))
 
 (defn create-user-response
   "Generate response for user creation"
   [email username password]
-  (let [username-query   (query/get-registered-user-by-username {:username username})
-        email-query      (query/get-registered-user-by-email {:email email})
+  (let [username-query   (query/get-registered-user-by-username query/db {:username username})
+        email-query      (query/get-registered-user-by-email query/db {:email email})
         email-exists?    (not-empty email-query)
         username-exists? (not-empty username-query)]
     (cond

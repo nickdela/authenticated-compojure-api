@@ -5,7 +5,7 @@
 (defn delete-user
   "Delete a user by ID"
   [id]
-  (let [deleted-user (query/delete-registered-user! {:id id})]
+  (let [deleted-user (query/delete-registered-user! query/db {:id id})]
     (if (not= 0 deleted-user)
       (respond/ok        {:message (format "User id %s successfully removed" id)})
       (respond/not-found {:error "Userid does not exist"}))))

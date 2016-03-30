@@ -8,22 +8,22 @@
 
 (defn setup-teardown [f]
   (try
-    (query/insert-permission<! {:permission "basic"})
-    (query/insert-permission<! {:permission "admin"})
-    (query/insert-permission<! {:permission "other"})
+    (query/insert-permission! query/db {:permission "basic"})
+    (query/insert-permission! query/db {:permission "admin"})
+    (query/insert-permission! query/db {:permission "other"})
     (helper/add-users)
     (f)
-    (finally (query/truncate-all-tables-in-database!))))
+    (finally (query/truncate-all-tables-in-database! query/db))))
 
 (use-fixtures :once helper/create-tables)
 (use-fixtures :each setup-teardown)
 
 (deftest can-add-user-permission-with-valid-token-and-admin-permissions
   (testing "Can add user permission with valid token and admin permissions"
-    (let [user-id-1         (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
-          user-id-2         (:id (first (query/get-registered-user-by-username {:username "Everyman"})))
-          _                 (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid user-id-1})))))
-          _                 (query/insert-permission-for-user<! {:userid user-id-1 :permission "admin"})
+    (let [user-id-1         (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
+          user-id-2         (:id (query/get-registered-user-by-username query/db {:username "Everyman"}))
+          _                 (is (= "basic" (:permissions (query/get-permissions-for-userid query/db {:userid user-id-1}))))
+          _                 (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
           response          (app (-> (mock/request :post (str "/api/permission/user/" user-id-2) (ch/generate-string {:permission "other"}))
                                      (mock/content-type "application/json")
                                      (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
@@ -35,10 +35,10 @@
 
 (deftest attempting-to-add-a-permission-that-does-not-exist-returns-404
   (testing "Attempting to add a permission that does not exist returns 404"
-    (let [user-id-1         (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
-          user-id-2         (:id (first (query/get-registered-user-by-username {:username "Everyman"})))
-          _                 (query/insert-permission-for-user<! {:userid user-id-1 :permission "admin"})
-          _                 (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid user-id-2})))))
+    (let [user-id-1         (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
+          user-id-2         (:id (query/get-registered-user-by-username query/db {:username "Everyman"}))
+          _                 (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
+          _                 (is (= "basic" (:permissions (query/get-permissions-for-userid query/db {:userid user-id-2}))))
           response (app (-> (mock/request :post (str "/api/permission/user/" user-id-2) (ch/generate-string {:permission "stranger"}))
                             (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
@@ -49,8 +49,8 @@
 
 (deftest can-not-add-user-permission-with-valid-token-and-no-admin-permissions
   (testing "Can not add user permission with valid token and no admin permissions"
-    (let [user-id-1         (:id (first (query/get-registered-user-by-username {:username "Everyman"})))
-          _                 (is (= "basic" (:permissions (first (query/get-permissions-for-userid {:userid user-id-1})))))
+    (let [user-id-1         (:id (query/get-registered-user-by-username query/db {:username "Everyman"}))
+          _                 (is (= "basic" (:permissions (query/get-permissions-for-userid query/db {:userid user-id-1}))))
           response (app (-> (mock/request :post (str "/api/permission/user/" user-id-1)  (ch/generate-string {:permission "other"}))
                             (mock/content-type "application/json")
                             (helper/get-token-auth-header-for-user "Everyman:pass")))

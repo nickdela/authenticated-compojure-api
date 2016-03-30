@@ -26,7 +26,7 @@
   (token-auth-header request (get-user-token username-and-password)))
 
 (defn get-permissions-for-user [id]
-  (:permissions (first (query/get-permissions-for-userid {:userid id}))))
+  (:permissions (query/get-permissions-for-userid query/db {:userid id})))
 
 (defn add-users []
   (let [user-1 {:email "j@man.com" :username "JarrodCTaylor" :password "pass"}
@@ -37,9 +37,9 @@
              (mock/content-type "application/json")))))
 
 (defn create-tables [f]
-  (query/create-registered-user-table-if-not-exists!)
-  (query/create-permission-table-if-not-exists!)
-  (query/create-user-permission-table-if-not-exists!)
-  (query/create-password-reset-key-table-if-not-exists!)
+  (query/create-registered-user-table-if-not-exists! query/db)
+  (query/create-permission-table-if-not-exists! query/db)
+  (query/create-user-permission-table-if-not-exists! query/db)
+  (query/create-password-reset-key-table-if-not-exists! query/db)
   (f))
 

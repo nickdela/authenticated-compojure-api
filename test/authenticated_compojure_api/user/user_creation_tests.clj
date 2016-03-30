@@ -18,28 +18,28 @@
         response (create-user user-2)
         body     (parse-body (:body response))]
     (is (= 409                    (:status response)))
-    (is (= 1                      (count (query/all-registered-users))))
+    (is (= 1                      (count (query/all-registered-users query/db))))
     (is (= expected-error-message (:error body)))))
 
 (defn setup-teardown [f]
   (try
-    (query/insert-permission<! {:permission "basic"})
+    (query/insert-permission! query/db {:permission "basic"})
     (f)
-    (finally (query/truncate-all-tables-in-database!))))
+    (finally (query/truncate-all-tables-in-database! query/db))))
 
 (use-fixtures :once helper/create-tables)
 (use-fixtures :each setup-teardown)
 
 (deftest can-successfully-create-a-new-user-who-is-given-basic-permission-as-default
   (testing "Can successfully create a new user who is given basic permission as default"
-    (is (= 0 (count (query/all-registered-users))))
+    (is (= 0 (count (query/all-registered-users query/db))))
     (let [response            (create-user {:email "new@user.com" :username "NewUser" :password "pass"})
           body                (parse-body (:body response))
-          new-registered-user (first (query/get-registered-user-details-by-username {:username (:username body)}))
+          new-registered-user (query/get-registered-user-details-by-username query/db {:username (:username body)})
           registered-at       (subs (str (c/to-long (:created_on new-registered-user))) 0 8)
           expected-time       (subs (str (c/to-long (t/now))) 0 8)]
       (is (= 201           (:status response)))
-      (is (= 1             (count (query/all-registered-users))))
+      (is (= 1             (count (query/all-registered-users query/db))))
       (is (= "NewUser"     (:username body)))
       (is (= "NewUser"     (str (:username new-registered-user))))
       (is (= expected-time registered-at) )

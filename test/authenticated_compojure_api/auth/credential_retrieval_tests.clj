@@ -9,10 +9,10 @@
 
 (defn setup-teardown [f]
   (try
-    (query/insert-permission<! {:permission "basic"})
+    (query/insert-permission! query/db {:permission "basic"})
     (helper/add-users)
     (f)
-    (finally (query/truncate-all-tables-in-database!))))
+    (finally (query/truncate-all-tables-in-database! query/db))))
 
 (use-fixtures :once helper/create-tables)
 (use-fixtures :each setup-teardown)
@@ -57,9 +57,9 @@
 
 (deftest mutiple-permissions-are-properly-formated
   (testing "Multiple permissions are properly formated"
-    (query/insert-permission<! {:permission "admin"})
-    (let [user-id-1  (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
-          _          (query/insert-permission-for-user<! {:userid user-id-1 :permission "admin"})
+    (query/insert-permission! query/db {:permission "admin"})
+    (let [user-id-1  (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
+          _          (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
           response   (app (-> (mock/request :get "/api/auth")
                               (helper/basic-auth-header "JarrodCTaylor:pass")))
           body       (helper/parse-body (:body response))]

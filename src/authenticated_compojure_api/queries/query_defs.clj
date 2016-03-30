@@ -1,15 +1,15 @@
 (ns authenticated-compojure-api.queries.query-defs
-  (:require [environ.core :refer [env]]
-            [yesql.core   :refer [defqueries]]))
+  (:require [hugsql.core :as hugsql]
+            [environ.core :refer [env]]))
 
-(def db-connection {:connection (env :database-url)})
+(def db (env :database-url))
 
-(defqueries "authenticated_compojure_api/tables/user/registered_user.sql"     db-connection)
-(defqueries "authenticated_compojure_api/tables/user/permission.sql"          db-connection)
-(defqueries "authenticated_compojure_api/tables/user/user_permission.sql"     db-connection)
-(defqueries "authenticated_compojure_api/tables/user/password_reset_key.sql"  db-connection)
-(defqueries "authenticated_compojure_api/tables/user/truncate_all.sql"        db-connection)
-(defqueries "authenticated_compojure_api/queries/user/registered_user.sql"    db-connection)
-(defqueries "authenticated_compojure_api/queries/user/permission.sql"         db-connection)
-(defqueries "authenticated_compojure_api/queries/user/user_permission.sql"    db-connection)
-(defqueries "authenticated_compojure_api/queries/user/password_reset_key.sql" db-connection)
+(hugsql/def-db-fns "authenticated_compojure_api/queries/user/password_reset_key.sql")
+(hugsql/def-db-fns "authenticated_compojure_api/tables/user/registered_user.sql")
+(hugsql/def-db-fns "authenticated_compojure_api/tables/user/permission.sql")
+(hugsql/def-db-fns "authenticated_compojure_api/tables/user/user_permission.sql")
+(hugsql/def-db-fns "authenticated_compojure_api/tables/user/password_reset_key.sql")
+(hugsql/def-db-fns "authenticated_compojure_api/tables/user/truncate_all.sql")
+(hugsql/def-db-fns "authenticated_compojure_api/queries/user/registered_user.sql")
+(hugsql/def-db-fns "authenticated_compojure_api/queries/user/permission.sql")
+(hugsql/def-db-fns "authenticated_compojure_api/queries/user/user_permission.sql")

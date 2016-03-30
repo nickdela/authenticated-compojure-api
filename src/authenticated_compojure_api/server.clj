@@ -6,11 +6,11 @@
 (defn create-tables
   "Create database tables if they don't exist"
   []
-  (query/create-registered-user-table-if-not-exists!)
-  (query/create-permission-table-if-not-exists!)
-  (query/create-basic-permission-if-not-exists!)
-  (query/create-user-permission-table-if-not-exists!)
-  (query/create-password-reset-key-table-if-not-exists!))
+  (query/create-registered-user-table-if-not-exists! query/db)
+  (query/create-permission-table-if-not-exists! query/db)
+  (query/create-basic-permission-if-not-exists! query/db)
+  (query/create-user-permission-table-if-not-exists! query/db)
+  (query/create-password-reset-key-table-if-not-exists! query/db))
 
 (defn -main [port]
   (create-tables)

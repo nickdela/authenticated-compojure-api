@@ -12,7 +12,7 @@
                  [buddy                      "0.10.0"]
                  [org.clojure/java.jdbc      "0.4.2"]
                  [postgresql/postgresql      "9.3-1102.jdbc41"]
-                 [yesql                      "0.5.1"]
+                 [com.layerware/hugsql       "0.4.4"]
                  [environ                    "1.0.1"]
                  [clj-time                   "0.11.0"]
                  [com.draines/postal         "1.11.4"]]

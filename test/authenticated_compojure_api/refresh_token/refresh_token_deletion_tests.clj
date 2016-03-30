@@ -8,24 +8,24 @@
 
 (defn setup-teardown [f]
   (try
-    (query/insert-permission<! {:permission "basic"})
+    (query/insert-permission! query/db {:permission "basic"})
     (helper/add-users)
     (f)
-    (finally (query/truncate-all-tables-in-database!))))
+    (finally (query/truncate-all-tables-in-database! query/db))))
 
 (use-fixtures :once helper/create-tables)
 (use-fixtures :each setup-teardown)
 
 (deftest can-delete-refresh-token-with-valid-refresh-token
   (testing "Can delete refresh token with valid refresh token"
-    (let [user-id-1                (:id (first (query/get-registered-user-by-username {:username "JarrodCTaylor"})))
+    (let [user-id-1                (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
           initial-response         (app (-> (mock/request :get "/api/auth")
                                             (helper/basic-auth-header "JarrodCTaylor:pass")))
           initial-body             (helper/parse-body (:body initial-response))
           refresh-token            (:refreshToken initial-body)
           refresh-delete-response  (app (mock/request :delete (str "/api/refresh-token/" refresh-token)))
           body                     (helper/parse-body (:body refresh-delete-response))
-          registered-user-row      (first (query/get-registered-user-by-id {:id user-id-1}))]
+          registered-user-row      (query/get-registered-user-by-id query/db {:id user-id-1})]
       (is (= 200 (:status refresh-delete-response)))
       (is (= "Refresh token successfully deleted" (:message body)))
       (is (= nil (:refresh_token registered-user-row))))))

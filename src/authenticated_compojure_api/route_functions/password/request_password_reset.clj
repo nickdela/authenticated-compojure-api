@@ -33,7 +33,7 @@
   "Safely process password reset request"
   [user from-email subject email-body-plain email-body-html response-base-link]
   (let [reset-key     (str (java.util.UUID/randomUUID))
-        the-insert    (query/insert-password-reset-key-with-default-valid-until<! {:reset_key reset-key :user_id (:id user)})
+        the-insert    (query/insert-password-reset-key-with-default-valid-until! query/db {:reset_key reset-key :user_id (:id user)})
         response-link (str response-base-link "/" (:reset_key the-insert))
         body-plain    (add-response-link-to-plain-body email-body-plain response-link)
         body-html     (add-response-link-to-html-body email-body-html response-link)]
@@ -43,7 +43,7 @@
 (defn request-password-reset-response
   "Generate response for password reset request"
   [user-email from-email subject email-body-plain email-body-html response-base-link]
-  (let [user (first (query/get-registered-user-by-email {:email user-email}))]
+  (let [user (query/get-registered-user-by-email query/db {:email user-email})]
     (if (empty? user)
       (respond/not-found {:error (str "No user exists with the email " user-email)})
       (process-password-reset-request user from-email subject email-body-plain email-body-html response-base-link))))

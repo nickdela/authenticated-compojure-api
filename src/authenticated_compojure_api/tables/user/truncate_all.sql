@@ -1,5 +1,7 @@
--- name: truncate-all-tables-in-database!
--- Truncate all tables in the database. Obviously very destructive only use in tests
+-- :name truncate-all-tables-in-database!
+-- :command :execute
+-- :result :affected
+-- :doc Truncate all tables in the database. Obviously very destructive only use in tests
 DO
 $body$
 BEGIN
