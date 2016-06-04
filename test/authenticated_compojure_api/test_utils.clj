@@ -3,7 +3,10 @@
             [ring.mock.request :as mock]
             [authenticated-compojure-api.handler :refer [app]]
             [authenticated-compojure-api.queries.query-defs :as query]
-            [buddy.core.codecs :refer [str->base64]]))
+            [buddy.core.codecs :as codecs]
+            [buddy.core.codecs.base64 :as b64]))
+
+(def str->base64 (comp codecs/bytes->str b64/encode))
 
 (defn parse-body [body]
   (ch/parse-string (slurp body) true))

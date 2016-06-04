@@ -3,21 +3,21 @@
   :license {:name "MIT"
             :url "https://opensource.org/licenses/MIT"}
 
-  :dependencies [[org.clojure/clojure        "1.7.0"]
-                 [metosin/compojure-api      "1.0.0-RC1"]
+  :dependencies [[org.clojure/clojure        "1.8.0"]
+                 [metosin/compojure-api      "1.1.2"]
                  [metosin/ring-http-response "0.6.5"]
                  [metosin/ring-swagger-ui    "2.1.4-0"]
-                 [cheshire                   "5.5.0"]
+                 [cheshire                   "5.6.1"]
                  [http-kit                   "2.1.19"]
-                 [buddy                      "0.10.0"]
-                 [org.clojure/java.jdbc      "0.4.2"]
+                 [buddy                      "0.13.0"]
+                 [org.clojure/java.jdbc      "0.6.1"]
                  [postgresql/postgresql      "9.3-1102.jdbc41"]
-                 [com.layerware/hugsql       "0.4.4"]
-                 [environ                    "1.0.1"]
+                 [com.layerware/hugsql       "0.4.7"]
+                 [environ                    "1.0.3"]
                  [clj-time                   "0.11.0"]
-                 [com.draines/postal         "1.11.4"]]
+                 [com.draines/postal         "2.0.0"]]
 
-  :plugins      [[lein-environ "1.0.1"]
+  :plugins      [[lein-environ "1.0.2"]
                  [funcool/codeina "0.3.0" :exclusions [org.clojure/clojure]]]
 
   :min-lein-version  "2.5.0"
