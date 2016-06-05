@@ -21,7 +21,9 @@
            :summary     "Request a password reset for the registered user with the matching email"
            :description "The `response-base-link` will get a reset key appended to it and then the
                          link itself will be appended to the email body. The reset key will be valid
-                         for 24 hours after creation."
+                         for 24 hours after creation. *NOTE* do not use a fromEmail address ending
+                         with @gmail.com because of the DMARC policy. It is recommended to use a custom
+                         domain you own instead"
            (request-password-reset-response userEmail fromEmail subject emailBodyPlain emailBodyHtml responseBaseLink))
 
     (POST "/reset-confirm" []

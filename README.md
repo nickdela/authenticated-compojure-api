@@ -14,12 +14,12 @@ development you will need a `profiles.clj` in the root of the project. Populate
 the file like so:
 
 ``` clojure
-{:dev-env-vars  {:env {:database-url  "postgres://auth_user:password1@127.0.0.1:5432/auth?stringtype=unspecified"
-                       :user-email    "Jarrod@JarrodCTaylor.com"
-                       :user-pass-key "mandrill-pass-key"
-                       :auth-key      "theSecretKeyUsedToCreateAndReadTokens"}}
- :test-env-vars {:env {:database-url  "postgres://auth_user:password1@127.0.0.1:5432/auth_test?stringtype=unspecified"
-                       :auth-key      "theSecretKeyUsedToCreateAndReadTokens"}}}
+{:dev-env-vars  {:env {:database-url             "postgres://auth_user:password1@127.0.0.1:5432/auth?stringtype=unspecified"
+                       :sendinblue-user-login    "Jarrod@JarrodCTaylor.com"
+                       :sendinblue-user-password "sendinblue"
+                       :auth-key                 "theSecretKeyUsedToCreateAndReadTokens"}}
+ :test-env-vars {:env {:database-url             "postgres://auth_user:password1@127.0.0.1:5432/auth_test?stringtype=unspecified"
+                       :auth-key                 "theSecretKeyUsedToCreateAndReadTokens"}}}
 ```
 Equivalent environment variables are `DATABASE_URL`, `USER_EMAIL`, `USER_PASS_KEY`, `AUTH_KEY`.
 

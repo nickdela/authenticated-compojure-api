@@ -16,12 +16,12 @@
     (str body-less-closing-tags "<br><p>" response-link "</p></body></html>")))
 
 (defn send-reset-email
-  "Send password reset email (uses Postal + Mandrill)"
+  "Send password reset email (uses Postal + https://account.sendinblue.com/)"
   [to-email from-email subject html-body plain-body]
-  (send-message {:host "smtp.mandrillapp.com"
-                 :user (env :user-email)
+  (send-message {:host "smtp-relay.sendinblue.com"
+                 :user (env :sendinblue-user-login)
                  :port 587
-                 :pass (env :user-pass-key)}
+                 :pass (env :sendinblue-user-password)}
                 {:from from-email
                  :to to-email
                  :subject subject
