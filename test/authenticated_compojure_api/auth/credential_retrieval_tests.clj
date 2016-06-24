@@ -4,7 +4,7 @@
             [authenticated-compojure-api.handler :refer :all]
             [authenticated-compojure-api.test-utils :as helper]
             [authenticated-compojure-api.queries.query-defs :as query]
-            [buddy.sign.jws :as jws]
+            [buddy.sign.jwt :as jwt]
             [ring.mock.request :as mock]))
 
 (defn setup-teardown [f]
@@ -23,7 +23,7 @@
                                   (helper/basic-auth-header "Everyman:pass")))
           body           (helper/parse-body (:body response))
           id             (:id body)
-          token-contents (jws/unsign (:token body) (env :auth-key) {:alg :hs512})]
+          token-contents (jwt/unsign (:token body) (env :auth-key) {:alg :hs512})]
       (is (= 5           (count body)))
       (is (= 200         (:status response)))
       (is (= "Everyman"  (:username body)))
@@ -42,7 +42,7 @@
                                   (helper/basic-auth-header "e@man.com:pass")))
           body           (helper/parse-body (:body response))
           id             (:id body)
-          token-contents (jws/unsign (:token body) (env :auth-key) {:alg :hs512})]
+          token-contents (jwt/unsign (:token body) (env :auth-key) {:alg :hs512})]
       (is (= 5           (count body)))
       (is (= 200         (:status response)))
       (is (= "Everyman"  (:username body)))
@@ -66,7 +66,7 @@
       (is (= 200              (:status response)))
       (is (= "JarrodCTaylor"  (:username body)))
       (is (= 36               (count (:refreshToken body))))
-      (is (= "basic,admin"    (:permissions (jws/unsign (:token body) (env :auth-key) {:alg :hs512})))))))
+      (is (= "basic,admin"    (:permissions (jwt/unsign (:token body) (env :auth-key) {:alg :hs512})))))))
 
 (deftest invlid-password-does-not-return-auth-credentials
   (testing "Invalid password does not return auth credentials"
@@ -100,7 +100,7 @@
           refresh-token      (:refreshToken initial-body)
           refreshed-response (app (mock/request :get (str "/api/refresh-token/" refresh-token)))
           body               (helper/parse-body (:body refreshed-response))
-          token-contents     (jws/unsign (:token body) (env :auth-key) {:alg :hs512})]
+          token-contents     (jwt/unsign (:token body) (env :auth-key) {:alg :hs512})]
       (is (= 200              (:status refreshed-response)))
       (is (= 2                (count body)))
       (is (= true             (contains? body :token)))
