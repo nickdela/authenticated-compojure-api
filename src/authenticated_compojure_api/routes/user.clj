@@ -21,12 +21,13 @@
            :summary     "Create a new user with provided username, email and password."
            (create-user-response email username password))
 
-    (DELETE "/:id"        {:as request}
-             :path-params [id :- s/Uuid]
-             :return      {:message String}
-             :middleware  [token-auth-mw cors-mw authenticated-mw]
-             :summary     "Deletes the specified user. Requires token to have `admin` auth or self ID."
-             :description "Authorization header expects the following format 'Token {token}'"
+    (DELETE "/:id"          {:as request}
+             :path-params   [id :- s/Uuid]
+             :return        {:message String}
+             :header-params [authorization :- String]
+             :middleware    [token-auth-mw cors-mw authenticated-mw]
+             :summary       "Deletes the specified user. Requires token to have `admin` auth or self ID."
+             :description   "Authorization header expects the following format 'Token {token}'"
              (delete-user-response request id))
 
     (PATCH  "/:id"          {:as request}
