@@ -12,7 +12,7 @@
                                                                  :password      hashed-password})
         permission      (query/insert-permission-for-user! query/db {:userid     (:id new-user)
                                                                      :permission "basic"})]
-    (respond/created {:username (str (:username new-user))})))
+    (respond/created {} {:username (str (:username new-user))})))
 
 (defn create-user-response
   "Generate response for user creation"
