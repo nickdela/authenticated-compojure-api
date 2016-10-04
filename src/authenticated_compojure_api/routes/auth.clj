@@ -8,7 +8,7 @@
 
 (def auth-routes
   "Specify routes for Authentication functions"
-  (context "/api/auth" []
+  (context "/api/v1/auth" []
 
      (GET "/"            {:as request}
            :tags          ["Auth"]

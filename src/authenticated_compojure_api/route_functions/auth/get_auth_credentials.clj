@@ -4,7 +4,7 @@
             [ring.util.http-response :as respond]))
 
 (defn auth-credentials-response
-  "Generate response for get requests to /api/auth. This route requires basic
+  "Generate response for get requests to /api/v1/auth. This route requires basic
    authentication. A successful request to this route will generate a new
    refresh-token, and return {:id :username :permissions :token :refreshToken}"
   [request]

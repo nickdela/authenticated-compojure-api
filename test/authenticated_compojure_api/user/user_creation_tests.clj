@@ -10,7 +10,7 @@
             [clj-time.coerce :as c]))
 
 (defn create-user [user-map]
-  (app (-> (mock/request :post "/api/user" (ch/generate-string user-map))
+  (app (-> (mock/request :post "/api/v1/user" (ch/generate-string user-map))
            (mock/content-type "application/json"))))
 
 (defn assert-no-dup [user-1 user-2 expected-error-message]

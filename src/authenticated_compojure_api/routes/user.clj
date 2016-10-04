@@ -11,7 +11,7 @@
 
 (def user-routes
   "Specify routes for User functions"
-  (context "/api/user" []
+  (context "/api/v1/user" []
            :tags ["User"]
 
     (POST "/"           {:as request}

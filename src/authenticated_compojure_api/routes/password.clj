@@ -6,7 +6,7 @@
 
 (def password-routes
   "Specify routes for User Password functions"
-  (context "/api/password" []
+  (context "/api/v1/password" []
            :tags       ["Password"]
            :return     {:message String}
            :middleware [cors-mw]

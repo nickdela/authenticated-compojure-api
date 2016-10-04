@@ -20,7 +20,7 @@
   (mock/header request "Authorization" (str "Token " token)))
 
 (defn get-user-token [username-and-password]
-  (let [initial-response (app (-> (mock/request :get "/api/auth")
+  (let [initial-response (app (-> (mock/request :get "/api/v1/auth")
                                   (basic-auth-header username-and-password)))
         initial-body     (parse-body (:body initial-response))]
     (:token initial-body)))
@@ -34,9 +34,9 @@
 (defn add-users []
   (let [user-1 {:email "j@man.com" :username "JarrodCTaylor" :password "pass"}
         user-2 {:email "e@man.com" :username "Everyman"      :password "pass"}]
-    (app (-> (mock/request :post "/api/user" (ch/generate-string user-1))
+    (app (-> (mock/request :post "/api/v1/user" (ch/generate-string user-1))
              (mock/content-type "application/json")))
-    (app (-> (mock/request :post "/api/user" (ch/generate-string user-2))
+    (app (-> (mock/request :post "/api/v1/user" (ch/generate-string user-2))
              (mock/content-type "application/json")))))
 
 (defn create-tables [f]

@@ -19,7 +19,7 @@
 
 (deftest valid-username-and-password-return-correct-auth-credentials
   (testing "Valid username and password return correct auth credentials"
-    (let [response       (app (-> (mock/request :get "/api/auth")
+    (let [response       (app (-> (mock/request :get "/api/v1/auth")
                                   (helper/basic-auth-header "Everyman:pass")))
           body           (helper/parse-body (:body response))
           id             (:id body)
@@ -38,7 +38,7 @@
 
 (deftest valid-email-and-password-return-correct-auth-credentials
   (testing "Valid email and password return correct auth credentials"
-    (let [response       (app (-> (mock/request :get "/api/auth")
+    (let [response       (app (-> (mock/request :get "/api/v1/auth")
                                   (helper/basic-auth-header "e@man.com:pass")))
           body           (helper/parse-body (:body response))
           id             (:id body)
@@ -60,7 +60,7 @@
     (query/insert-permission! query/db {:permission "admin"})
     (let [user-id-1  (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
           _          (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
-          response   (app (-> (mock/request :get "/api/auth")
+          response   (app (-> (mock/request :get "/api/v1/auth")
                               (helper/basic-auth-header "JarrodCTaylor:pass")))
           body       (helper/parse-body (:body response))]
       (is (= 200              (:status response)))
@@ -70,7 +70,7 @@
 
 (deftest invlid-password-does-not-return-auth-credentials
   (testing "Invalid password does not return auth credentials"
-    (let [response (app (-> (mock/request :get "/api/auth")
+    (let [response (app (-> (mock/request :get "/api/v1/auth")
                             (helper/basic-auth-header "JarrodCTaylor:badpass")))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
@@ -78,7 +78,7 @@
 
 (deftest invlid-username-does-not-return-auth-credentials
   (testing "Invalid username does not return auth credentials"
-    (let [response (app (-> (mock/request :get "/api/auth")
+    (let [response (app (-> (mock/request :get "/api/v1/auth")
                             (helper/basic-auth-header "baduser:badpass")))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
@@ -86,19 +86,19 @@
 
 (deftest no-auth-credentials-are-returned-when-no-username-and-password-provided
   (testing "No auth credentials are returned when no username and password provided"
-    (let [response (app (mock/request :get "/api/auth"))
+    (let [response (app (mock/request :get "/api/v1/auth"))
           body     (helper/parse-body (:body response))]
       (is (= 401              (:status response)))
       (is (= "Not authorized" (:error body))))))
 
 (deftest user-can-generate-a-new-token-with-a-valid-refresh-token
   (testing "User can generate a new tokens with a valid refresh-token"
-    (let [initial-response   (app (-> (mock/request :get "/api/auth")
+    (let [initial-response   (app (-> (mock/request :get "/api/v1/auth")
                                       (helper/basic-auth-header "JarrodCTaylor:pass")))
           initial-body       (helper/parse-body (:body initial-response))
           id                 (:id initial-body)
           refresh-token      (:refreshToken initial-body)
-          refreshed-response (app (mock/request :get (str "/api/refresh-token/" refresh-token)))
+          refreshed-response (app (mock/request :get (str "/api/v1/refresh-token/" refresh-token)))
           body               (helper/parse-body (:body refreshed-response))
           token-contents     (jwt/unsign (:token body) (env :auth-key) {:alg :hs512})]
       (is (= 200              (:status refreshed-response)))
@@ -115,7 +115,7 @@
 
 (deftest invalid-refresh-token-does-not-return-a-new-token
   (testing "Invalid refresh token does not return a new token"
-    (let [response       (app (mock/request :get "/api/refresh-token/abcd1234"))
+    (let [response       (app (mock/request :get "/api/v1/refresh-token/abcd1234"))
           body           (helper/parse-body (:body response))]
       (is (= 400           (:status response)))
       (is (= "Bad Request" (:error body))))))
