@@ -12,6 +12,7 @@
              ["project.clj"                                                              (render "project.clj"                                                                            data) ]
              ["profiles.clj"                                                             (render "profiles.clj"                                                                           data) ]
              ["Procfile"                                                                 (render "Procfile"                                                                               data) ]
+             [".gitignore"                                                               (render ".gitignore"                                                                                 ) ]
              ["README.md"                                                                (render "README.md"                                                                              data) ]
              ["script/init_database.sql"                                                 (render "script/init_database.sql"                                                               data) ]
              ["src/{{sanitized}}/auth_resources/basic_auth_backend.clj"                  (render "src/authenticated_compojure_api/auth_resources/basic_auth_backend.clj"                  data) ]
