@@ -1,13 +1,15 @@
 (ns leiningen.new.authenticated-compojure-api
-  (:use [leiningen.new.templates :only [renderer name-to-path sanitize-ns ->files]]))
+  (:require [leiningen.core.main :as main]
+            [leiningen.new.templates :refer [renderer name-to-path sanitize-ns ->files]]))
 
 (def render (renderer "authenticated-compojure-api"))
 
 (defn authenticated-compojure-api
-  [name]
+  [name & opts]
   (let [data {:name      name
               :ns-name   (sanitize-ns name)
               :sanitized (name-to-path name)}]
+    (main/info "=====\nBuilding your application...\n")
     (->files data
              ["project.clj"                                                              (render "project.clj"                                                                            data) ]
              ["profiles.clj"                                                             (render "profiles.clj"                                                                           data) ]
@@ -60,4 +62,5 @@
              ["test/{{sanitized}}/test_utils.clj"                                        (render "test/authenticated_compojure_api/test_utils.clj"                                        data) ]
              ["test/{{sanitized}}/user/user_creation_tests.clj"                          (render "test/authenticated_compojure_api/user/user_creation_tests.clj"                          data) ]
              ["test/{{sanitized}}/user/user_deletion_tests.clj"                          (render "test/authenticated_compojure_api/user/user_deletion_tests.clj"                          data) ]
-             ["test/{{sanitized}}/user/user_modify_tests.clj"                            (render "test/authenticated_compojure_api/user/user_modify_tests.clj"                            data) ])))
+             ["test/{{sanitized}}/user/user_modify_tests.clj"                            (render "test/authenticated_compojure_api/user/user_modify_tests.clj"                            data) ])
+    (main/info "You are good to go!\n=====")))
