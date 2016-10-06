@@ -12,18 +12,16 @@ Make sure you have the [latest version of leiningen installed](https://github.co
 lein new authenticated-compojure-api <project-name>
 ```
 
-
 ### Customize profiles.clj
 
 The project pulls sensitive information from environment variables.
-Make sure to populate the file correctly.
+Make sure to populate the file completely.
 
 Equivalent environment variables are `DATABASE_URL`, `USER_EMAIL`, `USER_PASS_KEY`, `AUTH_KEY`.
 
 ## Create the PostgreSQL database for local development
 
 `psql < script/init_database.sql`
-
 
 ### Running Locally
 

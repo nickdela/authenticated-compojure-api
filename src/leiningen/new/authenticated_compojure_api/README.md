@@ -4,11 +4,20 @@ Details Go Here...
 
 ## Usage
 
-### Customize profiles.clj
+### Add profiles.clj
 
-The project pulls sensitive information from environment variables.
-Make sure to populate the file correctly.
+The project pulls sensitive information from environment variables. For local
+development you will need a profiles.clj in the root of the project. Populate
+the file like so:
 
+``` clojure
+{:dev-env-vars  {:env {:database-url  "postgres://{{sanitized}}_user:password1@127.0.0.1:5432/{{sanitized}}?stringtype=unspecified"
+                       :sendinblue-user-login    "You@Something.com"
+                       :sendinblue-user-password "sendinblue"
+                       :auth-key      "theSecretKeyUsedToCreateAndReadTokens"}}
+ :test-env-vars {:env {:database-url  "postgres://{{sanitized}}_user:password1@127.0.0.1:5432/{{sanitized}}_test?stringtype=unspecified"
+                       :auth-key      "theSecretKeyUsedToCreateAndReadTokens"}}}
+```
 Equivalent environment variables are `DATABASE_URL`, `USER_EMAIL`, `USER_PASS_KEY`, `AUTH_KEY`.
 
 ## Create the PostgreSQL database for local development
