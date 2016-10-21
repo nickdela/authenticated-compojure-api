@@ -1,5 +1,5 @@
 (defproject {{ns-name}} "0.1.0-SNAPSHOT"
-  :description "An example compojure-api app with authentication using buddy"
+  :description "A authenticated compojure-api app using buddy"
   :license {:name "MIT"
             :url "https://opensource.org/licenses/MIT"}
 
