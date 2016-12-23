@@ -10,8 +10,9 @@
             [clj-time.coerce :as c]))
 
 (defn create-user [user-map]
-  (app (-> (mock/request :post "/api/v1/user" (ch/generate-string user-map))
-           (mock/content-type "application/json"))))
+  (app (-> (mock/request :post "/api/v1/user")
+           (mock/content-type "application/json")
+           (mock/body (ch/generate-string user-map)))))
 
 (defn assert-no-dup [user-1 user-2 expected-error-message]
   (let [_        (create-user user-1)
@@ -42,7 +43,7 @@
       (is (= 1             (count (query/all-registered-users query/db))))
       (is (= "NewUser"     (:username body)))
       (is (= "NewUser"     (str (:username new-registered-user))))
-      (is (= expected-time registered-at) )
+      (is (= expected-time registered-at))
       (is (= "basic"       (:permissions new-registered-user))))))
 
 (deftest can-not-create-a-user-if-username-already-exists-using-the-same-case

@@ -1,21 +1,19 @@
 (defproject {{ns-name}} "0.1.0-SNAPSHOT"
-  :description "A authenticated compojure-api app using buddy"
-  :license {:name "MIT"
-            :url "https://opensource.org/licenses/MIT"}
+  :description "An example compojure-api app with authentication using buddy"
 
   :dependencies [[org.clojure/clojure        "1.8.0"]
-                 [metosin/compojure-api      "1.1.8"]
+                 [metosin/compojure-api      "1.1.9"]
                  [metosin/ring-http-response "0.8.0"]
-                 [metosin/ring-swagger-ui    "2.2.2-0"]
+                 [metosin/ring-swagger-ui    "2.2.8"]
                  [cheshire                   "5.6.3"]
                  [http-kit                   "2.2.0"]
-                 [buddy                      "1.1.0"]
+                 [buddy                      "1.2.0"]
                  [org.clojure/java.jdbc      "0.6.1"]
                  [postgresql/postgresql      "9.3-1102.jdbc41"]
                  [com.layerware/hugsql       "0.4.7"]
                  [environ                    "1.1.0"]
-                 [clj-time                   "0.12.0"]
-                 [com.draines/postal         "2.0.1"]]
+                 [clj-time                   "0.12.2"]
+                 [com.draines/postal         "2.0.2"]]
 
   :plugins      [[lein-environ "1.1.0"]
                  [funcool/codeina "0.5.0" :exclusions [org.clojure/clojure]]]
@@ -30,15 +28,13 @@
   :profiles {:uberjar {:resource-paths ["swagger-ui"]
                        :aot :all}
 
-             :test-local   {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                           [ring-mock                 "0.1.5"]]}
-
              ;; Set these in ./profiles.clj
              :test-env-vars {}
              :dev-env-vars  {}
 
-             :test       [:test-local :test-env-vars]
-             :dev        [:dev-env-vars :test-local]
+             :test       [:test-env-vars]
+             :dev        [{:dependencies [[ring/ring-mock "0.3.0"]]}
+                          :dev-env-vars ]
              :production {:ring {:open-browser? false
                                  :stacktraces?  false
                                  :auto-reload?  false}}}

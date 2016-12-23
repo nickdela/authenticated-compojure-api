@@ -46,8 +46,9 @@
     (with-redefs [unit-test/send-reset-email (fn [to-email from-email subject html-body plain-body] nil)]
       (let [user-id-1        (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
             reset-info-json  (gen-reset-json "j@man.com")
-            response         (app (-> (mock/request :post "/api/v1/password/reset-request" reset-info-json)
-                                      (mock/content-type "application/json")))
+            response         (app (-> (mock/request :post "/api/v1/password/reset-request")
+                                      (mock/content-type "application/json")
+                                      (mock/body reset-info-json)))
             body             (helper/parse-body (:body response))
             pass-reset-row   (query/get-password-reset-keys-for-userid query/db {:userid user-id-1})
             pass-reset-key   (:reset_key (first pass-reset-row))
@@ -63,8 +64,9 @@
 (deftest invalid-user-email-return-404-when-requesting-password-reset
   (testing "Invalid user email returns 404 when requesting password reset"
     (let [reset-info-json (gen-reset-json "J@jrock.com")
-          response        (app (-> (mock/request :post "/api/v1/password/reset-request" reset-info-json)
-                                   (mock/content-type "application/json")))
+          response        (app (-> (mock/request :post "/api/v1/password/reset-request")
+                                   (mock/content-type "application/json")
+                                   (mock/body reset-info-json)))
           body            (helper/parse-body (:body response))]
       (is (= 404                                         (:status response)))
       (is (= "No user exists with the email J@jrock.com" (:error body))))))

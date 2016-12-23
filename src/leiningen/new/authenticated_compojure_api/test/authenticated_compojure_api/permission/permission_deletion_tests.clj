@@ -25,8 +25,9 @@
           _                 (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
           _                 (query/insert-permission-for-user! query/db {:userid user-id-2 :permission "other"})
           _                 (is (= "basic,other" (:permissions (query/get-permissions-for-userid query/db {:userid user-id-2}))))
-          response          (app (-> (mock/request :delete (str "/api/v1/permission/user/" user-id-2) (ch/generate-string {:permission "other"}))
+          response          (app (-> (mock/request :delete (str "/api/v1/permission/user/" user-id-2))
                                      (mock/content-type "application/json")
+                                     (mock/body (ch/generate-string {:permission "other"}))
                                      (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body              (helper/parse-body (:body response))
           expected-response (str "Permission 'other' for user " user-id-2 " successfully removed")]
@@ -39,8 +40,9 @@
     (let [user-id-1  (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
           _          (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
           _          (is (= "basic,admin" (:permissions (query/get-permissions-for-userid query/db {:userid user-id-1}))))
-          response   (app (-> (mock/request :delete (str "/api/v1/permission/user/" user-id-1) (ch/generate-string {:permission "other"}))
+          response   (app (-> (mock/request :delete (str "/api/v1/permission/user/" user-id-1))
                               (mock/content-type "application/json")
+                              (mock/body (ch/generate-string {:permission "other"}))
                               (helper/get-token-auth-header-for-user "Everyman:pass")))
           body       (helper/parse-body (:body response))]
       (is (= 401              (:status response)))

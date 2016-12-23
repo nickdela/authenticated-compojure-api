@@ -22,8 +22,9 @@
   (testing "Can modify a users username with valid token and admin permissions"
     (let [user-id-1  (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
           _          (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
-          response   (app (-> (mock/request :patch (str "/api/v1/user/" user-id-1) (ch/generate-string {:username "Newman"}))
+          response   (app (-> (mock/request :patch (str "/api/v1/user/" user-id-1))
                               (mock/content-type "application/json")
+                              (mock/body (ch/generate-string {:username "Newman"}))
                               (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body       (helper/parse-body (:body response))]
       (is (= 200         (:status response)))
@@ -34,8 +35,9 @@
   (testing "Can modify a users email with valid token and admin permissions"
     (let [user-id-1    (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
           _            (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
-          response     (app (-> (mock/request :patch (str "/api/v1/user/" user-id-1) (ch/generate-string {:email "new@email.com"}))
+          response     (app (-> (mock/request :patch (str "/api/v1/user/" user-id-1))
                                 (mock/content-type "application/json")
+                                (mock/body (ch/generate-string {:email "new@email.com"}))
                                 (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body         (helper/parse-body (:body response))
           updated-user (query/get-registered-user-by-id query/db {:id user-id-1})]
@@ -48,8 +50,9 @@
   (testing "Can modify a users password with valid token and admin permissions"
     (let [user-id-1    (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
           _            (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
-          response     (app (-> (mock/request :patch (str "/api/v1/user/" user-id-1) (ch/generate-string {:password "newPass"}))
+          response     (app (-> (mock/request :patch (str "/api/v1/user/" user-id-1))
                                 (mock/content-type "application/json")
+                                (mock/body (ch/generate-string {:password "newPass"}))
                                 (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body         (helper/parse-body (:body response))
           updated-user (query/get-registered-user-by-id query/db {:id user-id-1})]
@@ -59,8 +62,9 @@
 (deftest can-modify-your-own-password-with-valid-token-and-no-admin-permissions
   (testing "Can modify your own password with valid token and no admin permissions"
     (let [user-id-1    (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
-          response     (app (-> (mock/request :patch (str "/api/v1/user/" user-id-1) (ch/generate-string {:password "newPass"}))
+          response     (app (-> (mock/request :patch (str "/api/v1/user/" user-id-1))
                                 (mock/content-type "application/json")
+                                (mock/body (ch/generate-string {:password "newPass"}))
                                 (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body         (helper/parse-body (:body response))
           updated-user (query/get-registered-user-by-id query/db {:id user-id-1})]
@@ -70,8 +74,9 @@
 (deftest can-not-modify-a-user-with-valid-token-and-no-admin-permissions
   (testing "Can not modify a user with valid token and no admin permissions"
     (let [user-id-2        (:id (query/get-registered-user-by-username query/db {:username "Everyman"}))
-          response         (app (-> (mock/request :patch (str "/api/v1/user/" user-id-2) (ch/generate-string {:email "bad@mail.com"}))
+          response         (app (-> (mock/request :patch (str "/api/v1/user/" user-id-2))
                                     (mock/content-type "application/json")
+                                    (mock/body (ch/generate-string {:email "bad@mail.com"}))
                                     (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body             (helper/parse-body (:body response))
           non-updated-user (query/get-registered-user-by-id query/db {:id user-id-2})]
@@ -83,8 +88,9 @@
   (testing "Trying to modify a user that does not exist returns a 404"
     (let [user-id-1  (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
           _          (query/insert-permission-for-user! query/db {:userid user-id-1 :permission "admin"})
-          response   (app (-> (mock/request :patch "/api/v1/user/83b811-edf0-48ec-84-5a142e2c3a75" (ch/generate-string {:email "not@real.com"}))
+          response   (app (-> (mock/request :patch "/api/v1/user/83b811-edf0-48ec-84-5a142e2c3a75")
                               (mock/content-type "application/json")
+                              (mock/body (ch/generate-string {:email "not@real.com"}))
                               (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
           body       (helper/parse-body (:body response))]
       (is (= 404                     (:status response)))

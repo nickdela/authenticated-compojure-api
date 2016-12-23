@@ -34,10 +34,12 @@
 (defn add-users []
   (let [user-1 {:email "j@man.com" :username "JarrodCTaylor" :password "pass"}
         user-2 {:email "e@man.com" :username "Everyman"      :password "pass"}]
-    (app (-> (mock/request :post "/api/v1/user" (ch/generate-string user-1))
-             (mock/content-type "application/json")))
-    (app (-> (mock/request :post "/api/v1/user" (ch/generate-string user-2))
-             (mock/content-type "application/json")))))
+    (app (-> (mock/request :post "/api/v1/user")
+             (mock/content-type "application/json")
+             (mock/body (ch/generate-string user-1))))
+    (app (-> (mock/request :post "/api/v1/user")
+             (mock/content-type "application/json")
+             (mock/body (ch/generate-string user-2))))))
 
 (defn create-tables [f]
   (query/create-registered-user-table-if-not-exists! query/db)
@@ -45,4 +47,3 @@
   (query/create-user-permission-table-if-not-exists! query/db)
   (query/create-password-reset-key-table-if-not-exists! query/db)
   (f))
-
