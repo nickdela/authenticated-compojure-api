@@ -46,4 +46,5 @@
   (query/create-permission-table-if-not-exists! query/db)
   (query/create-user-permission-table-if-not-exists! query/db)
   (query/create-password-reset-key-table-if-not-exists! query/db)
+  (query/create-refresh-token-table-if-not-exists! query/db)
   (f))

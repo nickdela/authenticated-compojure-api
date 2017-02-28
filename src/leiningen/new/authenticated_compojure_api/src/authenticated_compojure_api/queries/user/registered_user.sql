@@ -6,18 +6,16 @@ SELECT id
        , email
        , username
        , password
-       , refresh_token
 FROM   registered_user;
 
 -- :name get-registered-user-by-id
 -- :command :query
 -- :result :one
--- :doc Selects the (id, email, username, password, refresh_token) for registered user matching the id
+-- :doc Selects the (id, email, username, password) for registered user matching the id
 SELECT id
        , email
        , username
        , password
-       , refresh_token
 FROM   registered_user
 WHERE  id = :id
 
@@ -50,7 +48,6 @@ SELECT   reg_user.id
          , reg_user.email
          , reg_user.username
          , reg_user.password
-         , reg_user.refresh_token
          , STRING_AGG(perm.permission, ',') AS permissions
 FROM     registered_user                    AS reg_user
          JOIN user_permission               AS perm
@@ -66,28 +63,11 @@ SELECT   reg_user.id
          , reg_user.email
          , reg_user.username
          , reg_user.password
-         , reg_user.refresh_token
          , STRING_AGG(perm.permission, ',') AS permissions
 FROM     registered_user                    AS reg_user
          JOIN user_permission               AS perm
            ON (reg_user.id = perm.user_id)
 WHERE    reg_user.email = :email
-GROUP BY reg_user.id;
-
--- :name get-registered-user-details-by-refresh-token
--- :command :query
--- :result :one
--- :doc Selects user details for matching refresh token
-SELECT   reg_user.id
-         , reg_user.email
-         , reg_user.username
-         , reg_user.password
-         , reg_user.refresh_token
-         , STRING_AGG(perm.permission, ',') AS permissions
-FROM     registered_user                    AS reg_user
-         JOIN user_permission               AS perm
-           ON (reg_user.id = perm.user_id)
-WHERE    reg_user.refresh_token = :refresh_token
 GROUP BY reg_user.id;
 
 -- :name insert-registered-user!
@@ -111,7 +91,6 @@ UPDATE registered_user
 SET    email = :email
        , username = :username
        , password = :password
-       , refresh_token = :refresh_token
 WHERE  id = :id;
 
 -- :name update-registered-user-password!
@@ -121,22 +100,6 @@ WHERE  id = :id;
 UPDATE registered_user
 SET    password = :password
 WHERE  id = :id;
-
--- :name update-registered-user-refresh-token!
--- :command :execute
--- :result :affected
--- :doc Update the refresh token for the user matching the given userid
-UPDATE registered_user
-SET    refresh_token = :refresh_token
-WHERE  id = :id;
-
--- :name null-refresh-token!
--- :command :execute
--- :result :affected
--- :doc Set refresh token to null for row matching the given refresh token
-UPDATE registered_user
-SET    refresh_token = NULL
-WHERE  refresh_token = :refresh_token;
 
 -- :name delete-registered-user!
 -- :command :execute

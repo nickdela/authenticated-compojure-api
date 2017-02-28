@@ -9,8 +9,8 @@
    refresh-token, and return {:id :username :permissions :token :refreshToken}"
   [request]
   (let [user          (:identity request)
-        refresh-token (str (java.util.UUID/randomUUID))
-        _             (query/update-registered-user-refresh-token! query/db {:refresh_token refresh-token :id (:id user)})]
+        refresh-token (str (java.util.UUID/randomUUID))]
+    (query/insert-refresh-token! query/db {:refresh_token refresh-token :user_id (:id user)})
     (respond/ok {:id            (:id user)
                  :username      (:username user)
                  :permissions   (:permissions user)

@@ -5,9 +5,10 @@
 
 (defn create-new-tokens
   "Create a new user token"
-  [user]
+  [old-token user]
   (let [new-refresh-token (str (java.util.UUID/randomUUID))
-        _ (query/update-registered-user-refresh-token! query/db {:refresh_token new-refresh-token :id (:id user)})]
+        _ (query/update-refresh-token! query/db {:refresh_token new-refresh-token
+                                                 :old_token     old-token})]
     {:token (create-token user) :refreshToken new-refresh-token}))
 
 (defn gen-new-token-response
@@ -16,4 +17,4 @@
   (let [user (query/get-registered-user-details-by-refresh-token query/db {:refresh_token refresh-token})]
     (if (empty? user)
       (respond/bad-request {:error "Bad Request"})
-      (respond/ok          (create-new-tokens user)))))
+      (respond/ok          (create-new-tokens refresh-token user)))))

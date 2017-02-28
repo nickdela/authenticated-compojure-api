@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS registered_user (
    , email         CITEXT             NOT NULL UNIQUE
    , username      CITEXT             NOT NULL UNIQUE
    , password      TEXT               NOT NULL
-   , refresh_token TEXT
 );
 
 -- :name drop-registered-user-table!

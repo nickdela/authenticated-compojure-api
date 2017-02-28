@@ -32,7 +32,7 @@
 
 (deftest attempting-to-delete-an-invalid-refresh-token-returns-an-error
   (testing "Attempting to delete an invalid refresh token returns an error"
-    (let [refresh-delete-response  (app (mock/request :delete (str "/api/v1/refresh-token/" "123abc")))
+    (let [refresh-delete-response  (app (mock/request :delete (str "/api/v1/refresh-token/" (java.util.UUID/randomUUID))))
           body                     (helper/parse-body (:body refresh-delete-response))]
       (is (= 404 (:status refresh-delete-response)))
       (is (= "The refresh token does not exist" (:error body))))))

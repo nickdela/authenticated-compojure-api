@@ -9,11 +9,10 @@
   (let [new-email     (if (empty? email)    (str (:email current-user-info)) email)
         new-username  (if (empty? username) (str (:username current-user-info)) username)
         new-password  (if (empty? password) (:password current-user-info) (hashers/encrypt password))
-        new-user-info (query/update-registered-user! query/db {:id (:id current-user-info)
-                                                       :email new-email
-                                                       :username new-username
-                                                       :password new-password
-                                                       :refresh_token (:refresh_token current-user-info)})]
+        new-user-info (query/update-registered-user! query/db {:id (:id       current-user-info)
+                                                                    :email    new-email
+                                                                    :username new-username
+                                                                    :password new-password})]
     (respond/ok {:id (:id current-user-info) :email new-email :username new-username})))
 
 (defn modify-user-response
