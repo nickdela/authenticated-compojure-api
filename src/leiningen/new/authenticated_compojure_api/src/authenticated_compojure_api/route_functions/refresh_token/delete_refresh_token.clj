@@ -5,7 +5,7 @@
 (defn remove-refresh-token-response
   "Remove refresh token (error if doesn't exist)"
   [refresh-token]
-  (let [null-refresh-token (query/delete-refresh-token! query/db {:refresh_token refresh-token})]
+  (let [null-refresh-token (query/delete-refresh-token! query/db {:refresh_token (java.util.UUID/fromString refresh-token)})]
     (if (zero? null-refresh-token)
       (respond/not-found  {:error "The refresh token does not exist"})
       (respond/ok         {:message "Refresh token successfully deleted"}))))
