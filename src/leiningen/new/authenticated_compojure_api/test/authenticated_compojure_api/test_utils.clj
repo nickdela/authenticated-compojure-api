@@ -2,7 +2,7 @@
   (:require [cheshire.core :as ch]
             [ring.mock.request :as mock]
             [{{ns-name}}.handler :refer [app]]
-            [{{ns-name}}.queries.query-defs :as query]
+            [{{ns-name}}.query-defs :as query]
             [buddy.core.codecs :as codecs]
             [buddy.core.codecs.base64 :as b64]))
 
@@ -29,7 +29,14 @@
   (token-auth-header request (get-user-token username-and-password)))
 
 (defn get-permissions-for-user [id]
-  (:permissions (query/get-permissions-for-userid query/db {:userid id})))
+  (:permissions (query/get-permissions-for-userid {:userid id})))
+
+(defn get-id-for-user [username]
+  (:id (query/get-registered-user-by-username {:username username})))
+
+(defn add-permission-for-username [username permission]
+  (let [user-id (:id (query/get-registered-user-by-username {:username username}))]
+    (query/insert-permission-for-user! {:userid user-id :permission permission})))
 
 (defn add-users []
   (let [user-1 {:email "j@man.com" :username "JarrodCTaylor" :password "pass"}
@@ -40,10 +47,3 @@
     (app (-> (mock/request :post "/api/v1/user")
              (mock/content-type "application/json")
              (mock/body (ch/generate-string user-2))))))
-
-(defn create-tables [f]
-  (query/create-registered-user-table-if-not-exists! query/db)
-  (query/create-permission-table-if-not-exists! query/db)
-  (query/create-user-permission-table-if-not-exists! query/db)
-  (query/create-password-reset-key-table-if-not-exists! query/db)
-  (f))

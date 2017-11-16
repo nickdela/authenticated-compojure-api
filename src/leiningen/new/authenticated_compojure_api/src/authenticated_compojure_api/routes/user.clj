@@ -10,7 +10,6 @@
 
 
 (def user-routes
-  "Specify routes for User functions"
   (context "/api/v1/user" []
            :tags ["User"]
 

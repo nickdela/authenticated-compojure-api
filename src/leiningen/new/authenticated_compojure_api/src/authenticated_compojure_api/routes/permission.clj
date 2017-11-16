@@ -9,7 +9,6 @@
 
 
 (def permission-routes
-  "Specify routes for User Permission-related functions"
   (context "/api/v1/permission/user/:id" []
     :tags          ["Permission"]
     :path-params   [id :- s/Uuid]

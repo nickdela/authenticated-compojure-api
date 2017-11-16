@@ -2,37 +2,38 @@
   (:require [clojure.test :refer :all]
             [{{ns-name}}.handler :refer :all]
             [{{ns-name}}.test-utils :as helper]
-            [{{ns-name}}.queries.query-defs :as query]
-            [ring.mock.request :as mock]
-            [cheshire.core :as ch]))
+            [{{ns-name}}.query-defs :as query]
+            [ring.mock.request                         :as mock]
+            [taoensso.timbre                           :as timbre]
+            [mount.core                                :as mount]
+            [cheshire.core                             :as ch]))
 
-(defn setup-teardown [f]
-  (try
-    (query/insert-permission! query/db {:permission "basic"})
-    (helper/add-users)
-    (f)
-    (finally (query/truncate-all-tables-in-database! query/db))))
+(use-fixtures :once (fn [f]
+                      (try
+                        (timbre/merge-config! {:level :warn})
+                        (mount/start)
+                        (query/insert-permission! {:permission "basic"})
+                        (helper/add-users)
+                        (f)
+                        (finally (query/truncate-all-tables-in-database!)))))
 
-(use-fixtures :once helper/create-tables)
-(use-fixtures :each setup-teardown)
+(deftest testing-refresh-token-deletion
 
-(deftest can-delete-refresh-token-with-valid-refresh-token
   (testing "Can delete refresh token with valid refresh token"
-    (let [user-id-1                (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
-          initial-response         (app (-> (mock/request :get "/api/v1/auth")
-                                            (helper/basic-auth-header "JarrodCTaylor:pass")))
-          initial-body             (helper/parse-body (:body initial-response))
-          refresh-token            (:refreshToken initial-body)
-          refresh-delete-response  (app (mock/request :delete (str "/api/v1/refresh-token/" refresh-token)))
-          body                     (helper/parse-body (:body refresh-delete-response))
-          registered-user-row      (query/get-registered-user-by-id query/db {:id user-id-1})]
+    (let [user-id                 (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
+          initial-response        (app (-> (mock/request :get "/api/v1/auth")
+                                           (helper/basic-auth-header "JarrodCTaylor:pass")))
+          initial-body            (helper/parse-body (:body initial-response))
+          refresh-token           (:refreshToken initial-body)
+          refresh-delete-response (app (mock/request :delete (str "/api/v1/refresh-token/" refresh-token)))
+          body                    (helper/parse-body (:body refresh-delete-response))
+          registered-user-row     (query/get-registered-user-by-id {:id user-id})]
       (is (= 200 (:status refresh-delete-response)))
       (is (= "Refresh token successfully deleted" (:message body)))
-      (is (= nil (:refresh_token registered-user-row))))))
+      (is (= nil (:refresh_token registered-user-row)))))
 
-(deftest attempting-to-delete-an-invalid-refresh-token-returns-an-error
   (testing "Attempting to delete an invalid refresh token returns an error"
-    (let [refresh-delete-response  (app (mock/request :delete (str "/api/v1/refresh-token/" "123abc")))
-          body                     (helper/parse-body (:body refresh-delete-response))]
+    (let [refresh-delete-response (app (mock/request :delete (str "/api/v1/refresh-token/" "123abc")))
+          body                    (helper/parse-body (:body refresh-delete-response))]
       (is (= 404 (:status refresh-delete-response)))
       (is (= "The refresh token does not exist" (:error body))))))

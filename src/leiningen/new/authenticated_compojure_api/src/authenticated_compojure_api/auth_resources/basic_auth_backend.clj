@@ -1,5 +1,5 @@
 (ns {{ns-name}}.auth-resources.basic-auth-backend
-  (:require [{{ns-name}}.queries.query-defs :as query]
+  (:require [{{ns-name}}.query-defs :as query]
             [buddy.auth.backends.httpbasic :refer [http-basic-backend]]
             [buddy.hashers :as hashers]))
 
@@ -9,9 +9,9 @@
    eiter username or email as an identifier we will query for both and check
    for a match."
   [identifier]
-  (let [registered-user-username (query/get-registered-user-details-by-username query/db {:username identifier})
-        registered-user-email    (query/get-registered-user-details-by-email query/db {:email identifier})
-        registered-user          (first (remove nil? [registered-user-username registered-user-email]))]
+  (let [registered-user-username (query/get-registered-user-details-by-username {:username identifier})
+        registered-user-email    (query/get-registered-user-details-by-email {:email identifier})
+        registered-user          (or registered-user-username registered-user-email)]
     (when-not (nil? registered-user)
       {:user-data (-> registered-user
                       (assoc-in [:username] (str (:username registered-user)))
@@ -27,7 +27,7 @@
    valid user email in the username field. It is a little strange but to adhere
    to legacy basic auth api of using username:password we have to make the
    field do double duty."
-  [request, auth-data]
+  [request auth-data]
   (let [identifier  (:username auth-data)
         password    (:password auth-data)
         user-info   (get-user-info identifier)]
@@ -39,3 +39,4 @@
   "Use the basic-auth function defined in this file as the authentication
    function for the http-basic-backend"
   (http-basic-backend {:authfn basic-auth}))
+

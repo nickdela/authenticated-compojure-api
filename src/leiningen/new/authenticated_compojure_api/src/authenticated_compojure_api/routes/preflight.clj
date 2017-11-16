@@ -4,7 +4,6 @@
             [ring.util.http-response :as respond]))
 
 (def preflight-route
-  "Specify routes for Preflight functions"
   (context "/api" []
 
     (OPTIONS "*"           {:as request}
@@ -14,5 +13,5 @@
               :summary     "This will catch all OPTIONS preflight requests from the
                             browser. It will always return a success for the purpose
                             of the browser retrieving the response headers to validate CORS
-                            requests. For some reason it does not work in the swagger UI."
+                            requests. Does not work in the swagger UI."
               (respond/ok  {}))))

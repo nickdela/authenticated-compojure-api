@@ -5,7 +5,6 @@
             [compojure.api.sweet :refer :all]))
 
 (def password-routes
-  "Specify routes for User Password functions"
   (context "/api/v1/password" []
            :tags       ["Password"]
            :return     {:message String}

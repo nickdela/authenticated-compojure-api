@@ -23,17 +23,19 @@ Equivalent environment variables are `DATABASE_URL`, `USER_EMAIL`, `USER_PASS_KE
 
 `psql < script/init_database.sql`
 
+## Run Migrations
+
+Migrations are managed by [migratus](https://github.com/yogthos/migratus) to begin working initially
+run both:
+
+`lein migratus migrate`
+`lein with-profile test migratus migrate`
+
 ### Running Locally
 
 `lein run -m <project-name>.server 3000`
 
 Then visit [http://localhost:3000/api-docs/index.html](http://localhost:3000/api-docs/index.html)
-
-### Table migrations / creation
-
-When you start the server any needed tables will be created automatically.
-
-You will now be able to create new users.
 
 ### Running Tests
 
@@ -41,5 +43,5 @@ You will now be able to create new users.
 
 ### Documentation
 
-n can generated locally with `lein doc` the output will be
+The HTML documentation can be generated with `lein doc` the output will be
 saved in `doc/api`.

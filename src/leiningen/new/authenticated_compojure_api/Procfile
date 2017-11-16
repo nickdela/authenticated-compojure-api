@@ -1,1 +1,1 @@
-web: lein with-profile production trampoline run -m {{ns-name}}.server $PORT
+web: java $JVM_OPTS -jar target/server.jar $PORT

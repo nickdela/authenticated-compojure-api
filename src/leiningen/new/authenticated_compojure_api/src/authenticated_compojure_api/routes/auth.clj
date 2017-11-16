@@ -7,10 +7,9 @@
             [compojure.api.sweet :refer :all]))
 
 (def auth-routes
-  "Specify routes for Authentication functions"
   (context "/api/v1/auth" []
 
-     (GET "/"            {:as request}
+     (GET "/"             {:as request}
            :tags          ["Auth"]
            :return        {:id s/Uuid :username String :permissions String :token String :refreshToken String}
            :header-params [authorization :- String]

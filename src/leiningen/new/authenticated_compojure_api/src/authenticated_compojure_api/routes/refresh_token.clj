@@ -5,7 +5,6 @@
             [compojure.api.sweet :refer :all]))
 
 (def refresh-token-routes
-  "Specify routes for Refresh-Token functions"
   (context "/api/v1/refresh-token/:refreshToken" []
            :tags        ["Refresh-Token"]
            :middleware  [cors-mw]
