@@ -16,7 +16,7 @@
                  [com.taoensso/timbre        "4.10.0"]
                  [migratus                   "1.0.0"]
                  [com.fzakaria/slf4j-timbre  "0.3.7"]
-                 [conman                     "0.7.2"]
+                 [conman                     "0.7.4"]
                  [com.draines/postal         "2.0.2"]]
 
   :plugins      [[lein-environ    "1.1.0"]
