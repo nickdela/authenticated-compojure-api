@@ -1,12 +1,10 @@
 (ns {{ns-name}}.permission.permission-deletion-tests
-  (:require [clojure.test                           :refer :all]
-            [{{ns-name}}.handler :refer :all]
-            [{{ns-name}}.test-utils :as helper]
-            [{{ns-name}}.query-defs :as query]
-            [taoensso.timbre                           :as timbre]
-            [mount.core                                :as mount]
-            [ring.mock.request                         :as mock]
-            [cheshire.core                             :as ch]))
+  (:require
+    [clojure.test :refer [use-fixtures deftest testing is]]
+    [taoensso.timbre :as timbre]
+    [mount.core :as mount]
+    [{{ns-name}}.test-utils :as helper]
+    [{{ns-name}}.query-defs :as query]))
 
 (use-fixtures :once (fn [f]
                       (timbre/merge-config! {:level :warn})
@@ -26,26 +24,20 @@
   (testing "Can delete user permission with valid token and admin permissions"
     (helper/add-permission-for-username "JarrodCTaylor" "admin")
     (helper/add-permission-for-username "Everyman" "other")
-    (let [user-id           (:id (query/get-registered-user-by-username {:username "Everyman"}))
-          response          (app (-> (mock/request :delete (str "/api/v1/permission/user/" user-id))
-                                     (mock/content-type "application/json")
-                                     (mock/body (ch/generate-string {:permission "other"}))
-                                     (helper/get-token-auth-header-for-user "JarrodCTaylor:pass")))
-          body              (helper/parse-body (:body response))
+    (let [user-id (:id (query/get-registered-user-by-username {:username "Everyman"}))
+          response (helper/authenticated-delete (str "/api/v1/permission/user/" user-id) {:permission "other"} "JarrodCTaylor:passwords")
+          body (helper/parse-body (:body response))
           expected-response (str "Permission 'other' for user " user-id " successfully removed")]
-      (is (= 200               (:status response)))
-      (is (= "basic"           (helper/get-permissions-for-user user-id)))
+      (is (= 200 (:status response)))
+      (is (= "basic" (helper/get-permissions-for-user user-id)))
       (is (= expected-response (:message body))))))
 
 (deftest can-not-delete-user-permission-with-valid-token-and-no-admin-permissions
   (testing "Can not delete user permission with valid token and no admin permissions"
     (helper/add-permission-for-username "JarrodCTaylor" "admin")
-    (let [user-id  (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
-          response (app (-> (mock/request :delete (str "/api/v1/permission/user/" user-id))
-                            (mock/content-type "application/json")
-                            (mock/body (ch/generate-string {:permission "other"}))
-                            (helper/get-token-auth-header-for-user "Everyman:pass")))
-          body     (helper/parse-body (:body response))]
-      (is (= 401              (:status response)))
+    (let [user-id (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
+          response (helper/authenticated-delete (str "/api/v1/permission/user/" user-id) {:permission "other"} "Everyman:passwords")
+          body (helper/parse-body (:body response))]
+      (is (= 401 (:status response)))
       (is (= "Not authorized" (:error body)))
-      (is (= "basic,admin"    (helper/get-permissions-for-user user-id))))))
+      (is (= "basic,admin" (helper/get-permissions-for-user user-id))))))

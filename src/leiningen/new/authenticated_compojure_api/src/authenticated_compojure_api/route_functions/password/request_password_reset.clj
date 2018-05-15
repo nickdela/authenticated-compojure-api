@@ -1,8 +1,10 @@
 (ns {{ns-name}}.route-functions.password.request-password-reset
-  (:require [{{ns-name}}.query-defs :as query]
-            [environ.core :refer [env]]
-            [postal.core :refer [send-message]]
-            [ring.util.http-response :as respond]))
+  (:require
+    [clojure.string :as str]
+    [environ.core :refer [env]]
+    [postal.core :refer [send-message]]
+    [ring.util.http-response :as respond]
+    [{{ns-name}}.query-defs :as query]))
 
 (defn plain-email-body
   "Insert link into plaintext email body"
@@ -12,8 +14,7 @@
 (defn html-email-body
   "Insert link into HTML email body"
   [body response-link]
-  (let [body-less-closing-tags (clojure.string/replace body #"</body></html>" "")]
-    (str body-less-closing-tags "<br><p>" response-link "</p></body></html>")))
+  (str (str/replace body #"</body></html>" "") "<br><p>" response-link "</p></body></html>"))
 
 (defn send-reset-email
   "Send password reset email (uses Postal + https://account.sendinblue.com/)"
@@ -30,11 +31,11 @@
                         {:type "text/html"  :content html-body}]}))
 
 (defn process-password-reset-request [user from-email subject email-body-plain email-body-html response-base-link]
-  (let [reset-key     (str (java.util.UUID/randomUUID))
-        inserted-key  (query/insert-password-reset-key-with-default-valid-until! {:reset_key reset-key :user_id (:id user)})
+  (let [reset-key (.toString (java.util.UUID/randomUUID))
+        inserted-key (query/insert-password-reset-key-with-default-valid-until! {:reset_key reset-key :user_id (:id user)})
         response-link (str response-base-link "/" (:reset_key inserted-key))
-        body-plain    (plain-email-body email-body-plain response-link)
-        body-html     (html-email-body email-body-html response-link)]
+        body-plain (plain-email-body email-body-plain response-link)
+        body-html (html-email-body email-body-html response-link)]
     (send-reset-email (str (:email user)) from-email subject body-html body-plain)
     (respond/ok {:message (str "Reset email successfully sent to " (str (:email user)))})))
 

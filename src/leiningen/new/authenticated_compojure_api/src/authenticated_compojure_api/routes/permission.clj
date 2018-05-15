@@ -1,22 +1,27 @@
 (ns {{ns-name}}.routes.permission
-  (:require [{{ns-name}}.middleware.cors :refer [cors-mw]]
-            [{{ns-name}}.middleware.token-auth :refer [token-auth-mw]]
-            [{{ns-name}}.middleware.authenticated :refer [authenticated-mw]]
-            [{{ns-name}}.route-functions.permission.add-user-permission :refer [add-user-permission-response]]
-            [{{ns-name}}.route-functions.permission.delete-user-permission :refer [delete-user-permission-response]]
-            [schema.core :as s]
-            [compojure.api.sweet :refer :all]))
+  (:require
+    [clojure.spec.alpha :as s]
+    [compojure.api.sweet :refer [context POST DELETE]]
+    [{{ns-name}}.specs :as specs]
+    [{{ns-name}}.general-functions.validations :as validations]
+    [{{ns-name}}.middleware.cors :refer [cors-mw]]
+    [{{ns-name}}.middleware.token-auth :refer [token-auth-mw]]
+    [{{ns-name}}.middleware.authenticated :refer [authenticated-mw]]
+    [{{ns-name}}.route-functions.permission.add-user-permission :refer [add-user-permission-response]]
+    [{{ns-name}}.route-functions.permission.delete-user-permission :refer [delete-user-permission-response]]))
 
+(s/def ::auth-header string?)
 
 (def permission-routes
   (context "/api/v1/permission/user/:id" []
-    :tags          ["Permission"]
-    :path-params   [id :- s/Uuid]
-    :body-params   [permission :- String]
-    :header-params [authorization :- String]
-    :return        {:message String}
-    :middleware    [token-auth-mw cors-mw authenticated-mw]
-    :description   "Authorization header expects the following format 'Token {token}'"
+    :tags ["Permission"]
+    :coercion validations/spec
+    :path-params [id :- ::specs/id]
+    :body-params [permission :- ::specs/permissions]
+    :header-params [authorization :- ::auth-header]
+    :return {:message ::specs/message}
+    :middleware [token-auth-mw cors-mw authenticated-mw]
+    :description "Authorization header expects the following format 'Token {token}'"
 
     (POST "/" request
       :summary "Adds the specified permission for the specified user. Requires token to have `admin` auth."

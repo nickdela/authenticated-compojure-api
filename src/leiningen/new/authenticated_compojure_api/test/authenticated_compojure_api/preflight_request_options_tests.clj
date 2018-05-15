@@ -1,7 +1,8 @@
 (ns {{ns-name}}.preflight-request-options-tests
-  (:require [clojure.test :refer :all]
-            [{{ns-name}}.handler :refer [app]]
-            [ring.mock.request :as mock]))
+  (:require
+    [clojure.test :refer [deftest testing is]]
+    [ring.mock.request :as mock]
+    [{{ns-name}}.handler :refer [app]]))
 
 (deftest preflight-request-options-returns-success-for-valid-path
   (testing "Prefligh request options returns success for valid path"

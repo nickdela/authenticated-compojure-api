@@ -50,6 +50,7 @@
              ["src/{{sanitized}}/handler.clj"                                            (render "src/authenticated_compojure_api/handler.clj"                                            data)]
              ["src/{{sanitized}}/query_defs.clj"                                         (render "src/authenticated_compojure_api/query_defs.clj"                                         data)]
              ["src/{{sanitized}}/server.clj"                                             (render "src/authenticated_compojure_api/server.clj"                                             data)]
+             ["src/{{sanitized}}/specs.clj"                                              (render "src/authenticated_compojure_api/specs.clj"                                              data)]
              ["test/{{sanitized}}/auth/credential_retrieval_tests.clj"                   (render "test/authenticated_compojure_api/auth/credential_retrieval_tests.clj"                   data)]
              ["test/{{sanitized}}/password/password_reset_tests.clj"                     (render "test/authenticated_compojure_api/password/password_reset_tests.clj"                     data)]
              ["test/{{sanitized}}/password/request_password_reset_tests.clj"             (render "test/authenticated_compojure_api/password/request_password_reset_tests.clj"             data)]

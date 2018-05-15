@@ -1,6 +1,7 @@
 (ns {{ns-name}}.auth-resources.token-auth-backend
-  (:require [environ.core :refer [env]]
-            [buddy.auth.backends :refer [jws]]))
+  (:require
+    [environ.core :refer [env]]
+    [buddy.auth.backends :refer [jws]]))
 
 (def token-backend
   "Use the `jws` from the buddy library as our token backend. Tokens

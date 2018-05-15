@@ -1,8 +1,9 @@
 (ns {{ns-name}}.server
-  (:require [{{ns-name}}.handler :refer [app]]
-            [org.httpkit.server :as httpkit]
-            [taoensso.timbre    :as timbre]
-            [mount.core         :as mount]))
+  (:require
+    [org.httpkit.server :as httpkit]
+    [taoensso.timbre :as timbre]
+    [mount.core :as mount]
+    [{{ns-name}}.handler :refer [app]]))
 
 (defn -main [port]
   (httpkit/run-server app {:port (Integer/parseInt port) :join false})

@@ -1,7 +1,8 @@
 (ns {{ns-name}}.route-functions.refresh-token.gen-new-token
-  (:require [{{ns-name}}.general-functions.user.create-token :refer [create-token]]
-            [{{ns-name}}.query-defs :as query]
-            [ring.util.http-response :as respond]))
+  (:require
+    [ring.util.http-response :as respond]
+    [{{ns-name}}.general-functions.user.create-token :refer [create-token]]
+    [{{ns-name}}.query-defs :as query]))
 
 (defn create-new-tokens [user]
   (let [new-refresh-token (str (java.util.UUID/randomUUID))]
@@ -12,4 +13,4 @@
   (let [user (query/get-registered-user-details-by-refresh-token {:refresh_token refresh-token})]
     (if (empty? user)
       (respond/bad-request {:error "Bad Request"})
-      (respond/ok          (create-new-tokens user)))))
+      (respond/ok (create-new-tokens user)))))

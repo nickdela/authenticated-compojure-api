@@ -1,15 +1,15 @@
 (ns {{ns-name}}.password.password-reset-tests
-  (:require [clojure.test                           :refer :all]
-            [{{ns-name}}.handler :refer :all]
-            [{{ns-name}}.test-utils :as helper]
-            [{{ns-name}}.query-defs :as query]
-            [taoensso.timbre                           :as timbre]
-            [mount.core                                :as mount]
-            [buddy.hashers                             :as hashers]
-            [ring.mock.request                         :as mock]
-            [cheshire.core                             :as ch]
-            [clj-time.core                             :as t]
-            [clj-time.coerce                           :as c]))
+  (:require
+    [clojure.test :refer [use-fixtures deftest testing is]]
+    [clojure.spec.alpha :as s]
+    [clojure.spec.gen.alpha :as gen]
+    [clojure.test.check.generators]
+    [taoensso.timbre :as timbre]
+    [mount.core :as mount]
+    [buddy.hashers :as hashers]
+    [{{ns-name}}.specs :as specs]
+    [{{ns-name}}.test-utils :as helper]
+    [{{ns-name}}.query-defs :as query]))
 
 (use-fixtures :once (fn [f]
                       (try
@@ -23,47 +23,40 @@
 (deftest test-password-resetting
 
   (testing "Test password is reset with valid resetKey"
-    (let [user-id      (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
-          _            (query/insert-password-reset-key-with-default-valid-until! {:reset_key "123" :user_id user-id})
-          response     (app (-> (mock/request :post "/api/v1/password/reset-confirm")
-                                (mock/content-type "application/json")
-                                (mock/body (ch/generate-string {:resetKey "123" :newPassword "new-pass"}))))
-          body         (helper/parse-body (:body response))
+    (let [user-id (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
+          reset-key (gen/generate (s/gen ::specs/resetKey))
+          _ (query/insert-password-reset-key-with-default-valid-until! {:reset_key reset-key :user_id user-id})
+          response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :newPassword "new-pass"})
+          body (helper/parse-body (:body response))
           updated-user (query/get-registered-user-by-id {:id user-id})]
       (is (= 200 (:status response)))
       (is (= true (hashers/check "new-pass" (:password updated-user))))
       (is (= "Password successfully reset" (:message body)))))
 
   (testing "Not found 404 is returned when invalid reset key is used"
-    (let [response (app (-> (mock/request :post "/api/v1/password/reset-confirm")
-                            (mock/content-type "application/json")
-                            (mock/body (ch/generate-string {:resetKey "321" :newPassword "new-pass"}))))
-          body     (helper/parse-body (:body response))]
+    (let [response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey (gen/generate (s/gen ::specs/resetKey)) :newPassword "new-pass"})
+          body (helper/parse-body (:body response))]
       (is (= 404 (:status response)))
       (is (= "Reset key does not exist" (:error body)))))
 
   (testing "Not found 404 is returned when valid reset key has expired"
-    (let [user-id      (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
-          _            (query/insert-password-reset-key-with-valid-until-date! {:reset_key "456" :user_id user-id :valid_until (c/to-sql-time (t/minus (t/now) (t/hours 24)))})
-          response     (app (-> (mock/request :post "/api/v1/password/reset-confirm")
-                                (mock/content-type "application/json")
-                                (mock/body (ch/generate-string {:resetKey "456" :newPassword "new-pass"}))))
-          body         (helper/parse-body (:body response))
-          updated-user (query/get-registered-user-by-id {:id user-id})]
+    (let [reset-key (gen/generate (s/gen ::specs/resetKey))
+          _ (query/insert-password-reset-key-with-valid-until-date! {:reset_key reset-key
+                                                                     :user_id (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
+                                                                     :valid_until (helper/create-offset-sql-timestamp :minus 24 :hours)})
+          response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :newPassword "new-pass"})
+          body (helper/parse-body (:body response))]
       (is (= 404 (:status response)))
       (is (= "Reset key has expired" (:error body)))))
 
   (testing "Password is not reset if reset key has already been used"
-    (let [user-id          (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
-          _                (query/insert-password-reset-key-with-default-valid-until! {:reset_key "789" :user_id user-id})
-          initial-response (app (-> (mock/request :post "/api/v1/password/reset-confirm")
-                                    (mock/content-type "application/json")
-                                    (mock/body (ch/generate-string {:resetKey "789" :newPassword "new-pass"}))))
-          second-response  (app (-> (mock/request :post "/api/v1/password/reset-confirm")
-                                    (mock/content-type "application/json")
-                                    (mock/body (ch/generate-string {:resetKey "789" :newPassword "nono"}))))
-          body             (helper/parse-body (:body second-response))
-          updated-user     (query/get-registered-user-by-id {:id user-id})]
+    (let [reset-key (gen/generate (s/gen ::specs/resetKey))
+          user-id (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
+          _ (query/insert-password-reset-key-with-default-valid-until! {:reset_key reset-key :user_id user-id})
+          initial-response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :newPassword "new-pass"})
+          second-response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :newPassword "not-gonna-happen"})
+          body (helper/parse-body (:body second-response))
+          updated-user (query/get-registered-user-by-id {:id user-id})]
       (is (= 200 (:status initial-response)))
       (is (= 404 (:status second-response)))
       (is (= true (hashers/check "new-pass" (:password updated-user))))
