@@ -1,4 +1,4 @@
-(defproject authenticated-compojure-api/lein-template "0.3.2"
+(defproject authenticated-compojure-api/lein-template "0.3.3"
   :description "compojure-api with token-based authentication using Buddy."
   :url "https://github.com/JarrodCTaylor/authenticated-compojure-api"
   :license {:name "MIT"
