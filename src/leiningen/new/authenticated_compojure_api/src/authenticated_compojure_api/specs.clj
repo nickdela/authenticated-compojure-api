@@ -63,21 +63,21 @@
 (s/def ::patch-pass-response (s/keys :req-un [::id ::username ::email]))
 (s/def ::change-username-request (s/keys :req-un [::username]))
 ;; = Request Password Reset ====================================================
-(s/def ::userEmail ::email)
-(s/def ::fromEmail ::email)
+(s/def ::useruser-email ::email)
+(s/def ::from-email ::email)
 (s/def ::subject string?)
-(s/def ::emailBodyHtml string?)
-(s/def ::emailBodyPlain string?)
-(s/def ::responseBaseLink string?)
-(s/def ::request-reset-request (s/keys :req-un [::userEmail ::fromEmail ::subject ::emailBodyHtml ::emailBodyPlain ::responseBaseLink]))
+(s/def ::email-body-html string?)
+(s/def ::email-body-plain string?)
+(s/def ::response-base-link string?)
+(s/def ::request-reset-request (s/keys :req-un [::useruser-email ::from-email ::subject ::email-body-html ::email-body-plain ::response-base-link]))
 (s/def ::request-reset-response (s/keys :req-un [::message]))
 ;; = Password Reset ============================================================
 (s/def ::resetKey
   (s/with-gen
     valid-uuid-str?
     #(uuid-str-gen)))
-(s/def ::newPassword ::password)
-(s/def ::reset-request (s/keys :req-un [::resetKey ::newPassword]))
+(s/def ::new-password ::password)
+(s/def ::reset-request (s/keys :req-un [::resetKey ::new-password]))
 (s/def ::reset-response (s/keys :req-un [::message]))
 ;; = Refresh Token =============================================================
 (s/def ::refresh-token-response (s/keys :req-un [::token ::refresh-token]))

@@ -26,7 +26,7 @@
     (let [user-id (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
           reset-key (gen/generate (s/gen ::specs/resetKey))
           _ (query/insert-password-reset-key-with-default-valid-until! {:reset_key reset-key :user_id user-id})
-          response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :newPassword "new-pass"})
+          response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :new-password "new-pass"})
           body (helper/parse-body (:body response))
           updated-user (query/get-registered-user-by-id {:id user-id})]
       (is (= 200 (:status response)))
@@ -34,7 +34,7 @@
       (is (= "Password successfully reset" (:message body)))))
 
   (testing "Not found 404 is returned when invalid reset key is used"
-    (let [response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey (gen/generate (s/gen ::specs/resetKey)) :newPassword "new-pass"})
+    (let [response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey (gen/generate (s/gen ::specs/resetKey)) :new-password "new-pass"})
           body (helper/parse-body (:body response))]
       (is (= 404 (:status response)))
       (is (= "Reset key does not exist" (:error body)))))
@@ -44,7 +44,7 @@
           _ (query/insert-password-reset-key-with-valid-until-date! {:reset_key reset-key
                                                                      :user_id (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
                                                                      :valid_until (helper/create-offset-sql-timestamp :minus 24 :hours)})
-          response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :newPassword "new-pass"})
+          response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :new-password "new-pass"})
           body (helper/parse-body (:body response))]
       (is (= 404 (:status response)))
       (is (= "Reset key has expired" (:error body)))))
@@ -53,8 +53,8 @@
     (let [reset-key (gen/generate (s/gen ::specs/resetKey))
           user-id (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
           _ (query/insert-password-reset-key-with-default-valid-until! {:reset_key reset-key :user_id user-id})
-          initial-response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :newPassword "new-pass"})
-          second-response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :newPassword "not-gonna-happen"})
+          initial-response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :new-password "new-pass"})
+          second-response (helper/non-authenticated-post "/api/v1/password/reset-confirm" {:resetKey reset-key :new-password "not-gonna-happen"})
           body (helper/parse-body (:body second-response))
           updated-user (query/get-registered-user-by-id {:id user-id})]
       (is (= 200 (:status initial-response)))

@@ -42,7 +42,7 @@
   (testing "Successfully request password reset with email for a valid registered user"
     (with-redefs [unit-test/send-reset-email (fn [to-email from-email subject html-body plain-body] nil)]
       (let [user-id (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
-            reset-json (assoc (gen/generate (s/gen ::specs/request-reset-request)) :userEmail "j@man.com")
+            reset-json (assoc (gen/generate (s/gen ::specs/request-reset-request)) :useruser-email "j@man.com")
             response (helper/non-authenticated-post "/api/v1/password/reset-request" reset-json)
             body (helper/parse-body (:body response))
             pass-reset-row (query/get-password-reset-keys-for-userid {:userid user-id})
@@ -55,7 +55,7 @@
         (is (= "Reset email successfully sent to j@man.com" (:message body))))))
 
   (testing "Invalid user email returns 404 when requesting password reset"
-    (let [reset-json  (assoc (gen/generate (s/gen ::specs/request-reset-request)) :userEmail "J@jrock.com")
+    (let [reset-json  (assoc (gen/generate (s/gen ::specs/request-reset-request)) :useruser-email "J@jrock.com")
           response (helper/non-authenticated-post "/api/v1/password/reset-request" reset-json)
           body (helper/parse-body (:body response))]
       (is (= 404 (:status response)))
