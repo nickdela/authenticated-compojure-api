@@ -14,5 +14,5 @@
               :summary "This will catch all OPTIONS preflight requests from the
                         browser. It will always return a success for the purpose
                         of the browser retrieving the response headers to validate CORS
-                        requests. Does not work in the swagger UI."
+                        requests."
               (respond/ok  {}))))

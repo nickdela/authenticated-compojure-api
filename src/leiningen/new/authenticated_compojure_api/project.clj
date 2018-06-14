@@ -33,8 +33,7 @@
   :codeina {:sources ["src"]
             :reader :clojure}
 
-  :profiles {:uberjar {:resource-paths ["swagger-ui"]
-                       :aot :all}
+  :profiles {:uberjar {:aot :all}
 
              ;; Set these in ./profiles.clj
              :test-env-vars {}

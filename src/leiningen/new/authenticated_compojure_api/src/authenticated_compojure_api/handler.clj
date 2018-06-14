@@ -15,17 +15,6 @@
 
 (def app
   (api
-    {:swagger
-     {:ui   "/api-docs"
-      :spec "/swagger.json"
-      :data {:info {:title "authenticated-refresh-for-real"
-                    :version "0.0.1"}
-             :tags [{:name "Preflight"     :description "Return successful response for all preflight requests"}
-                    {:name "User"          :description "Create, delete and update user details"}
-                    {:name "Permission"    :description "Add and remove permissions tied to specific users"}
-                    {:name "Refresh-Token" :description "Get and delete refresh-tokens"}
-                    {:name "Auth"          :description "Get auth information for a user"}
-                    {:name "Password"      :description "Request and confirm password resets"}]}}}
     preflight-route
     user-routes
     permission-routes
