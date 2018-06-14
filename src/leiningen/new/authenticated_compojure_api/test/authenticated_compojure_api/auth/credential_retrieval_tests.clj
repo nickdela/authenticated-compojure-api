@@ -6,8 +6,6 @@
     [clojure.test :refer [use-fixtures deftest testing is]]
     [environ.core :refer [env]]
     [buddy.sign.jwt :as jwt]
-    [taoensso.timbre :as timbre]
-    [mount.core :as mount]
     [ring.mock.request :as mock]
     [{{ns-name}}.handler :refer [app]]
     [{{ns-name}}.test-utils :as helper]
@@ -16,14 +14,12 @@
 
 (use-fixtures :once (fn [f]
                       (try
-                        (timbre/merge-config! {:level :warn})
-                        (mount/start)
-                        (query/insert-permission! {:permission "basic"})
-                        (query/insert-permission! {:permission "admin"})
+                        (query/insert-permission! query/db {:permission "basic"})
+                        (query/insert-permission! query/db {:permission "admin"})
                         (helper/add-users)
                         (helper/add-permission-for-username "JarrodCTaylor" "admin")
                         (f)
-                        (finally (query/truncate-all-tables-in-database!)))))
+                        (finally (query/truncate-all-tables-in-database! query/db)))))
 
 (deftest credential-retrieval-tests
 

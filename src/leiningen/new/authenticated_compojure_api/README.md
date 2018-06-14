@@ -29,14 +29,11 @@ Equivalent environment variables are `DATABASE_URL`, `USER_EMAIL`, `USER_PASS_KE
 Migrations are managed by [migratus](https://github.com/yogthos/migratus) to begin working initially
 run both:
 
-`lein migratus migrate`
-`lein with-profile test migratus migrate`
+`lein migratus migrate && lein with-profile test migratus migrate`
 
 ### Running Locally
 
 `lein run -m {{ns-name}}.server 3000`
-
-Then visit [http://localhost:3000/api-docs/index.html](http://localhost:3000/api-docs/index.html)
 
 ### Table migrations / creation
 

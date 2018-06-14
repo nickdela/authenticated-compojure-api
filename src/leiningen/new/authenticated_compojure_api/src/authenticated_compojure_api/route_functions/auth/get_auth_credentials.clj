@@ -10,7 +10,7 @@
   [request]
   (let [user (:identity request)
         refresh-token (.toString (java.util.UUID/randomUUID))]
-    (query/update-registered-user-refresh-token! {:refresh_token refresh-token :id (:id user)})
+    (query/update-registered-user-refresh-token! query/db {:refresh_token refresh-token :id (:id user)})
     (respond/ok {:id (.toString (:id user))
                  :username (:username user)
                  :permissions (:permissions user)

@@ -61,14 +61,14 @@
            (get-token-auth-header-for-user user-pass))))
 
 (defn get-permissions-for-user [id]
-  (:permissions (query/get-permissions-for-userid {:userid id})))
+  (:permissions (query/get-permissions-for-userid query/db {:userid id})))
 
 (defn get-id-for-user [username]
-  (:id (query/get-registered-user-by-username {:username username})))
+  (:id (query/get-registered-user-by-username query/db {:username username})))
 
 (defn add-permission-for-username [username permission]
-  (let [user-id (:id (query/get-registered-user-by-username {:username username}))]
-    (query/insert-permission-for-user! {:userid user-id :permission permission})))
+  (let [user-id (:id (query/get-registered-user-by-username query/db {:username username}))]
+    (query/insert-permission-for-user! query/db {:userid user-id :permission permission})))
 
 (defn add-users []
   (let [user-1 {:email "j@man.com" :username "JarrodCTaylor" :password "passwords"}

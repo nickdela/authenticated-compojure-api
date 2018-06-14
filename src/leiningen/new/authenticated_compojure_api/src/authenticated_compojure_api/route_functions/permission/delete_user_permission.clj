@@ -4,7 +4,7 @@
     [{{ns-name}}.query-defs :as query]))
 
 (defn delete-user-permission [id permission]
-  (let [deleted-permission (query/delete-user-permission! {:userid id :permission permission})]
+  (let [deleted-permission (query/delete-user-permission! query/db {:userid id :permission permission})]
     (if (not= 0 deleted-permission)
       (respond/ok {:message (format "Permission '%s' for user %s successfully removed" permission id)})
       (respond/not-found {:error (format "User %s does not have %s permission" id)}))))

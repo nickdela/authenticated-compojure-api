@@ -4,25 +4,18 @@
     [clojure.spec.alpha :as s]
     [clojure.spec.gen.alpha :as gen]
     [clojure.test.check.generators]
-    [taoensso.timbre :as timbre]
-    [mount.core :as mount]
     [buddy.hashers :as hashers]
     [{{ns-name}}.specs :as specs]
     [{{ns-name}}.test-utils :as helper]
     [{{ns-name}}.query-defs :as query]))
 
-(use-fixtures :once (fn [f]
-                      (timbre/merge-config! {:level :warn})
-                      (mount/start)
-                      (f)))
-
 (use-fixtures :each (fn [f]
                       (try
-                        (query/insert-permission! {:permission "basic"})
-                        (query/insert-permission! {:permission "admin"})
+                        (query/insert-permission! query/db {:permission "basic"})
+                        (query/insert-permission! query/db {:permission "admin"})
                         (helper/add-users)
                         (f)
-                        (finally (query/truncate-all-tables-in-database!)))))
+                        (finally (query/truncate-all-tables-in-database! query/db)))))
 
 (deftest can-modify-a-users-username-with-valid-token-and-admin-permissions
   (testing "Can modify a users username with valid token and admin permissions"
@@ -40,7 +33,7 @@
     (let [user-id (helper/get-id-for-user "JarrodCTaylor")
           response (helper/authenticated-patch (str "/api/v1/user/" user-id) {:email "new@email.com"} "JarrodCTaylor:passwords")
           body (helper/parse-body (:body response))
-          updated-user (query/get-registered-user-by-id {:id user-id})]
+          updated-user (query/get-registered-user-by-id query/db {:id user-id})]
       (is (= 200 (:status response)))
       (is (= "JarrodCTaylor" (:username body)))
       (is (= "new@email.com" (:email body)))
@@ -51,7 +44,7 @@
     (helper/add-permission-for-username "JarrodCTaylor" "admin")
     (let [user-id (helper/get-id-for-user "JarrodCTaylor")
           response (helper/authenticated-patch (str "/api/v1/user/" user-id) {:password "newPasss"} "JarrodCTaylor:passwords")
-          updated-user (query/get-registered-user-by-id {:id user-id})]
+          updated-user (query/get-registered-user-by-id query/db {:id user-id})]
       (is (= 200 (:status response)))
       (is (= true (hashers/check "newPasss" (:password updated-user)))))))
 
@@ -59,7 +52,7 @@
   (testing "Can modify your own password with valid token and no admin permissions"
     (let [user-id (helper/get-id-for-user "JarrodCTaylor")
           response (helper/authenticated-patch (str "/api/v1/user/" user-id) {:password "newPasss"} "JarrodCTaylor:passwords")
-          updated-user (query/get-registered-user-by-id {:id user-id})]
+          updated-user (query/get-registered-user-by-id query/db {:id user-id})]
       (is (= 200 (:status response)))
       (is (= true (hashers/check "newPasss" (:password updated-user)))))))
 
@@ -68,7 +61,7 @@
     (let [user-id (helper/get-id-for-user "Everyman")
           response (helper/authenticated-patch (str "/api/v1/user/" user-id) {:email "bad@mail.com"} "JarrodCTaylor:passwords")
           body (helper/parse-body (:body response))
-          non-updated-user (query/get-registered-user-by-id {:id user-id})]
+          non-updated-user (query/get-registered-user-by-id query/db {:id user-id})]
       (is (= 401 (:status response)))
       (is (= "e@man.com" (str (:email non-updated-user))))
       (is (= "Not authorized" (:error body))))))

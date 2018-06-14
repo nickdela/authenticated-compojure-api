@@ -1,17 +1,12 @@
 (ns {{ns-name}}.query-defs
   (:require
-    [mount.core :refer [defstate]]
-    [environ.core :refer [env]]
-    [conman.core :as conman]))
+    [hugsql.core :as hugsql]
+    [environ.core :refer [env]]))
 
-(def pool-spec {:jdbc-url (env :database-url)})
+(def db (env :database-url))
 
-(defstate ^:dynamic *db*
-          :start (conman/connect! pool-spec)
-          :stop (conman/disconnect! *db*))
-
-(conman/bind-connection *db* "sql/truncate_all.sql"
-                             "sql/user/password_reset_key.sql"
-                             "sql/user/permission.sql"
-                             "sql/user/registered_user.sql"
-                             "sql/user/user_permission.sql")
+(hugsql/def-db-fns "sql/truncate_all.sql")
+(hugsql/def-db-fns "sql/user/password_reset_key.sql")
+(hugsql/def-db-fns "sql/user/permission.sql")
+(hugsql/def-db-fns "sql/user/registered_user.sql")
+(hugsql/def-db-fns "sql/user/user_permission.sql")

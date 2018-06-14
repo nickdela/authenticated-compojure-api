@@ -32,7 +32,7 @@
 
 (defn process-password-reset-request [user from-email subject email-body-plain email-body-html response-base-link]
   (let [reset-key (.toString (java.util.UUID/randomUUID))
-        inserted-key (query/insert-password-reset-key-with-default-valid-until! {:reset_key reset-key :user_id (:id user)})
+        inserted-key (query/insert-password-reset-key-with-default-valid-until! query/db {:reset_key reset-key :user_id (:id user)})
         response-link (str response-base-link "/" (:reset_key inserted-key))
         body-plain (plain-email-body email-body-plain response-link)
         body-html (html-email-body email-body-html response-link)]
@@ -40,7 +40,7 @@
     (respond/ok {:message (str "Reset email successfully sent to " (str (:email user)))})))
 
 (defn request-password-reset-response [user-email from-email subject email-body-plain email-body-html response-base-link]
-  (let [user (query/get-registered-user-by-email {:email user-email})]
+  (let [user (query/get-registered-user-by-email query/db {:email user-email})]
     (if (empty? user)
       (respond/not-found {:error (str "No user exists with the email " user-email)})
       (process-password-reset-request user from-email subject email-body-plain email-body-html response-base-link))))

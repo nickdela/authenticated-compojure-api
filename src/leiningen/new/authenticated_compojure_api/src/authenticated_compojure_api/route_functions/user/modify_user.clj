@@ -9,7 +9,7 @@
   (let [new-email (if (empty? email) (str (:email current-user-info)) email)
         new-username (if (empty? username) (str (:username current-user-info)) username)
         new-password (if (empty? password) (:password current-user-info) (hashers/encrypt password))]
-    (query/update-registered-user! {:id (:id current-user-info)
+    (query/update-registered-user! query/db {:id (:id current-user-info)
                                     :email new-email
                                     :username new-username
                                     :password new-password
@@ -21,7 +21,7 @@
    modifying attributes associated with its own id or has admin permissions."
   [request id username password email]
   (let [auth (get-in request [:identity :permissions])
-        current-user-info (query/get-registered-user-by-id {:id id})
+        current-user-info (query/get-registered-user-by-id query/db {:id id})
         admin? (.contains auth "admin")
         modifying-self? (= (str id) (get-in request [:identity :id]))
         admin-or-self? (or admin? modifying-self?)

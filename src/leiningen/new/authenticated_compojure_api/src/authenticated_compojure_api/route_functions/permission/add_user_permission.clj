@@ -5,7 +5,7 @@
 
 (defn add-user-permission [id permission]
   (let [added-permission (try
-                           (query/insert-permission-for-user! {:userid id :permission permission})
+                           (query/insert-permission-for-user! query/db {:userid id :permission permission})
                            (catch Exception e 0))]
     (if (not= 0 added-permission)
       (respond/ok {:message (format "Permission '%s' for user %s successfully added" permission id)})

@@ -7,8 +7,6 @@
     [clojure.spec.alpha :as s]
     [clojure.spec.gen.alpha :as gen]
     [clojure.test.check.generators]
-    [taoensso.timbre :as timbre]
-    [mount.core :as mount]
     [{{ns-name}}.specs :as specs]
     [{{ns-name}}.test-utils :as helper]
     [{{ns-name}}.query-defs :as query]
@@ -16,12 +14,10 @@
 
 (use-fixtures :once (fn [f]
                       (try
-                        (timbre/merge-config! {:level :warn})
-                        (mount/start)
-                        (query/insert-permission! {:permission "basic"})
+                        (query/insert-permission! query/db {:permission "basic"})
                         (helper/add-users)
                         (f)
-                        (finally (query/truncate-all-tables-in-database!)))))
+                        (finally (query/truncate-all-tables-in-database! query/db)))))
 
 (deftest test-html-email-body-returns-desired-string
   (testing "test add response link to html body returns desired string"
@@ -41,11 +37,11 @@
 
   (testing "Successfully request password reset with email for a valid registered user"
     (with-redefs [unit-test/send-reset-email (fn [to-email from-email subject html-body plain-body] nil)]
-      (let [user-id (:id (query/get-registered-user-by-username {:username "JarrodCTaylor"}))
+      (let [user-id (:id (query/get-registered-user-by-username query/db {:username "JarrodCTaylor"}))
             reset-json (assoc (gen/generate (s/gen ::specs/request-reset-request)) :useruser-email "j@man.com")
             response (helper/non-authenticated-post "/api/v1/password/reset-request" reset-json)
             body (helper/parse-body (:body response))
-            pass-reset-row (query/get-password-reset-keys-for-userid {:userid user-id})
+            pass-reset-row (query/get-password-reset-keys-for-userid query/db {:userid user-id})
             valid-until-ts (:valid_until (first pass-reset-row))
             valid-until (.truncatedTo (.toInstant valid-until-ts) ChronoUnit/SECONDS)
             expected-time (.truncatedTo (.plus (Instant/now) 24 ChronoUnit/HOURS) ChronoUnit/SECONDS)]
