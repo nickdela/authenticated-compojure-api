@@ -34,6 +34,10 @@ run both:
 
 `lein run -m <project-name>.server 3000`
 
+#### Example create a new user
+
+`curl 'http://localhost:3000/api/v1/user' -X POST -H 'Content-Type: application/json' -d '{"email":"some@one.com","username":"someone","password":"somePassword1"}'`
+
 ### Running Tests
 
 `lein test`
