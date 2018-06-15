@@ -2,7 +2,6 @@
   (:require
     [compojure.api.sweet :refer [context POST]]
     [{{ns-name}}.specs :as specs]
-    [{{ns-name}}.general-functions.validations :as validations]
     [{{ns-name}}.middleware.cors :refer [cors-mw]]
     [{{ns-name}}.route-functions.password.password-reset :refer [password-reset-response]]
     [{{ns-name}}.route-functions.password.request-password-reset :refer [request-password-reset-response]]))
@@ -12,7 +11,7 @@
            :tags ["Password"]
            :return {:message ::specs/message}
            :middleware [cors-mw]
-           :coercion validations/spec
+           :coercion :spec
 
     (POST "/reset-request" []
           :body-params [useruser-email :- ::specs/email

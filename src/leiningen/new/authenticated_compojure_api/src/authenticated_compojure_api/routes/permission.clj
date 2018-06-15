@@ -3,7 +3,6 @@
     [clojure.spec.alpha :as s]
     [compojure.api.sweet :refer [context POST DELETE]]
     [{{ns-name}}.specs :as specs]
-    [{{ns-name}}.general-functions.validations :as validations]
     [{{ns-name}}.middleware.cors :refer [cors-mw]]
     [{{ns-name}}.middleware.token-auth :refer [token-auth-mw]]
     [{{ns-name}}.middleware.authenticated :refer [authenticated-mw]]
@@ -15,7 +14,7 @@
 (def permission-routes
   (context "/api/v1/permission/user/:id" []
     :tags ["Permission"]
-    :coercion validations/spec
+    :coercion :spec
     :path-params [id :- ::specs/id]
     :body-params [permission :- ::specs/permissions]
     :header-params [authorization :- ::auth-header]

@@ -3,7 +3,6 @@
     [clojure.spec.alpha :as s]
     [compojure.api.sweet :refer [context POST DELETE PATCH]]
     [{{ns-name}}.specs :as specs]
-    [{{ns-name}}.general-functions.validations :as validations]
     [{{ns-name}}.middleware.cors :refer [cors-mw]]
     [{{ns-name}}.middleware.token-auth :refer [token-auth-mw]]
     [{{ns-name}}.middleware.authenticated :refer [authenticated-mw]]
@@ -16,7 +15,7 @@
 (def user-routes
   (context "/api/v1/user" []
            :tags ["User"]
-           :coercion validations/spec
+           :coercion :spec
 
     (POST "/" {:as request}
            :return ::specs/register-response

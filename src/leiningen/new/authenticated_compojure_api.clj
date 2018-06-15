@@ -27,7 +27,6 @@
              ["src/{{sanitized}}/auth_resources/basic_auth_backend.clj"                  (render "src/authenticated_compojure_api/auth_resources/basic_auth_backend.clj"                  data)]
              ["src/{{sanitized}}/auth_resources/token_auth_backend.clj"                  (render "src/authenticated_compojure_api/auth_resources/token_auth_backend.clj"                  data)]
              ["src/{{sanitized}}/general_functions/user/create_token.clj"                (render "src/authenticated_compojure_api/general_functions/user/create_token.clj"                data)]
-             ["src/{{sanitized}}/general_functions/validations.clj"                      (render "src/authenticated_compojure_api/general_functions/validations.clj"                      data)]
              ["src/{{sanitized}}/middleware/authenticated.clj"                           (render "src/authenticated_compojure_api/middleware/authenticated.clj"                           data)]
              ["src/{{sanitized}}/middleware/basic_auth.clj"                              (render "src/authenticated_compojure_api/middleware/basic_auth.clj"                              data)]
              ["src/{{sanitized}}/middleware/cors.clj"                                    (render "src/authenticated_compojure_api/middleware/cors.clj"                                    data)]

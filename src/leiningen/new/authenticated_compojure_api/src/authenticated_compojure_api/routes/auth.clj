@@ -3,7 +3,6 @@
     [clojure.spec.alpha :as s]
     [compojure.api.sweet :refer [context GET]]
     [{{ns-name}}.specs :as specs]
-    [{{ns-name}}.general-functions.validations :as validations]
     [{{ns-name}}.middleware.basic-auth :refer [basic-auth-mw]]
     [{{ns-name}}.middleware.authenticated :refer [authenticated-mw]]
     [{{ns-name}}.middleware.cors :refer [cors-mw]]
@@ -14,7 +13,7 @@
 
 (def auth-routes
   (context "/api/v1/auth" []
-           :coercion validations/spec
+           :coercion :spec
 
      (GET "/" {:as request}
            :tags ["Auth"]
