@@ -49,6 +49,8 @@ You will now be able to create new users.
 
 `lein test`
 
+*NOTE* Test will fail the first run after migrations due to a duplicate key.
+
 ### Documentation
 
 The HTML documentation can generated locally with `lein doc` the output will be
